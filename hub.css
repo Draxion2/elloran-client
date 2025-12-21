@@ -1,5 +1,4 @@
-<style>
-    :root {
+:root {
       --ink: #f6ead1;
       --gold: #b89558;
       --oak: #2a2018;
@@ -1132,4 +1131,3 @@
         grid-template-columns: repeat(2, minmax(0, 1fr))
       }
     }
-  </style>
