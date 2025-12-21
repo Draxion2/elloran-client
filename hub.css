@@ -27,7 +27,8 @@
       margin: 0;
       font-family: ui-serif, Georgia, serif;
       color: var(--ink);
-      background: #0b0d10
+      background: #0b0d10;
+      outline: 2px solid red;
     }
 
     /* Deck */
