@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-idle-2");
+console.log("hub.js V-05/20/26 dragon-idle-3");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -45,8 +45,6 @@ function startHubAmbienceOnce() {
 
   hubAmbienceAudio.loop = true;
   hubAmbienceAudio.volume = selected.volume;
-
-  console.log(selected, selected.volume);
 
   hubAmbienceAudio.play().catch((err) => {
     console.warn("Hub ambience failed:", err);
@@ -1610,7 +1608,6 @@ function updateDragonIdleText(d){
         });
       }
       renderMoodlets(a);
-      console.log("Dragon idle render fired:", a);
       updateDragonIdleText(a);
       applyRoostTheme(a.element);
       applyActionButtonStates();
