@@ -44,6 +44,8 @@ function startHubAmbienceOnce() {
   hubAmbienceAudio.loop = true;
   hubAmbienceAudio.volume = selected.volume;
 
+  console.log(selected, selected.volume);
+
   hubAmbienceAudio.play().catch((err) => {
     console.warn("Hub ambience failed:", err);
     hubAmbienceStarted = false;
