@@ -9,6 +9,52 @@
   };
   const backdrop = $("#backdrop");
 
+const HUB_AMBIENCE_TRACKS = [
+  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_faint_wind.mp3",
+  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_gulls.mp3",
+  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ocean_waves.mp3",
+  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ship_creak.mp3"
+];
+
+let hubAmbienceStarted = false;
+let hubAmbienceAudio = null;
+
+function startHubAmbienceOnce() {
+  if (hubAmbienceStarted) return;
+  hubAmbienceStarted = true;
+
+  const track =
+    HUB_AMBIENCE_TRACKS[Math.floor(Math.random() * HUB_AMBIENCE_TRACKS.length)];
+
+  hubAmbienceAudio = new Audio(track);
+  hubAmbienceAudio.loop = true;
+  hubAmbienceAudio.volume = 0;
+
+  hubAmbienceAudio.play()
+    .then(() => {
+      fadeAudioIn(hubAmbienceAudio, 0.22, 1800);
+    })
+    .catch((err) => {
+      console.warn("Hub ambience could not start:", err);
+      hubAmbienceStarted = false;
+    });
+}
+
+function fadeAudioIn(audio, targetVolume = 0.22, duration = 1800) {
+  const start = performance.now();
+
+  function tick(now) {
+    const progress = Math.min(1, (now - start) / duration);
+    audio.volume = targetVolume * progress;
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
   function toast(msg) {
     const t = $("#toast");
     if (!t) {
@@ -2417,6 +2463,7 @@
   /* ================= Buttons & Backdrop ================= */
   document.querySelectorAll(".btn[data-panel]").forEach((btn) => {
     btn.addEventListener("click", async () => {
+      startHubAmbienceOnce();
       const key = btn.getAttribute("data-panel");
       const p = panels[key];
       if (!p) return;
