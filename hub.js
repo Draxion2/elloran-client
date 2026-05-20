@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-action-reactions");
+console.log("hub.js V-05/20/26 dragon-action-reactions-2");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -2266,7 +2266,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
-          toast(`${d.name} seems happier.`);
+          setTemporaryDragonReaction(`${d.name} perks up, clearly enjoying the attention.`);
           return;
         }
         console.error("actPlay (pet) failed", err);
@@ -2326,7 +2326,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
-          toast(`${d.name} looks cleaner and more relaxed.`);
+          setTemporaryDragonReaction(`${d.name} relaxes as you tend to them.`);
           return;
         }
         console.error("actGroom failed", err);
@@ -2392,7 +2392,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
-          toast(`${local.name} trains hard.`);
+          setTemporaryDragonReaction(`${local.name} steadies themselves after training.`);
           return;
         }
         console.error("actTrain failed", err);
