@@ -36,13 +36,13 @@ function startHubAmbienceOnce() {
 
   hubAmbienceStarted = true;
 
-  const track =
+  const selected =
     HUB_AMBIENCE_TRACKS[Math.floor(Math.random() * HUB_AMBIENCE_TRACKS.length)];
 
-  hubAmbienceAudio = new Audio(track.url);
+  hubAmbienceAudio = new Audio(selected.url);
 
   hubAmbienceAudio.loop = true;
-  hubAmbienceAudio.volume = track.volume;
+  hubAmbienceAudio.volume = selected.volume;
 
   hubAmbienceAudio.play().catch((err) => {
     console.warn("Hub ambience failed:", err);
