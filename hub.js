@@ -12,11 +12,11 @@
 const HUB_AMBIENCE_TRACKS = [
   {
     url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_faint_wind.mp3",
-    volume: 0.70
+    volume: 1
   },
   {
     url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_gulls.mp3",
-    volume: 0.70
+    volume: 1
   },
   {
     url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ocean_waves.mp3",
