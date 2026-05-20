@@ -30,7 +30,7 @@ function startHubAmbienceOnce() {
   hubAmbienceAudio = new Audio(track);
 
   hubAmbienceAudio.loop = true;
-  hubAmbienceAudio.volume = 0.22;
+  hubAmbienceAudio.volume = 0.40;
 
   hubAmbienceAudio.play().catch((err) => {
     console.warn("Hub ambience failed:", err);
