@@ -1133,13 +1133,29 @@
       }
     }
 @keyframes lanternFlicker {
-  0%, 100% {
-    opacity: 0.35;
+  0% {
+    opacity: 0.92;
     transform: scale(1);
   }
-  50% {
+
+  25% {
     opacity: 1;
-    transform: scale(1.03);
+    transform: scale(1.01);
+  }
+
+  50% {
+    opacity: 0.96;
+    transform: scale(0.995);
+  }
+
+  75% {
+    opacity: 0.99;
+    transform: scale(1.005);
+  }
+
+  100% {
+    opacity: 0.92;
+    transform: scale(1);
   }
 }
 #lantern-glow {
@@ -1147,14 +1163,14 @@
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  background: rgba(255, 0, 0, 0.5); /* TEST ONLY */
-}
 
-.topbar,
-.nav,
-.mentor,
-.panel,
-.backdrop,
-#toast {
-  z-index: 10;
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(255,180,90,0.08) 0%,
+      rgba(255,140,40,0.04) 35%,
+      transparent 70%
+    );
+
+  animation: lanternFlicker 7s ease-in-out infinite;
 }
