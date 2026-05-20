@@ -35,6 +35,7 @@
       position: absolute;
       inset: 0;
       display: grid;
+      z-index: 2;
       place-items: center;
       background:
         radial-gradient(60% 45% at 50% 15%, rgba(255, 233, 180, .06), transparent 60%),
@@ -1131,3 +1132,45 @@
         grid-template-columns: repeat(2, minmax(0, 1fr))
       }
     }
+@keyframes lanternFlicker {
+  0% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+
+  25% {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+
+  50% {
+    opacity: 0.96;
+    transform: scale(0.995);
+  }
+
+  75% {
+    opacity: 0.99;
+    transform: scale(1.005);
+  }
+
+  100% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+}
+#lantern-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(255,180,90,0.08) 0%,
+      rgba(255,140,40,0.04) 35%,
+      transparent 70%
+    );
+
+  animation: lanternFlicker 7s ease-in-out infinite;
+}
