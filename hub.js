@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-idle");
+console.log("hub.js V-05/20/26 dragon-idle-2");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1634,45 +1634,54 @@ function updateDragonIdleText(d){
     }
 
     function startRestTimer() {
-      const d = active();
-      if (!d) {
-        stopRestTimer();
-        return;
-      }
-      const until = Number(d.rest_until_at || 0);
-      const newKey = `${d.id}:${until}`;
-      // ✅ already running for this dragon/rest value
-      if (restTimerRAF && restTimerKey === newKey) return;
-      // restart only if dragon/rest_until changed
-      if (restTimerRAF) cancelAnimationFrame(restTimerRAF);
-      restTimerKey = newKey;
-      const tick = () => {
-        const d2 = active();
-        if (!restTimerEl || !d2) return;
-        if (document.visibilityState !== "visible") {
-          restTimerRAF = requestAnimationFrame(tick);
-          return;
-        }
-        const until2 = Number(d2.rest_until_at || 0);
-        const msLeft = until2 - Date.now();
-        if (until2 > Date.now()) {
-          restTimerEl.style.display = "block";
-          restTimerEl.textContent = `Resting… ${fmtTime(msLeft)} remaining`;
-          restTimerRAF = requestAnimationFrame(tick);
-          return;
-        }
-        // ✅ rest ended
-        restTimerEl.textContent = "";
-        restTimerEl.style.display = "none";
-        cancelAnimationFrame(restTimerRAF);
-        restTimerRAF = null;
-        restTimerKey = null;
-        // ✅ do NOT call HUB.renderActive() here
-        applyActionButtonStates();
-        refreshDragonsFromApiSafe();
-      };
-      tick();
+  const d = active();
+  if (!d) {
+    stopRestTimer();
+    return;
+  }
+
+  const until = Number(d.rest_until_at || 0);
+
+  // Not resting — do nothing.
+  if (!until || until <= Date.now()) {
+    stopRestTimer();
+    if (restTimerEl) {
+      restTimerEl.textContent = "";
+      restTimerEl.style.display = "none";
     }
+    return;
+  }
+
+  const newKey = `${d.id}:${until}`;
+
+  if (restTimerRAF && restTimerKey === newKey) return;
+
+  if (restTimerRAF) cancelAnimationFrame(restTimerRAF);
+  restTimerKey = newKey;
+
+  const tick = () => {
+    const d2 = active();
+    if (!restTimerEl || !d2) return;
+
+    const until2 = Number(d2.rest_until_at || 0);
+    const msLeft = until2 - Date.now();
+
+    if (until2 > Date.now()) {
+      restTimerEl.style.display = "block";
+      restTimerEl.textContent = `Resting… ${fmtTime(msLeft)} remaining`;
+      restTimerRAF = requestAnimationFrame(tick);
+      return;
+    }
+
+    restTimerEl.textContent = "";
+    restTimerEl.style.display = "none";
+    stopRestTimer();
+    applyActionButtonStates();
+    refreshDragonsFromApiSafe();
+  };
+
+  tick();
+}
     let view = "list";
     let rosterTimerInterval = null;
 
