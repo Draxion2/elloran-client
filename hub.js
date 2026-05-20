@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-idle-4");
+console.log("hub.js V-05/20/26 dragon-action-reactions");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
