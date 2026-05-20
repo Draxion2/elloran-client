@@ -1,3 +1,5 @@
+console.log("hub.js V-05/20/26 dragon-idle");
+
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
   const $ = (sel) => document.querySelector(sel);
@@ -1608,6 +1610,7 @@ function updateDragonIdleText(d){
         });
       }
       renderMoodlets(a);
+      console.log("Dragon idle render fired:", a);
       updateDragonIdleText(a);
       applyRoostTheme(a.element);
       applyActionButtonStates();
