@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-idle-3");
+console.log("hub.js V-05/20/26 dragon-idle-4");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1220,17 +1220,24 @@ const DRAGON_IDLE_LINES = {
     "{name} watches the distant waves quietly.",
     "{name} shifts comfortably against the wooden deck.",
     "{name} rests near the lantern glow in silence.",
-    "{name} listens to the ship creak beneath them."
+    "{name} listens to the ship creak beneath them.",
+    "{name} looks up, their eyes lighting up with curiosity.",
+    "{name} is awake and relaxing on the wooden floor.",
+    "You hear faint growls coming from within the roost.",
+    "{name} emerges into the light."
   ],
   happy: [
     "{name} lets out a soft, content rumble.",
-    "{name} curls comfortably near the warm lanternlight.",
-    "{name} seems unusually relaxed aboard the Black Raven."
+    "{name} curls comfortably near the warm lantern light.",
+    "{name} seems unusually relaxed aboard the ship.",
+    "{name} appears delighted to see you.",
+    "{name} seems happy and content."
   ],
   hungry: [
     "{name} keeps glancing toward the food crates.",
     "{name} sniffs the air, clearly hoping for food.",
-    "{name} seems distracted by hunger."
+    "{name} seems distracted by hunger.",
+    "The moment you enter the roost, you hear {name}'s stomach growl."
   ],
   tired: [
     "{name} lets out a slow breath before settling down.",
