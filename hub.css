@@ -1172,5 +1172,5 @@
       transparent 70%
     );
 
-  animation: lanternFlicker 1s ease-in-out infinite;
+  animation: lanternFlicker 7s ease-in-out infinite;
 }
