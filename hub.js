@@ -45,7 +45,7 @@ function fadeAudioIn(audio, targetVolume = 0.22, duration = 1800) {
 
   function tick(now) {
     const progress = Math.min(1, (now - start) / duration);
-    audio.volume = targetVolume * progress;
+    audio.volume = Math.max(0, Math.min(1, targetVolume * progress));
 
     if (progress < 1) {
       requestAnimationFrame(tick);
