@@ -1215,6 +1215,9 @@ function startHubAmbienceOnce() {
     setDisabledVisual(btnRest, isResting, reason);
   }
 
+let dragonReactionTimeout = null;
+let dragonReactionActive = false;
+
 const DRAGON_IDLE_LINES = {
   neutral: [
     "{name} watches the distant waves quietly.",
@@ -1265,6 +1268,7 @@ function pickDragonIdleLine(d){
 }
 
 function updateDragonIdleText(d){
+  if(dragonReactionActive) return;
   const el = document.getElementById("dragonIdleText");
   if(!el) return;
 
@@ -1274,6 +1278,32 @@ function updateDragonIdleText(d){
     el.textContent = pickDragonIdleLine(d);
     el.style.opacity = ".92";
   }, 220);
+}
+
+function setTemporaryDragonReaction(text, duration = 12000){
+  const el = document.getElementById("dragonIdleText");
+  if(!el) return;
+
+  dragonReactionActive = true;
+
+  if(dragonReactionTimeout){
+    clearTimeout(dragonReactionTimeout);
+  }
+
+  el.style.opacity = "0";
+
+  setTimeout(() => {
+    el.textContent = text;
+    el.style.opacity = ".92";
+  }, 180);
+
+  dragonReactionTimeout = setTimeout(() => {
+    dragonReactionActive = false;
+
+    const id = STATE.dragons.selectedId ?? STATE.dragons.activeId;
+    const d = id != null ? STATE.dragons.byId[id] : null;
+    updateDragonIdleText(d);
+  }, duration);
 }
 
   function initRoost() {
@@ -2065,6 +2095,7 @@ function updateDragonIdleText(d){
         if (typeof STATE._onInventoryChange === "function")
           STATE._onInventoryChange();
         scheduleInventorySave();
+        setTemporaryDragonReaction(`${d.name} eagerly snaps up the offered food.`);
         return true;
       } catch (err) {
         console.error("feedItemToDragon failed", err);
@@ -2235,6 +2266,7 @@ function updateDragonIdleText(d){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
+          toast(`${d.name} seems happier.`);
           return;
         }
         console.error("actPlay (pet) failed", err);
@@ -2294,6 +2326,7 @@ function updateDragonIdleText(d){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
+          toast(`${d.name} looks cleaner and more relaxed.`);
           return;
         }
         console.error("actGroom failed", err);
@@ -2359,6 +2392,7 @@ function updateDragonIdleText(d){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
+          toast(`${local.name} trains hard.`);
           return;
         }
         console.error("actTrain failed", err);
