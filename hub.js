@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-action-reactions-2");
+console.log("hub.js V-05/20/26 dragon-action-reactions-3");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1268,15 +1268,24 @@ function pickDragonIdleLine(d){
 }
 
 function updateDragonIdleText(d){
-  if(dragonReactionActive) return;
   const el = document.getElementById("dragonIdleText");
   if(!el) return;
+
+  if(dragonReactionActive){
+    return;
+  }
 
   el.style.opacity = "0";
 
   setTimeout(() => {
+
+    // IMPORTANT:
+    // Check AGAIN after timeout.
+    if(dragonReactionActive) return;
+
     el.textContent = pickDragonIdleLine(d);
     el.style.opacity = ".92";
+
   }, 220);
 }
 
