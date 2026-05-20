@@ -1215,6 +1215,60 @@ function startHubAmbienceOnce() {
     setDisabledVisual(btnRest, isResting, reason);
   }
 
+const DRAGON_IDLE_LINES = {
+  neutral: [
+    "{name} watches the distant waves quietly.",
+    "{name} shifts comfortably against the wooden deck.",
+    "{name} rests near the lantern glow in silence.",
+    "{name} listens to the ship creak beneath them."
+  ],
+  happy: [
+    "{name} lets out a soft, content rumble.",
+    "{name} curls comfortably near the warm lanternlight.",
+    "{name} seems unusually relaxed aboard the Black Raven."
+  ],
+  hungry: [
+    "{name} keeps glancing toward the food crates.",
+    "{name} sniffs the air, clearly hoping for food.",
+    "{name} seems distracted by hunger."
+  ],
+  tired: [
+    "{name} lets out a slow breath before settling down.",
+    "{name} looks ready to rest for a while.",
+    "{name} quietly curls against the floorboards."
+  ],
+  bonded: [
+    "{name} seems calmer whenever you're nearby.",
+    "{name} watches you with quiet trust.",
+    "{name} stays close as the ship gently rocks."
+  ]
+};
+
+function pickDragonIdleLine(d){
+  if(!d) return "No dragon is currently resting in the roost.";
+
+  let pool = DRAGON_IDLE_LINES.neutral;
+
+  if(Number(d.hunger || 0) >= 70) pool = DRAGON_IDLE_LINES.hungry;
+  else if(Number(d.hp || 0) < Number(d.hpMax || 1) * 0.4) pool = DRAGON_IDLE_LINES.tired;
+  else if(Number(d.bond || 0) >= 60) pool = DRAGON_IDLE_LINES.bonded;
+  else if(Number(d.mood || 0) >= 75) pool = DRAGON_IDLE_LINES.happy;
+
+  return pool[Math.floor(Math.random() * pool.length)].replaceAll("{name}", d.name || "Your dragon");
+}
+
+function updateDragonIdleText(d){
+  const el = document.getElementById("dragonIdleText");
+  if(!el) return;
+
+  el.style.opacity = "0";
+
+  setTimeout(() => {
+    el.textContent = pickDragonIdleLine(d);
+    el.style.opacity = ".92";
+  }, 220);
+}
+
   function initRoost() {
     if (roostMounted) {
       HUB.renderActive?.();
@@ -1439,6 +1493,7 @@ function startHubAmbienceOnce() {
         if (typeof applyActionButtonStates === "function") applyActionButtonStates();
         // Hide set-active button (no dragon to set active from the portrait)
         if (btnSetActive) btnSetActive.style.display = "none";
+        updateDragonIdleText(null);
         return;
       }
       // --- Stamina line (JS-only, no HTML edits) ---
@@ -1553,6 +1608,7 @@ function startHubAmbienceOnce() {
         });
       }
       renderMoodlets(a);
+      updateDragonIdleText(a);
       applyRoostTheme(a.element);
       applyActionButtonStates();
       startRestTimer();
