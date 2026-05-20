@@ -1174,3 +1174,17 @@
 
   animation: lanternFlicker 7s ease-in-out infinite;
 }
+.dragon-idle-text{
+  margin: 4px 0 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(0,0,0,.12));
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+  font-style: italic;
+  min-height: 42px;
+  opacity: .92;
+  transition: opacity .35s ease;
+}
