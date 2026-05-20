@@ -19,6 +19,10 @@ const HUB_AMBIENCE_TRACKS = [
 let hubAmbienceStarted = false;
 let hubAmbienceAudio = null;
 
+function safeVolume(value) {
+  return Math.max(0, Math.min(1, Number(value) || 0));
+}
+
 function startHubAmbienceOnce() {
   if (hubAmbienceStarted) return;
   hubAmbienceStarted = true;
@@ -45,7 +49,7 @@ function fadeAudioIn(audio, targetVolume = 0.22, duration = 1800) {
 
   function tick(now) {
     const progress = Math.min(1, (now - start) / duration);
-    audio.volume = Math.max(0, Math.min(1, targetVolume * progress));
+    audio.volume = safeVolume(targetVolume * progress);
 
     if (progress < 1) {
       requestAnimationFrame(tick);
