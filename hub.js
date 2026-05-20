@@ -19,44 +19,23 @@ const HUB_AMBIENCE_TRACKS = [
 let hubAmbienceStarted = false;
 let hubAmbienceAudio = null;
 
-function safeVolume(value) {
-  return Math.max(0, Math.min(1, Number(value) || 0));
-}
-
 function startHubAmbienceOnce() {
   if (hubAmbienceStarted) return;
+
   hubAmbienceStarted = true;
 
   const track =
     HUB_AMBIENCE_TRACKS[Math.floor(Math.random() * HUB_AMBIENCE_TRACKS.length)];
 
   hubAmbienceAudio = new Audio(track);
+
   hubAmbienceAudio.loop = true;
-  hubAmbienceAudio.volume = 0;
+  hubAmbienceAudio.volume = 0.22;
 
-  hubAmbienceAudio.play()
-    .then(() => {
-      fadeAudioIn(hubAmbienceAudio, 0.22, 1800);
-    })
-    .catch((err) => {
-      console.warn("Hub ambience could not start:", err);
-      hubAmbienceStarted = false;
-    });
-}
-
-function fadeAudioIn(audio, targetVolume = 0.22, duration = 1800) {
-  const start = performance.now();
-
-  function tick(now) {
-    const progress = Math.min(1, (now - start) / duration);
-    audio.volume = safeVolume(targetVolume * progress);
-
-    if (progress < 1) {
-      requestAnimationFrame(tick);
-    }
-  }
-
-  requestAnimationFrame(tick);
+  hubAmbienceAudio.play().catch((err) => {
+    console.warn("Hub ambience failed:", err);
+    hubAmbienceStarted = false;
+  });
 }
 
   function toast(msg) {
