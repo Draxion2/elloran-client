@@ -1154,5 +1154,5 @@
       rgba(255,140,40,0.18) 35%,
       transparent 70%
     );
-  animation: lanternFlicker 4s ease-in-out infinite;
+  animation: lanternFlicker 1s ease-in-out infinite;
 }
