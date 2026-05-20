@@ -39,7 +39,7 @@ function startHubAmbienceOnce() {
   const track =
     HUB_AMBIENCE_TRACKS[Math.floor(Math.random() * HUB_AMBIENCE_TRACKS.length)];
 
-  hubAmbienceAudio = new Audio(selected.url);
+  hubAmbienceAudio = new Audio(track.url);
 
   hubAmbienceAudio.loop = true;
   hubAmbienceAudio.volume = track.volume;
