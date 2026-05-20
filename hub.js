@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-action-reactions-3");
+console.log("hub.js V-05/20/26 dragon-action-reactions-4");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -2268,6 +2268,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
         setCD("play", CDdur.play);
         toast(`${d.name} seems happier.`);
         applyDragonPatch(local, payload.dragon);
+        setTemporaryDragonReaction(`${d.name} perks up, clearly enjoying the attention.`);
       } catch (err) {
         const serverMsg = extractApiPayloadMessage(err);
         // If it's the expected stamina gate, don't console.error
@@ -2275,7 +2276,6 @@ function setTemporaryDragonReaction(text, duration = 12000){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
-          setTemporaryDragonReaction(`${d.name} perks up, clearly enjoying the attention.`);
           return;
         }
         console.error("actPlay (pet) failed", err);
@@ -2328,6 +2328,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
         setCD("groom", CDdur.groom);
         toast(`${d.name} looks cleaner and more relaxed.`);
         applyDragonPatch(local, payload.dragon);
+        setTemporaryDragonReaction(`${d.name} relaxes as you tend to them.`);
       } catch (err) {
         const serverMsg = extractApiPayloadMessage(err);
         // If it's the expected stamina gate, don't console.error
@@ -2335,7 +2336,6 @@ function setTemporaryDragonReaction(text, duration = 12000){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
-          setTemporaryDragonReaction(`${d.name} relaxes as you tend to them.`);
           return;
         }
         console.error("actGroom failed", err);
@@ -2394,6 +2394,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
         setCD("train", CDdur.train);
         toast(`${local.name} trains hard.`);
         applyDragonPatch(local, payload.dragon);
+        setTemporaryDragonReaction(`${local.name} steadies themselves after training.`);
       } catch (err) {
         const serverMsg = extractApiPayloadMessage(err);
         // If it's the expected stamina gate, don't console.error
@@ -2401,7 +2402,6 @@ function setTemporaryDragonReaction(text, duration = 12000){
           toast(serverMsg);
           // force UI into correct locked state
           refreshDragonsFromApiSafe();
-          setTemporaryDragonReaction(`${local.name} steadies themselves after training.`);
           return;
         }
         console.error("actTrain failed", err);
