@@ -10,10 +10,22 @@
   const backdrop = $("#backdrop");
 
 const HUB_AMBIENCE_TRACKS = [
-  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_faint_wind.mp3",
-  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_gulls.mp3",
-  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ocean_waves.mp3",
-  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ship_creak.mp3"
+  {
+    url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_faint_wind.mp3",
+    volume: 0.70
+  },
+  {
+    url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_gulls.mp3",
+    volume: 0.70
+  },
+  {
+    url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ocean_waves.mp3",
+    volume: 0.40
+  },
+  {
+    url: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/background_hub_ship_creak.mp3",
+    volume: 0.30
+  }
 ];
 
 let hubAmbienceStarted = false;
@@ -27,10 +39,10 @@ function startHubAmbienceOnce() {
   const track =
     HUB_AMBIENCE_TRACKS[Math.floor(Math.random() * HUB_AMBIENCE_TRACKS.length)];
 
-  hubAmbienceAudio = new Audio(track);
+  hubAmbienceAudio = new Audio(selected.url);
 
   hubAmbienceAudio.loop = true;
-  hubAmbienceAudio.volume = 0.40;
+  hubAmbienceAudio.volume = track.volume;
 
   hubAmbienceAudio.play().catch((err) => {
     console.warn("Hub ambience failed:", err);
