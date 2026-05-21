@@ -1,4 +1,4 @@
-/* hub.css V-05/20/26 dragon-idle */
+/* hub.css V-05/21/26 captains quarter */
 
 :root {
       --ink: #f6ead1;
@@ -1189,4 +1189,202 @@
   min-height: 42px;
   opacity: .92;
   transition: opacity .35s ease;
+}
+/* ===== Captain's Quarters ===== */
+
+#panel-quarters{
+  padding:0;
+  overflow:hidden;
+}
+
+.quarters-room{
+  position:relative;
+  min-height:700px;
+  border-radius:18px;
+  overflow:hidden;
+
+  border:1px solid rgba(255,255,255,.08);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.25),
+      rgba(0,0,0,.55)
+    ),
+    url('YOUR_CAPTAIN_CABIN_IMAGE');
+
+  background-size:cover;
+  background-position:center;
+
+  box-shadow:
+    0 25px 50px rgba(0,0,0,.45);
+}
+
+.quarters-scene{
+  position:relative;
+  width:100%;
+  height:700px;
+}
+
+/* Lantern Glow */
+
+.quarters-light{
+  position:absolute;
+  top:40px;
+  left:50%;
+  transform:translateX(-50%);
+
+  width:220px;
+  height:220px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,190,110,.22),
+      rgba(255,190,110,.08),
+      transparent 72%
+    );
+
+  filter:blur(10px);
+
+  animation: lanternFlicker 6s ease-in-out infinite;
+}
+
+@keyframes lanternFlicker{
+  0%{ opacity:.90; transform:translateX(-50%) scale(1); }
+  50%{ opacity:1; transform:translateX(-50%) scale(1.03); }
+  100%{ opacity:.88; transform:translateX(-50%) scale(1); }
+}
+
+/* Window */
+
+.quarters-window{
+  position:absolute;
+  top:90px;
+  right:80px;
+
+  width:160px;
+  height:220px;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20,30,40,.85),
+      rgba(5,10,18,.95)
+    );
+
+  border:1px solid rgba(255,255,255,.08);
+
+  overflow:hidden;
+}
+
+.window-glow{
+  position:absolute;
+  inset:0;
+
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      rgba(180,220,255,.10),
+      transparent 65%
+    );
+}
+
+/* Trophy Shelf */
+
+.quarters-shelf{
+  position:absolute;
+  top:120px;
+  left:60px;
+
+  display:flex;
+  gap:14px;
+}
+
+.shelf-item{
+  width:42px;
+  height:58px;
+
+  border-radius:6px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(180,150,100,.20),
+      rgba(80,55,30,.35)
+    );
+
+  border:1px solid rgba(255,255,255,.05);
+
+  opacity:.55;
+}
+
+/* Table */
+
+.captain-table{
+  position:absolute;
+  left:50%;
+  bottom:90px;
+
+  transform:translateX(-50%);
+
+  width:min(760px,90%);
+  min-height:220px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(35,20,12,.92),
+      rgba(18,10,6,.96)
+    );
+
+  border:1px solid rgba(255,255,255,.06);
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.45);
+
+  padding:28px;
+}
+
+/* Journal */
+
+.journal-area{
+  max-width:520px;
+}
+
+.journal-title{
+  font-size:18px;
+  font-weight:700;
+  color:#f2dfb4;
+
+  margin-bottom:14px;
+}
+
+.journal-entry{
+  color:#d7ccb6;
+  line-height:1.7;
+  font-size:15px;
+}
+
+/* Dragon */
+
+.dragon-rest{
+  position:absolute;
+  right:90px;
+  bottom:60px;
+
+  max-width:260px;
+}
+
+.dragon-rest-text{
+  color:#d8cfbf;
+  font-style:italic;
+  line-height:1.6;
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.55);
 }
