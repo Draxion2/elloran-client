@@ -225,6 +225,125 @@
       pointer-events: auto
     }
 
+    /* ===== Sea Map Panel ===== */
+#panel-map .map-wrap{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+}
+
+#panel-map .map-stage{
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.25);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+  overflow:hidden;
+  min-height: 520px;
+}
+
+#panel-map .map-img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+  user-select:none;
+  -webkit-user-drag:none;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+/* Sidebar */
+#panel-map .map-side{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,.45),
+    rgba(0,0,0,.25)
+  );
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+#panel-map .map-side-title{
+  font-weight: 800;
+  letter-spacing:.04em;
+  opacity:.95;
+  padding: 6px 6px 2px;
+}
+
+#panel-map .map-list{
+  display: grid;
+  gap: 6px;
+}
+
+#panel-map .map-row{
+  background: rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.06);
+  color: var(--ink);
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: 10px;
+  font-size: 14px;
+  transition:
+    background .15s ease,
+    box-shadow .15s ease,
+    transform .12s ease,
+    border-color .15s ease;
+  position: relative;
+}
+    
+#panel-map .map-row::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:6px;
+  bottom:6px;
+  width:3px;
+  border-radius: 3px;
+  background: transparent;
+  transition: background .15s ease;
+}
+
+#panel-map .map-row:hover::before,
+#panel-map .map-row.active::before{
+  background: var(--gold);
+}
+
+#panel-map .map-row:hover{
+  background: rgba(184,149,88,.12);
+  border-color: rgba(184,149,88,.35);
+  box-shadow:
+    0 0 0 1px rgba(184,149,88,.15),
+    0 6px 18px rgba(0,0,0,.45);
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+#panel-map .map-row:active{
+  transform: translateY(0px);
+}
+
+/* selected state (your JS can toggle .active later) */
+#panel-map .map-row.active{
+  background: rgba(184,149,88,.18);
+  border-color: rgba(184,149,88,.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(184,149,88,.25),
+    0 4px 14px rgba(0,0,0,.35);
+  font-weight: 600;
+}
+
+#panel-map .map-hint{
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,.08);
+  font-size: 12px;
+  color: var(--muted);
+}
+
     /* ================= Cargo Hold ================= */
     #panel-cargo {
       --panel: #171310;
