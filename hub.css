@@ -1,4 +1,4 @@
-/* hub.css V-05/21/26 captains quarter */
+/* hub.css V-05/21/26 captains-quarter-2 */
 
 :root {
       --ink: #f6ead1;
@@ -1341,6 +1341,8 @@
       rgba(35,20,12,.92),
       rgba(18,10,6,.96)
     );
+
+  backdrop-filter: blur(2px);
 
   border:1px solid rgba(255,255,255,.06);
 
