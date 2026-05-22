@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 dragon-action-reactions-4");
+console.log("hub.js V-05/20/26 sea-map");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -29,6 +29,85 @@ const HUB_AMBIENCE_TRACKS = [
     volume: 0.20
   }
 ];
+
+const SEA_DESTINATIONS = {
+  TREASURE_COVE: {
+    name: "Treasure Cove",
+    risk: "Low",
+    distance: "Nearby",
+    desc: "A hidden sanctuary where weary crews repair hulls, trade whispers, and prepare for the next voyage."
+  },
+
+  OARS_REST: {
+    name: "Port of Oar’s Rest",
+    risk: "Low",
+    distance: "Short Voyage",
+    desc: "The busiest harbor in the western waters, filled with merchants, sailors, and rumors from across the sea."
+  },
+
+  KORIN: {
+    name: "Korin",
+    risk: "Moderate",
+    distance: "Medium Voyage",
+    desc: "A stern coastal settlement where storms and hardened sailors are equally common."
+  },
+
+  TRYN: {
+    name: "Tryn",
+    risk: "Moderate",
+    distance: "Medium Voyage",
+    desc: "A distant settlement surrounded by uneasy waters and fading legends."
+  },
+
+  AROBUS_ISLE: {
+    name: "Arobus Isle",
+    risk: "High",
+    distance: "Long Voyage",
+    desc: "An isolated island whispered about in taverns and old pirate journals."
+  },
+
+  TETRI: {
+    name: "Tetri",
+    risk: "High",
+    distance: "Long Voyage",
+    desc: "Dark waters, dangerous reefs, and ambitious captains surround the distant reaches of Tetri."
+  }
+};
+
+const mapRows = document.querySelectorAll(".map-row");
+
+const voyageName = document.querySelector(".voyage-name");
+const voyageDesc = document.querySelector(".voyage-desc");
+const voyageRisk = document.getElementById("voyageRisk");
+const voyageDistance = document.getElementById("voyageDistance");
+const btnSetSail = document.getElementById("btnSetSail");
+
+let selectedDestination = null;
+
+mapRows.forEach(row => {
+
+  row.addEventListener("click", () => {
+
+    mapRows.forEach(r => r.classList.remove("active"));
+    row.classList.add("active");
+
+    const key = row.dataset.dest;
+    const data = SEA_DESTINATIONS[key];
+
+    if(!data) return;
+
+    selectedDestination = key;
+
+    voyageName.textContent = data.name;
+    voyageDesc.textContent = data.desc;
+    voyageRisk.textContent = `Risk: ${data.risk}`;
+    voyageDistance.textContent = `Distance: ${data.distance}`;
+
+    btnSetSail.disabled = false;
+
+  });
+
+});
 
 let hubAmbienceStarted = false;
 let hubAmbienceAudio = null;
