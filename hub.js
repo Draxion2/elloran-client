@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 sea-map");
+console.log("hub.js V-05/20/26 sea-map-2");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -354,7 +354,6 @@ function startHubAmbienceOnce() {
         },
         body: JSON.stringify(payload)
       });
-      console.log("Inventory layout saved to backend.");
       // optional tiny feedback:
       // toast('Cargo saved.');
     } catch (err) {
