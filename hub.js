@@ -289,7 +289,7 @@ function startHubAmbienceOnce() {
     // No token → bounce to login
     if (!token) {
       window.location.href =
-        "https://draxtesting.forumotion.com/h1-title-page-completed";
+        "https://draxtesting.forumotion.com/h1-title-page";
       throw new Error("No auth token");
     }
     const cfg = {
@@ -304,7 +304,7 @@ function startHubAmbienceOnce() {
     if (res.status === 401) {
       localStorage.removeItem("elloran.authToken");
       window.location.href =
-        "https://draxtesting.forumotion.com/h1-title-page-completed";
+        "https://draxtesting.forumotion.com/h1-title-page";
       throw new Error("Unauthorized / token expired");
     }
     if (!res.ok) {
