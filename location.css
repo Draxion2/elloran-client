@@ -105,13 +105,12 @@ body.debug-hotspots .hotspot-label {
 
 /* Hover polish */
 .hotspot:hover {
-  cursor: pointer;
-  background: rgba(184, 149, 88, 0.1);
+ cursor: pointer;
+  background: rgba(184, 149, 88, 0.08);
   border-color: rgba(255, 220, 150, 0.55);
-  box-shadow: 0 0 24px rgba(184, 149, 88, 0.28),
-    inset 0 0 18px rgba(255, 220, 150, 0.08);
-  transform: scale(1.015);
-  backdrop-filter: blur(1px);
+  box-shadow:
+    0 0 18px rgba(184, 149, 88, 0.22),
+    inset 0 0 12px rgba(255, 220, 150, 0.06);
 }
 
 /* Soft pulse animation */
@@ -133,19 +132,6 @@ body.debug-hotspots .hotspot-label {
   color: rgba(255, 220, 150, 0.9);
   font-size: 14px;
   pointer-events: none;
-  animation: hotspotSparkle 1.4s ease-in-out infinite;
-}
-
-@keyframes hotspotSparkle {
-  0%, 100% {
-    opacity: 0;
-    transform: translateY(4px) scale(.8);
-  }
-
-  50% {
-    opacity: 1;
-    transform: translateY(-4px) scale(1.15);
-  }
 }
 
 .hotspot:hover::after {
@@ -159,21 +145,7 @@ body.debug-hotspots .hotspot-label {
   font-size: 10px;
 
   pointer-events: none;
-
-  animation: hotspotSparkle2 1.8s ease-in-out infinite;
-  /* animation: hotspotPulse 1.8s infinite; */
-}
-
-@keyframes hotspotSparkle2 {
-  0%, 100% {
-    opacity: 0;
-    transform: translateY(-2px) scale(.8);
-  }
-
-  50% {
-    opacity: 1;
-    transform: translateY(3px) scale(1.1);
-  }
+  animation: hotspotPulse 1.8s infinite;
 }
 
 @keyframes hotspotPulse {
