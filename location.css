@@ -105,11 +105,12 @@ body.debug-hotspots .hotspot-label {
 /* Hover polish */
 .hotspot:hover {
  cursor: pointer;
-  background: rgba(184, 149, 88, 0.08);
-  border-color: rgba(255, 220, 150, 0.55);
+  background: rgba(120, 180, 255, 0.08);
+  border-color: rgba(180, 220, 255, 0.65);
+
   box-shadow:
-    0 0 18px rgba(184, 149, 88, 0.22),
-    inset 0 0 12px rgba(255, 220, 150, 0.06);
+    0 0 18px rgba(120, 180, 255, 0.25),
+    inset 0 0 12px rgba(180, 220, 255, 0.08);
 }
 
 /* Soft pulse animation */
