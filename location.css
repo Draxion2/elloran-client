@@ -141,16 +141,16 @@ body.debug-hotspots .hotspot-label {
   );
   background-size: 180px 100%;
 
-  animation: hotspotSheen 1.2s ease-in-out infinite;
+  animation: hotspotSheen 3s ease-in-out infinite;
 }
 
 @keyframes hotspotSheen {
   from {
-    transform: translateX(-40%);
+    transform: translateX(-25%);
   }
 
   to {
-    transform: translateX(40%);
+    transform: translateX(25%);
   }
 }
 
