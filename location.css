@@ -1,4 +1,4 @@
-/* 06/03/26 HUD UPDATE v-6*/
+/* 06/03/26 HUD UPDATE v-7*/
 
 :root {
   --gold: #b89558;
@@ -48,28 +48,26 @@ body.debug-hotspots .hotspot-label {
 }
 
 /* Top HUD */
-/* Top HUD */
 .location-hud {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  min-height: 86px;
+  height: 112px;
   z-index: 20;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 18px;
 
-  padding: 10px 20px;
+  padding: 10px 36px;
 
   background:
     radial-gradient(circle at top left, rgba(255, 220, 150, 0.12), transparent 38%),
     linear-gradient(180deg, rgba(18, 11, 6, 0.96), rgba(5, 3, 2, 0.72));
 
   border-bottom: 2px solid rgba(184, 149, 88, 0.55);
-
   box-shadow:
     0 8px 28px rgba(0, 0, 0, 0.55),
     inset 0 -1px 0 rgba(255, 220, 150, 0.08);
@@ -78,7 +76,7 @@ body.debug-hotspots .hotspot-label {
 .hud-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   min-width: 0;
 }
 
@@ -106,9 +104,6 @@ body.debug-hotspots .hotspot-label {
 }
 
 .location-title {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
   min-width: 0;
 }
 
@@ -121,17 +116,19 @@ body.debug-hotspots .hotspot-label {
 }
 
 .location-title span {
-  font-size: 0.86rem;
-  color: var(--muted);
-  text-shadow: 0 2px 8px #000;
+  display: block;
+  max-width: 720px;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 .location-stats {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 14px;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .hud-currency-card {
