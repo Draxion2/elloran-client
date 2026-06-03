@@ -1,4 +1,4 @@
-/* 06/03/26 HUD UPDATE v-4*/
+/* 06/03/26 HUD UPDATE v-5*/
 
 :root {
   --gold: #b89558;
@@ -132,6 +132,10 @@ body.debug-hotspots .hotspot-label {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.hud-currency-card {
+  text-align: center;
 }
 
 .hud-bar-card,
