@@ -1473,7 +1473,7 @@ const ACTION_PREVIEWS = {
   },
   train: {
     title: "Train Dragon",
-    desc: "Practice discipline and commands. Training is useful, but tiring.",
+    desc: "Practice discipline and commands.",
     mood: ["Mood slightly drops.", "Mood drops.", "Mood drops moderately.", "Mood drops sharply.", "Mood drops heavily."],
     hunger: ["Hunger slightly increases.", "Hunger increases.", "Hunger increases moderately.", "Hunger increases sharply.", "Hunger increases heavily."]
   },
