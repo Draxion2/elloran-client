@@ -1,4 +1,4 @@
-console.log("hub.js V-06/03/26 dragon-update-2");
+console.log("hub.js V-06/03/26 dragon-update-3");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1534,14 +1534,6 @@ function clearDragonActionPreview() {
 
     btn.addEventListener("mouseenter", () => showDragonActionPreview(key));
     btn.addEventListener("focus", () => showDragonActionPreview(key));
-    btn.addEventListener("mouseleave", () => {
-  setTimeout(clearDragonActionPreview, 120);
-});
-
-btn.addEventListener("blur", () => {
-  setTimeout(clearDragonActionPreview, 120);
-});
-  });
 });
 
     function now() {
