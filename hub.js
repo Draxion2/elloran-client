@@ -2734,7 +2734,7 @@ function clearDragonActionPreview() {
     );
     HUB.renderActive();
     HUB.renderCollection();
-  });
+  };
   /* ================= Buttons & Backdrop ================= */
   document.querySelectorAll(".btn[data-panel]").forEach((btn) => {
     btn.addEventListener("click", async () => {
