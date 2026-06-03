@@ -1,4 +1,4 @@
-/* 06/03/26 HUD UPDATE v-7*/
+/* 06/03/26 HUD UPDATE v-8*/
 
 :root {
   --gold: #b89558;
@@ -118,8 +118,10 @@ body.debug-hotspots .hotspot-label {
 .location-title span {
   display: block;
   max-width: 720px;
+  margin-top: 5px;
   white-space: normal;
   line-height: 1.2;
+  font-size: .86rem;
 }
 
 .location-stats {
