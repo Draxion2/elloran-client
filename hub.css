@@ -1,4 +1,4 @@
-/* hub.css V-05/21/26 captains-quarter-5 */
+/* hub.css V-06/03/26 dragon-update-1 */
 
 :root {
       --ink: #f6ead1;
@@ -1308,6 +1308,36 @@
   min-height: 42px;
   opacity: .92;
   transition: opacity .35s ease;
+}
+.dragon-action-preview {
+  min-height: 74px;
+  padding: 10px 12px;
+  border: 1px solid rgba(147, 197, 253, 0.22);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(80, 120, 180, 0.12),
+      rgba(0, 0, 0, 0.18)
+    );
+
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dragon-action-preview strong {
+  display: block;
+  color: #dbeafe;
+  margin-bottom: 3px;
+}
+
+.dragon-action-preview .preview-note {
+  display: block;
+  margin-top: 4px;
+  color: #93c5fd;
+  font-style: italic;
 }
 /* ===== Captain's Quarters ===== */
 
