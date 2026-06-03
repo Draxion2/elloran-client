@@ -1,4 +1,4 @@
-// 06/03/26 UPDATE HUD v-2
+// 06/03/26 UPDATE HUD v-3
 
 const API_BASE = "https://xqgu-nq5e-7wvz.n7e.xano.io/api:thFaVU7E";
 const AUTH_TOKEN_KEY = "elloran.authToken";
@@ -31,7 +31,7 @@ const actionText = document.getElementById("actionText");
 const actionOptions = document.getElementById("actionOptions");
 const closeActionPanel = document.getElementById("closeActionPanel");
 
-const debugHotspotsBtn = document.getElementById("debugHotspotsBtn");
+// const debugHotspotsBtn = document.getElementById("debugHotspotsBtn");
 
 let interactionLocked = false;
 let currentVoice = null;
@@ -2865,9 +2865,9 @@ function bindNpcContinueButtons() {
 }
 
 function bindUtilityButtons() {
-  debugHotspotsBtn.addEventListener("click", () => {
-    document.body.classList.toggle("debug-hotspots");
-  });
+  // debugHotspotsBtn.addEventListener("click", () => {
+  //   document.body.classList.toggle("debug-hotspots");
+  // });
 
   closeActionPanel.addEventListener("click", () => {
     if (interactionLocked) return;
