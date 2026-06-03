@@ -1,4 +1,4 @@
-// 06/03/26 UPDATE HUD v-4
+// 06/03/26 UPDATE HUD v-5
 
 const API_BASE = "https://xqgu-nq5e-7wvz.n7e.xano.io/api:thFaVU7E";
 const AUTH_TOKEN_KEY = "elloran.authToken";
@@ -2696,12 +2696,19 @@ async function restUntilMorning() {
       throw new Error("Rest failed.");
     }
 
-    hudHpFill.textContent = `HP: ${data.player_hp_after ?? 0} / ${
-      window.playerData.hp_max ?? 0
-    }`;
-    hudDragonFill.textContent = `Dragon: ${data.dragon_hp_after ?? 0} / ${
-      window.activeDragonData?.hp_max ?? data.dragon_hp_after ?? 0
-    }`;
+    const playerHpAfter = data.player_hp_after ?? 0;
+    const playerHpMax = window.playerData?.hp_max ?? playerHpAfter;
+    const playerHpPct = playerHpMax > 0 ? (playerHpAfter / playerHpMax) * 100 : 0;
+
+    hudHpText.textContent = `${playerHpAfter} / ${playerHpMax}`;
+    hudHpFill.style.width = `${Math.max(0, Math.min(100, playerHpPct))}%`;
+
+    const dragonHpAfter = data.dragon_hp_after ?? 0;
+    const dragonHpMax = window.activeDragonData?.hp_max ?? dragonHpAfter;
+    const dragonHpPct = dragonHpMax > 0 ? (dragonHpAfter / dragonHpMax) * 100 : 0;
+
+    hudDragonText.textContent = `${dragonHpAfter} / ${dragonHpMax}`;
+    hudDragonFill.style.width = `${Math.max(0, Math.min(100, dragonHpPct))}%`;
 
     if (window.playerData) {
       window.playerData.hp_current = data.player_hp_after;
