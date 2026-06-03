@@ -2696,10 +2696,10 @@ async function restUntilMorning() {
       throw new Error("Rest failed.");
     }
 
-    hudHp.textContent = `HP: ${data.player_hp_after ?? 0} / ${
+    hudHpFill.textContent = `HP: ${data.player_hp_after ?? 0} / ${
       window.playerData.hp_max ?? 0
     }`;
-    hudDragon.textContent = `Dragon: ${data.dragon_hp_after ?? 0} / ${
+    hudDragonFill.textContent = `Dragon: ${data.dragon_hp_after ?? 0} / ${
       window.activeDragonData?.hp_max ?? data.dragon_hp_after ?? 0
     }`;
 
