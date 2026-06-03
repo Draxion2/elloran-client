@@ -1,3 +1,5 @@
+// 06/03/26 UPDATE HUD
+
 const API_BASE = "https://xqgu-nq5e-7wvz.n7e.xano.io/api:thFaVU7E";
 const AUTH_TOKEN_KEY = "elloran.authToken";
 const REQUIRED_REGION_ID = 15;
