@@ -1,4 +1,4 @@
-console.log("hub.js V-05/20/26 sea-map-2");
+console.log("hub.js V-06/03/26 dragon-update-1");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1451,6 +1451,93 @@ function setTemporaryDragonReaction(text, duration = 12000){
       train: 7000,
       rest: 1000
     };
+
+    const actionPreview = $("#dragonActionPreview");
+
+const ACTION_PREVIEWS = {
+  feed: {
+    title: "Feed Dragon",
+    desc: "Offer food to ease hunger and lift your dragon's spirits.",
+    mood: ["Mood greatly improves.", "Mood improves.", "Mood improves slightly.", "Mood improves a little.", "Mood barely improves."],
+    hunger: ["Hunger greatly decreases.", "Hunger decreases.", "Hunger decreases moderately.", "Hunger decreases slightly.", "Hunger decreases a little."]
+  },
+  play: {
+    title: "Play With Dragon",
+    desc: "Spend time playing together and keeping your dragon cheerful.",
+    mood: ["Mood greatly improves.", "Mood improves.", "Mood improves moderately.", "Mood improves slightly.", "Mood improves a little."]
+  },
+  groom: {
+    title: "Groom Dragon",
+    desc: "Clean scales, claws, wings, and wounds from the day's wear.",
+    mood: ["Mood greatly improves.", "Mood improves.", "Mood improves moderately.", "Mood improves slightly.", "Mood improves a little."]
+  },
+  train: {
+    title: "Train Dragon",
+    desc: "Practice discipline and commands. Training is useful, but tiring.",
+    mood: ["Mood slightly drops.", "Mood drops.", "Mood drops moderately.", "Mood drops sharply.", "Mood drops heavily."],
+    hunger: ["Hunger slightly increases.", "Hunger increases.", "Hunger increases moderately.", "Hunger increases sharply.", "Hunger increases heavily."]
+  },
+  rest: {
+    title: "Rest Dragon",
+    desc: "Send your dragon to rest and recover. Resting removes them from active duty for a while."
+  }
+};
+
+function showDragonActionPreview(actionKey) {
+  if (!actionPreview) return;
+
+  const d = active();
+  const info = ACTION_PREVIEWS[actionKey];
+
+  if (!d || !info) {
+    actionPreview.textContent = "Select an active dragon to preview actions.";
+    return;
+  }
+
+  const stamina = getStamina(d);
+  const streaks = d.action_streaks || {};
+  const tier = Math.max(0, Math.min(4, Number(streaks[actionKey] || 0)));
+
+  const lines = [];
+
+  lines.push(`<strong>${info.title}</strong>`);
+  lines.push(info.desc);
+
+  if (info.mood) lines.push(info.mood[tier]);
+  if (info.hunger) lines.push(info.hunger[tier]);
+
+  if (actionKey !== "rest") {
+    lines.push(`Uses 1 Stamina. Current stamina: ${stamina.cur}/${stamina.max}.`);
+  }
+
+  if (tier >= 2 && actionKey !== "rest") {
+    lines.push(`<span class="preview-note">Repeating this action is becoming less effective.</span>`);
+  }
+
+  actionPreview.innerHTML = lines.join("<br>");
+}
+
+function clearDragonActionPreview() {
+  if (!actionPreview) return;
+  actionPreview.textContent = "Hover over a dragon action to see what it may do.";
+}
+
+[
+  ["feed", "#actFeed", "#btnFeed"],
+  ["play", "#actPlay", "#btnPlay"],
+  ["groom", "#actGroom", "#btnGroom"],
+  ["train", "#actTrain", "#btnTrain"],
+  ["rest", "#actRest", "#btnRest"]
+].forEach(([key, ringSel, mirrorSel]) => {
+  [$(ringSel), $(mirrorSel)].forEach((btn) => {
+    if (!btn) return;
+
+    btn.addEventListener("mouseenter", () => showDragonActionPreview(key));
+    btn.addEventListener("focus", () => showDragonActionPreview(key));
+    btn.addEventListener("mouseleave", clearDragonActionPreview);
+    btn.addEventListener("blur", clearDragonActionPreview);
+  });
+});
 
     function now() {
       return Date.now();
