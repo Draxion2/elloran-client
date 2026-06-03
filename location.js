@@ -1,14 +1,19 @@
-// 06/03/26 UPDATE HUD
+// 06/03/26 UPDATE HUD v-2
 
 const API_BASE = "https://xqgu-nq5e-7wvz.n7e.xano.io/api:thFaVU7E";
 const AUTH_TOKEN_KEY = "elloran.authToken";
 const REQUIRED_REGION_ID = 15;
 
-const hudHp = document.querySelector(".location-stats .stat-pill:nth-child(1)");
-const hudDragon = document.querySelector(
-  ".location-stats .stat-pill:nth-child(2)"
-);
-const hudCs = document.querySelector(".location-stats .stat-pill:nth-child(3)");
+const hudHpText = document.getElementById("hudHpText");
+const hudDragonText = document.getElementById("hudDragonText");
+const hudCsText = document.getElementById("hudCsText");
+
+const hudHpFill = document.getElementById("hudHpFill");
+const hudDragonFill = document.getElementById("hudDragonFill");
+
+const hudHpCard = document.getElementById("hudHpCard");
+const hudDragonCard = document.getElementById("hudDragonCard");
+const hudCsCard = document.getElementById("hudCsCard");
 
 const loadingVeil = document.getElementById("loadingVeil");
 const enterLocationBtn = document.getElementById("enterLocationBtn");
@@ -1992,7 +1997,9 @@ function hideLoadingVeil() {
 }
 
 function pulseHud() {
-  [hudHp, hudDragon, hudCs].forEach((el) => {
+  [hudHpCard, hudDragonCard, hudCsCard].forEach((el) => {
+    if (!el) return;
+
     el.classList.remove("hud-updated");
     void el.offsetWidth;
     el.classList.add("hud-updated");
@@ -2014,11 +2021,28 @@ async function loadPlayerHud() {
 
     if (!validateLocation(player)) return;
 
-    hudHp.textContent = `HP: ${player.hp_current ?? 0} / ${player.hp_max ?? 0}`;
-    hudDragon.textContent = dragon
-      ? `Dragon: ${dragon.hp_current ?? 0} / ${dragon.hp_max ?? 0}`
-      : "Dragon: —";
-    hudCs.textContent = `CS: ${player.celestial_silver ?? 0}`;
+    const playerHpCurrent = player.hp_current ?? 0;
+    const playerHpMax = player.hp_max ?? 0;
+    const playerHpPct =
+      playerHpMax > 0 ? (playerHpCurrent / playerHpMax) * 100 : 0;
+
+    hudHpText.textContent = `${playerHpCurrent} / ${playerHpMax}`;
+    hudHpFill.style.width = `${Math.max(0, Math.min(100, playerHpPct))}%`;
+
+    if (dragon) {
+      const dragonHpCurrent = dragon.hp_current ?? 0;
+      const dragonHpMax = dragon.hp_max ?? 0;
+      const dragonHpPct =
+        dragonHpMax > 0 ? (dragonHpCurrent / dragonHpMax) * 100 : 0;
+
+      hudDragonText.textContent = `${dragonHpCurrent} / ${dragonHpMax}`;
+      hudDragonFill.style.width = `${Math.max(0, Math.min(100, dragonHpPct))}%`;
+    } else {
+      hudDragonText.textContent = "—";
+      hudDragonFill.style.width = "0%";
+    }
+
+    hudCsText.textContent = player.celestial_silver ?? 0;
 
     pulseHud();
   } catch (err) {
