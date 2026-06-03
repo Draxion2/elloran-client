@@ -1,4 +1,4 @@
-/* 06/03/26 HUD UPDATE v-2*/
+/* 06/03/26 HUD UPDATE v-3*/
 
 :root {
   --gold: #b89558;
@@ -22,7 +22,9 @@ body {
   background: #050505;
 }
 
-body.debug-hotspots .hotspot {
+/* DBUGGING HOTSPOTS */
+
+/*body.debug-hotspots .hotspot {
   background: rgba(255, 0, 0, 0.22);
   border-color: rgba(255, 80, 80, 0.8);
 }
@@ -37,7 +39,7 @@ body.debug-hotspots .hotspot-label {
   top: 20px;
   left: 50%;
   position: absolute;
-}
+}*/
 
 /* Main Scene */
 .location-page {
