@@ -1,4 +1,4 @@
-/* hub.css V-06/03/26 dragon-update-1 */
+/* hub.css V-06/03/26 dragon-update-2 */
 
 :root {
       --ink: #f6ead1;
@@ -1314,7 +1314,7 @@
   padding: 10px 12px;
   border: 1px solid rgba(147, 197, 253, 0.22);
   border-radius: 12px;
-
+  pointer-events: none;
   background:
     linear-gradient(
       180deg,
