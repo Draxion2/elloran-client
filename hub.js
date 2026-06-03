@@ -1535,6 +1535,7 @@ function clearDragonActionPreview() {
     btn.addEventListener("mouseenter", () => showDragonActionPreview(key));
     btn.addEventListener("focus", () => showDragonActionPreview(key));
 });
+});
 
     function now() {
       return Date.now();
