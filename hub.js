@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-personality-1");
+console.log("hub.js V-06/04/26 dragon-personality-2");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -610,6 +610,7 @@ function startHubAmbienceOnce() {
             name: raw.name || speciesObj.name || "Unnamed",
             element: raw.element || "Neutral",
             species: speciesObj.name || "Dragon",
+            personality: raw.personality || speciesObj.personality || null,
             img: raw.img_url || "",
             rarity: speciesObj.rarity || "Common",
             size: "Small",
@@ -1417,7 +1418,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
     const kvId = $("#kvId"),
       kvSpecies = $("#kvSpecies"),
       kvType = $("#kvType"),
-      kvTrait = $("#kvTrait");
+      kvTrait = $("#kvTrait"),
       kvPersonality = $("#kvPersonality");
     const barHP = $("#barHP"),
       barHappy = $("#barHappy"),
