@@ -1415,8 +1415,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
       chipEl = $("#chipElement"),
       badgeR = $("#badgeRarity"),
       badgeS = $("#badgeSize");
-    const kvId = $("#kvId"),
-      kvSpecies = $("#kvSpecies"),
+    const kvSpecies = $("#kvSpecies"),
       kvType = $("#kvType"),
       kvTrait = $("#kvTrait"),
       kvPersonality = $("#kvPersonality");
@@ -1669,7 +1668,6 @@ function clearDragonActionPreview() {
         if (chipEl) chipEl.textContent = "—";
         if (badgeR) badgeR.textContent = "—";
         if (badgeS) badgeS.textContent = "—";
-        if (kvId) kvId.textContent = "—";
         if (kvSpecies) kvSpecies.textContent = "—";
         if (kvType) kvType.textContent = "—";
         if (kvTrait) kvTrait.textContent = "—";
@@ -1773,7 +1771,6 @@ function clearDragonActionPreview() {
       if (chipEl) chipEl.textContent = a.element;
       if (badgeR) badgeR.textContent = a.rarity;
       if (badgeS) badgeS.textContent = a.size;
-      if (kvId) kvId.textContent = a.id;
       if (kvSpecies) kvSpecies.textContent = a.species;
       if (kvType) kvType.textContent = a.element;
       if (kvTrait) kvTrait.textContent = a.trait || "—";
