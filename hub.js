@@ -1673,13 +1673,7 @@ function clearDragonActionPreview() {
         if (kvSpecies) kvSpecies.textContent = "—";
         if (kvType) kvType.textContent = "—";
         if (kvTrait) kvTrait.textContent = "—";
-        if (kvPersonality) {
-          const primary = a.personality?.primary?.name || "Unknown";
-          const secondary = a.personality?.secondary?.name || "";
-          kvPersonality.textContent = secondary
-            ? `${primary} / ${secondary}`
-            : primary;
-        }
+       if (kvPersonality) kvPersonality.textContent = "—";
         // Clear bars + percents
         if (barHP) barHP.style.width = "0%";
         if (barHappy) barHappy.style.width = "0%";
@@ -1783,6 +1777,14 @@ function clearDragonActionPreview() {
       if (kvSpecies) kvSpecies.textContent = a.species;
       if (kvType) kvType.textContent = a.element;
       if (kvTrait) kvTrait.textContent = a.trait || "—";
+      if (kvPersonality) {
+        const primary = a.personality?.primary?.name || "Unknown";
+        const secondary = a.personality?.secondary?.name || "";
+
+        kvPersonality.textContent = secondary
+          ? `${primary} / ${secondary}`
+          : primary;
+      }
       const hpTarget = pct(a.hp, a.hpMax);
       const happyTarget = clamp(a.happiness, 0, 100);
       const hungerTarget = clamp(a.hunger, 0, 100);
