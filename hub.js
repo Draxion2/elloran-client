@@ -1296,7 +1296,7 @@ function startHubAmbienceOnce() {
 
 let dragonReactionTimeout = null;
 let dragonReactionActive = false;
-let lastIdledragonId = null;
+let lastIdleDragonId = null;
 
 const DRAGON_IDLE_LINES = {
   neutral: [
