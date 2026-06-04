@@ -1439,32 +1439,27 @@ function updateDragonIdleText(d, force = false){
 }
 
 function startDragonIdleRotation() {
-
   if (dragonIdleTimer) {
     clearTimeout(dragonIdleTimer);
   }
 
-  const delay =
-    45000 + Math.floor(Math.random() * 45000);
+  const delay = 45000 + Math.floor(Math.random() * 45000);
 
   dragonIdleTimer = setTimeout(() => {
+    const roostPanel = document.querySelector("#panel-roost");
 
-    if (!dragonReactionActive) {
-
-      const id =
-        STATE.dragons.selectedId ??
-        STATE.dragons.activeId;
-
-      const d =
-        id != null
-          ? STATE.dragons.byId[id]
-          : null;
+    if (
+      roostPanel &&
+      roostPanel.classList.contains("open") &&
+      !dragonReactionActive
+    ) {
+      const id = STATE.dragons.selectedId ?? STATE.dragons.activeId;
+      const d = id != null ? STATE.dragons.byId[id] : null;
 
       updateDragonIdleText(d, true);
     }
 
     startDragonIdleRotation();
-
   }, delay);
 }
 
