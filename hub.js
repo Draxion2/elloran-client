@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v2");
+console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v3");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1297,6 +1297,7 @@ function startHubAmbienceOnce() {
 let dragonReactionTimeout = null;
 let dragonReactionActive = false;
 let lastIdleDragonId = null;
+let dragonIdleTimer = null;
 
 const DRAGON_IDLE_LINES = {
   neutral: [
@@ -1437,6 +1438,36 @@ function updateDragonIdleText(d, force = false){
   }, 220);
 }
 
+function startDragonIdleRotation() {
+
+  if (dragonIdleTimer) {
+    clearTimeout(dragonIdleTimer);
+  }
+
+  const delay =
+    45000 + Math.floor(Math.random() * 45000);
+
+  dragonIdleTimer = setTimeout(() => {
+
+    if (!dragonReactionActive) {
+
+      const id =
+        STATE.dragons.selectedId ??
+        STATE.dragons.activeId;
+
+      const d =
+        id != null
+          ? STATE.dragons.byId[id]
+          : null;
+
+      updateDragonIdleText(d, true);
+    }
+
+    startDragonIdleRotation();
+
+  }, delay);
+}
+
 function setTemporaryDragonReaction(text, duration = 12000){
   const el = document.getElementById("dragonIdleText");
   if(!el) return;
@@ -1467,6 +1498,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
     if (roostMounted) {
       HUB.renderActive?.();
       HUB.renderCollection?.();
+      startDragonIdleRotation();
     }
     roostMounted = true;
     const root = $("#roostRoot"),
