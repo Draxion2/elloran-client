@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v3");
+console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v4");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1395,8 +1395,8 @@ function pickDragonIdleLine(d){
 if (traitCode && DRAGON_TRAIT_IDLE_LINES[traitCode]) {
   const traitPool = DRAGON_TRAIT_IDLE_LINES[traitCode];
 
-  // 35% chance to use trait-specific flavor
-  if (Math.random() < 0.35) {
+  // 60% chance to use trait-specific flavor
+  if (Math.random() < 0.60) {
     return traitPool[Math.floor(Math.random() * traitPool.length)]
       .replaceAll("{name}", d.name || "Your dragon");
   }
@@ -1443,7 +1443,7 @@ function startDragonIdleRotation() {
     clearTimeout(dragonIdleTimer);
   }
 
-  const delay = 45000 + Math.floor(Math.random() * 45000);
+  const delay = 30000 + Math.floor(Math.random() * 15000);
 
   dragonIdleTimer = setTimeout(() => {
     const roostPanel = document.querySelector("#panel-roost");
