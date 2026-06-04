@@ -1,4 +1,4 @@
-/* hub.css V-06/03/26 dragon-update-4 */
+/* hub.css V-06/03/26 dragon-personality-1 */
 
 :root {
       --ink: #f6ead1;
@@ -956,6 +956,28 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px
     }
+
+    .kvblock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.kvblock span {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #bfae83;
+}
+
+.kvblock b {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1e6c7;
+}
 
     .kvrow {
       display: flex;
