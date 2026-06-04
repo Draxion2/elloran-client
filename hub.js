@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-personality-3");
+console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v1");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1333,10 +1333,72 @@ const DRAGON_IDLE_LINES = {
   ]
 };
 
+const DRAGON_TRAIT_IDLE_LINES = {
+  PROTECTIVE: [
+    "{name} positions themselves between you and the door.",
+    "{name} watches the room carefully, staying close to your side.",
+    "{name} lets out a low rumble when footsteps pass outside the roost."
+  ],
+
+  PLAYFUL: [
+    "{name} nudges your hand, clearly wanting attention.",
+    "{name} flicks their tail with mischief in their eyes.",
+    "{name} bounces lightly, waiting for you to play along."
+  ],
+
+  CURIOUS: [
+    "{name} sniffs at nearby crates with bright, curious eyes.",
+    "{name} tilts their head, studying every movement you make.",
+    "{name} paws gently at something shiny on the floorboards."
+  ],
+
+  INDEPENDENT: [
+    "{name} keeps their distance, but their eyes still follow you.",
+    "{name} rests alone, clearly comfortable doing things their own way.",
+    "{name} gives you a brief glance before settling back down."
+  ],
+
+  STUBBORN: [
+    "{name} huffs and refuses to move from their chosen spot.",
+    "{name} digs their claws into the floorboards with quiet defiance.",
+    "{name} gives you a look that says they heard you... and disagree."
+  ],
+
+  CALM: [
+    "{name} breathes slowly, completely at ease.",
+    "{name} rests peacefully despite the creaking ship around them.",
+    "{name} watches the lantern light with steady, patient eyes."
+  ],
+
+  MYSTERIOUS: [
+    "{name} stares into the shadows as if listening to something unseen.",
+    "{name} grows still, their eyes reflecting the lantern flame.",
+    "{name} seems distant, as though their thoughts are far beyond the ship."
+  ],
+
+  FOOD_LOVING: [
+    "{name} keeps glancing toward the food crates.",
+    "{name} perks up the moment anything edible is nearby.",
+    "{name} sniffs the air hopefully, searching for a snack."
+  ]
+};
+
 function pickDragonIdleLine(d){
   if(!d) return "No dragon is currently resting in the roost.";
 
   let pool = DRAGON_IDLE_LINES.neutral;
+
+  const traitCode = d.trait?.code;
+
+if (traitCode && DRAGON_TRAIT_IDLE_LINES[traitCode]) {
+  const traitPool = DRAGON_TRAIT_IDLE_LINES[traitCode];
+
+  // 35% chance to use trait-specific flavor
+  if (Math.random() < 0.35) {
+    return traitPool[Math.floor(Math.random() * traitPool.length)]
+      .replaceAll("{name}", d.name || "Your dragon");
+  }
+}
 
   if(Number(d.hunger || 0) >= 70) pool = DRAGON_IDLE_LINES.hungry;
   else if(Number(d.hp || 0) < Number(d.hpMax || 1) * 0.4) pool = DRAGON_IDLE_LINES.tired;
