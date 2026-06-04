@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-personality-2");
+console.log("hub.js V-06/04/26 dragon-personality-3");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -614,7 +614,7 @@ function startHubAmbienceOnce() {
             img: raw.img_url || "",
             rarity: speciesObj.rarity || "Common",
             size: "Small",
-            trait: "—",
+            trait: raw.trait || null,
             level: raw.level ?? 1,
             hp: raw.hp ?? raw.hp_current ?? raw.hp_max ?? 1,
             hpMax: raw.hp_max ?? raw.hp ?? raw.hp_current ?? 1,
@@ -1670,7 +1670,7 @@ function clearDragonActionPreview() {
         if (badgeS) badgeS.textContent = "—";
         if (kvSpecies) kvSpecies.textContent = "—";
         if (kvType) kvType.textContent = "—";
-        if (kvTrait) kvTrait.textContent = "—";
+        if (kvTrait) kvTrait.textContent = a.trait?.name || "—";
        if (kvPersonality) kvPersonality.textContent = "—";
         // Clear bars + percents
         if (barHP) barHP.style.width = "0%";
@@ -2802,7 +2802,7 @@ function clearDragonActionPreview() {
           img: raw.img_url || existing.img || "",
           rarity: speciesObj.rarity || existing.rarity || "Common",
           size: existing.size || "Small",
-          trait: existing.trait || "—",
+          trait: raw.trait || existing.trait || null,
           level: raw.level ?? existing.level ?? 1,
           hp: raw.hp ?? raw.hp_current ?? existing.hp ?? raw.hp_max ?? 1,
           hpMax: raw.hp_max ?? existing.hpMax ?? raw.hp ?? raw.hp_current ?? 1,
