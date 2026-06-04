@@ -951,11 +951,11 @@
     }
 
     /* Stat table beside hero */
-    .statgrid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px
-    }
+    .dragon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
     .kvblock {
   display: flex;
