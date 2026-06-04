@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v1");
+console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v2");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1296,6 +1296,7 @@ function startHubAmbienceOnce() {
 
 let dragonReactionTimeout = null;
 let dragonReactionActive = false;
+let lastIdledragonId = null;
 
 const DRAGON_IDLE_LINES = {
   neutral: [
@@ -1408,7 +1409,7 @@ if (traitCode && DRAGON_TRAIT_IDLE_LINES[traitCode]) {
   return pool[Math.floor(Math.random() * pool.length)].replaceAll("{name}", d.name || "Your dragon");
 }
 
-function updateDragonIdleText(d){
+function updateDragonIdleText(d, force = false){
   const el = document.getElementById("dragonIdleText");
   if(!el) return;
 
@@ -1416,17 +1417,23 @@ function updateDragonIdleText(d){
     return;
   }
 
+  const dragonId = d?.id ?? null;
+
+  // Cosmetic text should not reroll on normal API refreshes.
+  // Only reroll when forced or when the viewed dragon changes.
+  if(!force && dragonId === lastIdleDragonId){
+    return;
+  }
+
+  lastIdleDragonId = dragonId;
+
   el.style.opacity = "0";
 
   setTimeout(() => {
-
-    // IMPORTANT:
-    // Check AGAIN after timeout.
     if(dragonReactionActive) return;
 
     el.textContent = pickDragonIdleLine(d);
     el.style.opacity = ".92";
-
   }, 220);
 }
 
@@ -1765,7 +1772,7 @@ function clearDragonActionPreview() {
         if (typeof applyActionButtonStates === "function") applyActionButtonStates();
         // Hide set-active button (no dragon to set active from the portrait)
         if (btnSetActive) btnSetActive.style.display = "none";
-        updateDragonIdleText(null);
+        updateDragonIdleText(null, true);
         return;
       }
       // --- Stamina line (JS-only, no HTML edits) ---
@@ -2208,6 +2215,7 @@ function clearDragonActionPreview() {
 
     function preview(id) {
       STATE.dragons.selectedId = id;
+      updateDragonIdleText(STATE.dragons.byId[id], true);
       HUB.renderActive();
       HUB.renderCollection();
     }
