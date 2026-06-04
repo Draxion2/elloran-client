@@ -1,4 +1,4 @@
-console.log("hub.js V-06/03/26 dragon-update-3");
+console.log("hub.js V-06/04/26 dragon-personality-1");
 
 /* ===== Tiny utils ===== */
   window.HUB = window.HUB || {};
@@ -1418,6 +1418,7 @@ function setTemporaryDragonReaction(text, duration = 12000){
       kvSpecies = $("#kvSpecies"),
       kvType = $("#kvType"),
       kvTrait = $("#kvTrait");
+      kvPersonality = $("#kvPersonality");
     const barHP = $("#barHP"),
       barHappy = $("#barHappy"),
       barHunger = $("#barHunger");
@@ -1671,6 +1672,13 @@ function clearDragonActionPreview() {
         if (kvSpecies) kvSpecies.textContent = "—";
         if (kvType) kvType.textContent = "—";
         if (kvTrait) kvTrait.textContent = "—";
+        if (kvPersonality) {
+          const primary = a.personality?.primary?.name || "Unknown";
+          const secondary = a.personality?.secondary?.name || "";
+          kvPersonality.textContent = secondary
+            ? `${primary} / ${secondary}`
+            : primary;
+        }
         // Clear bars + percents
         if (barHP) barHP.style.width = "0%";
         if (barHappy) barHappy.style.width = "0%";
@@ -2790,6 +2798,7 @@ function clearDragonActionPreview() {
           name: raw.name || existing.name || speciesObj.name || "Unnamed",
           element: raw.element || existing.element || "Neutral",
           species: speciesObj.name || existing.species || "Dragon",
+          personality: raw.personality || speciesObj.personality || null,
           img: raw.img_url || existing.img || "",
           rarity: speciesObj.rarity || existing.rarity || "Common",
           size: existing.size || "Small",
