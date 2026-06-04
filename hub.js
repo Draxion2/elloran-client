@@ -1773,7 +1773,7 @@ function clearDragonActionPreview() {
       if (badgeS) badgeS.textContent = a.size;
       if (kvSpecies) kvSpecies.textContent = a.species;
       if (kvType) kvType.textContent = a.element;
-      if (kvTrait) kvTrait.textContent = a.trait || "—";
+      if (kvTrait) kvTrait.textContent = a.trait?.name || "—";
       if (kvPersonality) {
         const primary = a.personality?.primary?.name || "Unknown";
         const secondary = a.personality?.secondary?.name || "";
