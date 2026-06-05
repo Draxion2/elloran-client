@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-action-reactions-v1 tidy-v1");
+console.log("hub.js V-06/04/26 dragon-traits-action-reactions-v2 tidy-v1");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -1665,6 +1665,10 @@ function updateDragonIdleText(d, force = false) {
 
     el.textContent = pickDragonIdleLine(d);
     el.style.opacity = ".92";
+    
+    el.classList.remove("idle-line-pulse");
+    void el.offsetWidth;
+    el.classList.add("idle-line-pulse");
   }, 220);
 }
 
