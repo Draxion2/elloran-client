@@ -1,4 +1,4 @@
-/* hub.css V-06/03/26 dragon-personality-2 */
+/* hub.css V-06/04/26 dragon-traits-1 */
 
 :root {
       --ink: #f6ead1;
@@ -1339,6 +1339,28 @@
   min-height: 42px;
   opacity: .92;
   transition: opacity .35s ease;
+}
+#dragonIdleText.idle-line-pulse {
+  animation: dragonIdleLinePulse 1.4s ease;
+}
+
+@keyframes dragonIdleLinePulse {
+  0% {
+    color: var(--muted);
+    text-shadow: none;
+  }
+
+  35% {
+    color: #ffe6a6;
+    text-shadow:
+      0 0 8px rgba(255, 210, 120, .55),
+      0 0 18px rgba(184, 149, 88, .28);
+  }
+
+  100% {
+    color: inherit;
+    text-shadow: none;
+  }
 }
 .dragon-action-preview {
   height: 135px;
