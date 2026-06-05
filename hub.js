@@ -1710,7 +1710,7 @@ function pickDragonIdleLine(d) {
     const bondPool = DRAGON_BOND_IDLE_LINES[bondStage];
 
     // 35% chance to show relationship behavior when not hungry/tired.
-    if (bondPool && Math.random() < 0.35) {
+    if (bondPool && Math.random() < 1) {
       return bondPool[Math.floor(Math.random() * bondPool.length)].replaceAll(
         "{name}",
         d.name || "Your dragon"
