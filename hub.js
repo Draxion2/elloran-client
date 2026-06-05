@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-action-reactions-v2 tidy-v1");
+console.log("hub.js V-06/05/26 dragon-bond-v1 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -262,6 +262,15 @@ function getStamina(d) {
     max,
     resetAt
   };
+}
+
+function getBondStage(bond) {
+  bond = Number(bond || 0);
+  if (bond >= 100) return "devoted";
+  if (bond >= 75) return "loyal";
+  if (bond >= 50) return "trusted";
+  if (bond >= 25) return "familiar";
+  return "wary";
 }
 
 function fmtMs(ms) {
@@ -1474,55 +1483,97 @@ const DRAGON_TRAIT_IDLE_LINES = {
   ],
 
   AFFECTIONATE: [
-  "{name} leans gently against your side.",
-  "{name} seems happiest when staying close to you.",
-  "{name} watches you with quiet, trusting eyes.",
-  "{name} nudges your shoulder before settling down nearby.",
-  "{name} follows your movements around the roost."
-],
+    "{name} leans gently against your side.",
+    "{name} seems happiest when staying close to you.",
+    "{name} watches you with quiet, trusting eyes.",
+    "{name} nudges your shoulder before settling down nearby.",
+    "{name} follows your movements around the roost."
+  ],
 
   WATCHFUL: [
-  "{name} keeps a careful eye on everything around them.",
-  "{name} scans the room without ever fully relaxing.",
-  "{name}'s gaze follows every creak and distant sound.",
-  "{name} watches the doorway with unwavering focus.",
-  "{name} notices movement long before you do."
-],
+    "{name} keeps a careful eye on everything around them.",
+    "{name} scans the room without ever fully relaxing.",
+    "{name}'s gaze follows every creak and distant sound.",
+    "{name} watches the doorway with unwavering focus.",
+    "{name} notices movement long before you do."
+  ],
   PICKY_EATER: [
-  "{name} sniffs the food bowl and seems unimpressed.",
-  "{name} eyes the provisions suspiciously before looking away.",
-  "{name} appears to be hoping for something better to eat.",
-  "{name} gives the offered meal a doubtful glance.",
-  "{name} seems unusually selective about what goes into their stomach."
-],
+    "{name} sniffs the food bowl and seems unimpressed.",
+    "{name} eyes the provisions suspiciously before looking away.",
+    "{name} appears to be hoping for something better to eat.",
+    "{name} gives the offered meal a doubtful glance.",
+    "{name} seems unusually selective about what goes into their stomach."
+  ],
   ENERGETIC: [
-  "{name} struggles to stay still for more than a few moments.",
-  "{name} paces excitedly around the roost.",
-  "{name} flicks their tail with restless enthusiasm.",
-  "{name} looks ready to sprint across the deck at any moment.",
-  "{name} seems eager for something to happen."
-],
+    "{name} struggles to stay still for more than a few moments.",
+    "{name} paces excitedly around the roost.",
+    "{name} flicks their tail with restless enthusiasm.",
+    "{name} looks ready to sprint across the deck at any moment.",
+    "{name} seems eager for something to happen."
+  ],
   COMPETITIVE: [
-  "{name} watches other dragons with quiet determination.",
-  "{name} carries themselves as though they have something to prove.",
-  "{name} seems unwilling to be outdone by anyone.",
-  "{name} stands a little taller whenever another dragon is nearby.",
-  "{name} looks ready to turn almost anything into a challenge."
-],
+    "{name} watches other dragons with quiet determination.",
+    "{name} carries themselves as though they have something to prove.",
+    "{name} seems unwilling to be outdone by anyone.",
+    "{name} stands a little taller whenever another dragon is nearby.",
+    "{name} looks ready to turn almost anything into a challenge."
+  ],
   RESTLESS: [
-  "{name} shifts position again despite only just getting comfortable.",
-  "{name} seems unable to settle on a single spot.",
-  "{name} glances toward the exit more than once.",
-  "{name} fidgets with growing impatience.",
-  "{name} looks as though they would rather be somewhere else right now."
-],
+    "{name} shifts position again despite only just getting comfortable.",
+    "{name} seems unable to settle on a single spot.",
+    "{name} glances toward the exit more than once.",
+    "{name} fidgets with growing impatience.",
+    "{name} looks as though they would rather be somewhere else right now."
+  ],
   GENTLE: [
-  "{name} moves with remarkable care despite their size.",
-  "{name}'s calm presence makes the roost feel quieter.",
-  "{name} watches the world with patient eyes.",
-  "{name} carefully avoids disturbing anything around them.",
-  "{name} rests peacefully beside you."
-]
+    "{name} moves with remarkable care despite their size.",
+    "{name}'s calm presence makes the roost feel quieter.",
+    "{name} watches the world with patient eyes.",
+    "{name} carefully avoids disturbing anything around them.",
+    "{name} rests peacefully beside you."
+  ]
+};
+
+const DRAGON_BOND_IDLE_LINES = {
+  wary: [
+    "{name} keeps a careful distance.",
+    "{name} watches you cautiously.",
+    "{name} seems unsure what to make of you.",
+    "{name} shifts slightly away when you move too quickly.",
+    "{name} studies you as though still deciding if you can be trusted."
+  ],
+
+  familiar: [
+    "{name} seems more comfortable around you than before.",
+    "{name} no longer watches every movement with suspicion.",
+    "{name} appears to recognize your routines.",
+    "{name} allows you closer than they once did.",
+    "{name} relaxes slightly when you enter the roost."
+  ],
+
+  trusted: [
+    "{name} settles nearby without hesitation.",
+    "{name} seems comfortable in your presence.",
+    "{name} watches you with growing confidence.",
+    "{name} lets their guard down when you are close.",
+    "{name} rests nearby as though your presence feels safe."
+  ],
+
+  loyal: [
+    "{name} visibly relaxes when you arrive.",
+    "{name} seems happiest when close to you.",
+    "{name} follows your movements around the roost.",
+    "{name} stays near you even when the ship grows noisy.",
+    "{name} greets you with a familiar, content rumble."
+  ],
+
+  devoted: [
+    "{name} looks at you with complete trust.",
+    "{name} seems unwilling to let you out of sight for long.",
+    "{name} settles beside you as though there is nowhere else they would rather be.",
+    "{name} responds to your presence before you even speak.",
+    "{name} rests close enough that you can feel their warmth."
+  ]
 };
 
 const DRAGON_ACTION_REACTIONS = {
@@ -1534,32 +1585,46 @@ const DRAGON_ACTION_REACTIONS = {
     CURIOUS: "{name} investigates the meal carefully before eating.",
     INDEPENDENT: "{name} accepts the food with quiet self-assurance.",
     FOOD_LOVING: "{name} eagerly devours every scrap offered.",
-    PICKY_EATER: "{name} sniffs the meal suspiciously before finally taking a bite.",
-    ENERGETIC: "{name} finishes eating so quickly you wonder if they even tasted it.",
-    STUBBORN: "{name} eventually eats, though only after inspecting everything first.",
+    PICKY_EATER:
+      "{name} sniffs the meal suspiciously before finally taking a bite.",
+    ENERGETIC:
+      "{name} finishes eating so quickly you wonder if they even tasted it.",
+    STUBBORN:
+      "{name} eventually eats, though only after inspecting everything first.",
     COMPETITIVE: "{name} attacks the meal as if trying to set a record.",
     CALM: "{name} eats slowly and appears completely content.",
     RESTLESS: "{name} struggles to stay focused on the meal.",
     GENTLE: "{name} accepts the food carefully from your hand.",
-    MYSTERIOUS: "{name} studies the meal quietly before taking a deliberate bite."
+    MYSTERIOUS:
+      "{name} studies the meal quietly before taking a deliberate bite."
   },
 
   play: {
-    AFFECTIONATE: "{name} stays close throughout the play session, clearly enjoying your attention.",
+    AFFECTIONATE:
+      "{name} stays close throughout the play session, clearly enjoying your attention.",
     PLAYFUL: "{name} immediately joins in with obvious excitement.",
     PROTECTIVE: "{name} enjoys the activity while staying close to your side.",
-    WATCHFUL: "{name} plays along, though their eyes still track every sound nearby.",
-    CURIOUS: "{name} turns the game into an excuse to investigate everything around them.",
-    INDEPENDENT: "{name} participates, though only after deciding it was worthwhile.",
-    FOOD_LOVING: "{name} plays for a while, though their attention drifts toward the food crates.",
-    PICKY_EATER: "{name} seems more interested in choosing the game than playing it.",
-    ENERGETIC: "{name} throws themselves into the activity with almost too much excitement.",
-    STUBBORN: "{name} joins in eventually, but only after pretending not to care.",
+    WATCHFUL:
+      "{name} plays along, though their eyes still track every sound nearby.",
+    CURIOUS:
+      "{name} turns the game into an excuse to investigate everything around them.",
+    INDEPENDENT:
+      "{name} participates, though only after deciding it was worthwhile.",
+    FOOD_LOVING:
+      "{name} plays for a while, though their attention drifts toward the food crates.",
+    PICKY_EATER:
+      "{name} seems more interested in choosing the game than playing it.",
+    ENERGETIC:
+      "{name} throws themselves into the activity with almost too much excitement.",
+    STUBBORN:
+      "{name} joins in eventually, but only after pretending not to care.",
     COMPETITIVE: "{name} quickly turns the activity into a challenge.",
     CALM: "{name} enjoys the game without getting overly excited.",
-    RESTLESS: "{name} moves from one playful motion to the next without slowing down.",
+    RESTLESS:
+      "{name} moves from one playful motion to the next without slowing down.",
     GENTLE: "{name} plays carefully, never rougher than they need to be.",
-    MYSTERIOUS: "{name} plays in a strange, quiet way that feels almost ritualistic."
+    MYSTERIOUS:
+      "{name} plays in a strange, quiet way that feels almost ritualistic."
   },
 
   groom: {
@@ -1567,10 +1632,13 @@ const DRAGON_ACTION_REACTIONS = {
     PLAYFUL: "{name} keeps trying to turn grooming into a game.",
     PROTECTIVE: "{name} allows the grooming but keeps watching the entrance.",
     WATCHFUL: "{name} remains alert even while you tend to them.",
-    CURIOUS: "{name} inspects every brush and cloth before letting you continue.",
+    CURIOUS:
+      "{name} inspects every brush and cloth before letting you continue.",
     INDEPENDENT: "{name} tolerates the grooming with dignified patience.",
-    FOOD_LOVING: "{name} behaves better once food is clearly not off the table later.",
-    PICKY_EATER: "{name} seems very particular about how their scales are cleaned.",
+    FOOD_LOVING:
+      "{name} behaves better once food is clearly not off the table later.",
+    PICKY_EATER:
+      "{name} seems very particular about how their scales are cleaned.",
     ENERGETIC: "{name} makes grooming difficult by constantly shifting around.",
     STUBBORN: "{name} resists at first, then finally allows you to continue.",
     COMPETITIVE: "{name} holds still as if determined to prove they can.",
@@ -1582,13 +1650,16 @@ const DRAGON_ACTION_REACTIONS = {
 
   train: {
     AFFECTIONATE: "{name} works hard, seeming eager to please you.",
-    PLAYFUL: "{name} treats the training like a game but still gives it effort.",
+    PLAYFUL:
+      "{name} treats the training like a game but still gives it effort.",
     PROTECTIVE: "{name} approaches every exercise with focused discipline.",
     WATCHFUL: "{name} studies each command carefully before acting.",
     CURIOUS: "{name} seems fascinated by every new movement and command.",
-    INDEPENDENT: "{name} follows the routine, though clearly on their own terms.",
+    INDEPENDENT:
+      "{name} follows the routine, though clearly on their own terms.",
     FOOD_LOVING: "{name} trains harder once they suspect food may follow.",
-    PICKY_EATER: "{name} performs well enough, though they seem unimpressed by the reward.",
+    PICKY_EATER:
+      "{name} performs well enough, though they seem unimpressed by the reward.",
     ENERGETIC: "{name} seems disappointed when the training session ends.",
     STUBBORN: "{name} cooperates eventually, though not without resistance.",
     COMPETITIVE: "{name} attacks the training session with determination.",
@@ -1605,8 +1676,10 @@ function getDragonActionReaction(actionKey, d, fallbackText) {
   const traitCode = d.trait?.code;
   const reaction = DRAGON_ACTION_REACTIONS[actionKey]?.[traitCode];
 
-  return (reaction || fallbackText || "")
-    .replaceAll("{name}", d.name || "Your dragon");
+  return (reaction || fallbackText || "").replaceAll(
+    "{name}",
+    d.name || "Your dragon"
+  );
 }
 
 function pickDragonIdleLine(d) {
@@ -1628,11 +1701,26 @@ function pickDragonIdleLine(d) {
     }
   }
 
-  if (Number(d.hunger || 0) >= 70) pool = DRAGON_IDLE_LINES.hungry;
-  else if (Number(d.hp || 0) < Number(d.hpMax || 1) * 0.4)
+  if (Number(d.hunger || 0) >= 70) {
+    pool = DRAGON_IDLE_LINES.hungry;
+  } else if (Number(d.hp || 0) < Number(d.hpMax || 1) * 0.4) {
     pool = DRAGON_IDLE_LINES.tired;
-  else if (Number(d.bond || 0) >= 60) pool = DRAGON_IDLE_LINES.bonded;
-  else if (Number(d.mood || 0) >= 75) pool = DRAGON_IDLE_LINES.happy;
+  } else {
+    const bondStage = getBondStage(d.bond);
+    const bondPool = DRAGON_BOND_IDLE_LINES[bondStage];
+
+    // 35% chance to show relationship behavior when not hungry/tired.
+    if (bondPool && Math.random() < 0.35) {
+      return bondPool[Math.floor(Math.random() * bondPool.length)].replaceAll(
+        "{name}",
+        d.name || "Your dragon"
+      );
+    }
+
+    if (Number(d.mood || 0) >= 75) {
+      pool = DRAGON_IDLE_LINES.happy;
+    }
+  }
 
   return pool[Math.floor(Math.random() * pool.length)].replaceAll(
     "{name}",
@@ -1665,7 +1753,7 @@ function updateDragonIdleText(d, force = false) {
 
     el.textContent = pickDragonIdleLine(d);
     el.style.opacity = ".92";
-    
+
     el.classList.remove("idle-line-pulse");
     void el.offsetWidth;
     el.classList.add("idle-line-pulse");
@@ -2836,12 +2924,12 @@ function initRoost() {
       toast(`${d.name} seems happier.`);
       applyDragonPatch(local, payload.dragon);
       setTemporaryDragonReaction(
-  getDragonActionReaction(
-    "play",
-    d,
-    "{name} perks up, clearly enjoying the attention."
-  )
-);
+        getDragonActionReaction(
+          "play",
+          d,
+          "{name} perks up, clearly enjoying the attention."
+        )
+      );
     } catch (err) {
       const serverMsg = extractApiPayloadMessage(err);
       // If it's the expected stamina gate, don't console.error
@@ -2902,12 +2990,12 @@ function initRoost() {
       toast(`${d.name} looks cleaner and more relaxed.`);
       applyDragonPatch(local, payload.dragon);
       setTemporaryDragonReaction(
-  getDragonActionReaction(
-    "groom",
-    d,
-    "{name} relaxes as you tend to them."
-  )
-);
+        getDragonActionReaction(
+          "groom",
+          d,
+          "{name} relaxes as you tend to them."
+        )
+      );
     } catch (err) {
       const serverMsg = extractApiPayloadMessage(err);
       // If it's the expected stamina gate, don't console.error
@@ -2974,12 +3062,12 @@ function initRoost() {
       toast(`${local.name} trains hard.`);
       applyDragonPatch(local, payload.dragon);
       setTemporaryDragonReaction(
-  getDragonActionReaction(
-    "train",
-    local,
-    "{name} steadies themselves after training."
-  )
-);
+        getDragonActionReaction(
+          "train",
+          local,
+          "{name} steadies themselves after training."
+        )
+      );
     } catch (err) {
       const serverMsg = extractApiPayloadMessage(err);
       // If it's the expected stamina gate, don't console.error
