@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v4 tidy-v1");
+console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v5 tidy-v1");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -1364,7 +1364,7 @@ const DRAGON_IDLE_LINES = {
     "{name} emerges into the light."
   ],
   happy: [
-    "{name} lets out a soft, content rumble.",
+    "{name} lets out a soft, contented rumble.",
     "{name} curls comfortably near the warm lantern light.",
     "{name} seems unusually relaxed aboard the ship.",
     "{name} appears delighted to see you.",
@@ -1392,50 +1392,117 @@ const DRAGON_TRAIT_IDLE_LINES = {
   PROTECTIVE: [
     "{name} positions themselves between you and the door.",
     "{name} watches the room carefully, staying close to your side.",
-    "{name} lets out a low rumble when footsteps pass outside the roost."
+    "{name} lets out a low rumble when footsteps pass outside the roost.",
+    "{name} subtly positions themselves where they can watch over you.",
+    "{name} remains alert, ready to react to the slightest threat."
   ],
 
   PLAYFUL: [
     "{name} nudges your hand, clearly wanting attention.",
     "{name} flicks their tail with mischief in their eyes.",
-    "{name} bounces lightly, waiting for you to play along."
+    "{name} bounces lightly, waiting for you to play along.",
+    "{name} bats at an imaginary target before looking pleased with themselves.",
+    "{name} seems determined to turn even a quiet moment into a game."
   ],
 
   CURIOUS: [
     "{name} sniffs at nearby crates with bright, curious eyes.",
     "{name} tilts their head, studying every movement you make.",
-    "{name} paws gently at something shiny on the floorboards."
+    "{name} paws gently at something shiny on the floorboards.",
+    "{name} investigates a loose plank as though it hides a great mystery.",
+    "{name} studies a passing shadow with intense fascination."
   ],
 
   INDEPENDENT: [
     "{name} keeps their distance, but their eyes still follow you.",
     "{name} rests alone, clearly comfortable doing things their own way.",
-    "{name} gives you a brief glance before settling back down."
+    "{name} gives you a brief glance before settling back down.",
+    "{name} appears perfectly content occupying their own corner of the roost.",
+    "{name} values your company, but clearly enjoys their personal space."
   ],
 
   STUBBORN: [
     "{name} huffs and refuses to move from their chosen spot.",
     "{name} digs their claws into the floorboards with quiet defiance.",
-    "{name} gives you a look that says they heard you... and disagree."
+    "{name} gives you a look that says they heard you... and disagree.",
+    "{name} ignores a perfectly good resting spot in favor of their chosen one.",
+    "{name} seems determined to do things on their own terms."
   ],
 
   CALM: [
     "{name} breathes slowly, completely at ease.",
     "{name} rests peacefully despite the creaking ship around them.",
-    "{name} watches the lantern light with steady, patient eyes."
+    "{name} watches the lantern light with steady, patient eyes.",
+    "{name} remains unbothered by the noise and motion of the ship.",
+    "{name} looks completely at peace with the world around them."
   ],
 
   MYSTERIOUS: [
     "{name} stares into the shadows as if listening to something unseen.",
     "{name} grows still, their eyes reflecting the lantern flame.",
-    "{name} seems distant, as though their thoughts are far beyond the ship."
+    "{name} seems distant, as though their thoughts are far beyond the ship.",
+    "{name} seems to notice things that escape everyone else.",
+    "{name} watches the horizon with a distant, unreadable expression."
   ],
 
   FOOD_LOVING: [
     "{name} keeps glancing toward the food crates.",
     "{name} perks up the moment anything edible is nearby.",
-    "{name} sniffs the air hopefully, searching for a snack."
-  ]
+    "{name} sniffs the air hopefully, searching for a snack.",
+    "{name} perks up immediately at the faintest smell of food.",
+    "{name} appears convinced that another meal should arrive any minute now."
+  ],
+
+  AFFECTIONATE: [
+  "{name} leans gently against your side.",
+  "{name} seems happiest when staying close to you.",
+  "{name} watches you with quiet, trusting eyes.",
+  "{name} nudges your shoulder before settling down nearby.",
+  "{name} follows your movements around the roost."
+],
+
+  WATCHFUL: [
+  "{name} keeps a careful eye on everything around them.",
+  "{name} scans the room without ever fully relaxing.",
+  "{name}'s gaze follows every creak and distant sound.",
+  "{name} watches the doorway with unwavering focus.",
+  "{name} notices movement long before you do."
+],
+  PICKY_EATER: [
+  "{name} sniffs the food bowl and seems unimpressed.",
+  "{name} eyes the provisions suspiciously before looking away.",
+  "{name} appears to be hoping for something better to eat.",
+  "{name} gives the offered meal a doubtful glance.",
+  "{name} seems unusually selective about what goes into their stomach."
+],
+  ENERGETIC: [
+  "{name} struggles to stay still for more than a few moments.",
+  "{name} paces excitedly around the roost.",
+  "{name} flicks their tail with restless enthusiasm.",
+  "{name} looks ready to sprint across the deck at any moment.",
+  "{name} seems eager for something to happen."
+],
+  COMPETITIVE: [
+  "{name} watches other dragons with quiet determination.",
+  "{name} carries themselves as though they have something to prove.",
+  "{name} seems unwilling to be outdone by anyone.",
+  "{name} stands a little taller whenever another dragon is nearby.",
+  "{name} looks ready to turn almost anything into a challenge."
+],
+  RESTLESS: [
+  "{name} shifts position again despite only just getting comfortable.",
+  "{name} seems unable to settle on a single spot.",
+  "{name} glances toward the exit more than once.",
+  "{name} fidgets with growing impatience.",
+  "{name} looks as though they would rather be somewhere else right now."
+],
+  GENTLE: [
+  "{name} moves with remarkable care despite their size.",
+  "{name}'s calm presence makes the roost feel quieter.",
+  "{name} watches the world with patient eyes.",
+  "{name} carefully avoids disturbing anything around them.",
+  "{name} rests peacefully beside you."
+]
 };
 
 function pickDragonIdleLine(d) {
