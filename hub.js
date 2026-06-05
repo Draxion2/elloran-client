@@ -1,4 +1,4 @@
-console.log("hub.js V-06/05/26 dragon-bond-v2 tidy-v2");
+console.log("hub.js V-06/05/26 dragon-bond-v3 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -633,6 +633,7 @@ async function loadPlayerHubData() {
           element: raw.element || "Neutral",
           species: speciesObj.name || "Dragon",
           personality: raw.personality || speciesObj.personality || null,
+          favoriteActivity: raw.favorite_activity || null,
           img: raw.img_url || "",
           rarity: speciesObj.rarity || "Common",
           size: "Small",
@@ -1576,6 +1577,32 @@ const DRAGON_BOND_IDLE_LINES = {
   ]
 };
 
+const DRAGON_FAVORITE_ACTIVITY_REACTIONS = {
+  feed: [
+    "{name} seems especially pleased with today's meal.",
+    "{name} eagerly settles in for their favorite part of the day.",
+    "{name} accepts the food with unmistakable enthusiasm."
+  ],
+
+  play: [
+    "{name} perks up immediately.",
+    "{name} clearly loves spending time this way.",
+    "{name} throws themselves into the moment with rare excitement."
+  ],
+
+  groom: [
+    "{name} relaxes almost instantly.",
+    "{name} seems unusually content during the grooming session.",
+    "{name} settles into the attention as though waiting for this."
+  ],
+
+  train: [
+    "{name} approaches the exercise with unusual enthusiasm.",
+    "{name} looks excited before the session even begins.",
+    "{name} gives the training their full attention."
+  ]
+};
+
 const DRAGON_ACTION_REACTIONS = {
   feed: {
     AFFECTIONATE: "{name} happily accepts the food and stays close afterward.",
@@ -1673,13 +1700,24 @@ const DRAGON_ACTION_REACTIONS = {
 function getDragonActionReaction(actionKey, d, fallbackText) {
   if (!d) return fallbackText || "";
 
-  const traitCode = d.trait?.code;
-  const reaction = DRAGON_ACTION_REACTIONS[actionKey]?.[traitCode];
+  const isFavoriteActivity = d.favoriteActivity === actionKey;
 
-  return (reaction || fallbackText || "").replaceAll(
-    "{name}",
-    d.name || "Your dragon"
-  );
+  if (isFavoriteActivity) {
+    const favoritePool = DRAGON_FAVORITE_ACTIVITY_REACTIONS[actionKey];
+
+    if (favoritePool && favoritePool.length) {
+      const favoriteReaction =
+        favoritePool[Math.floor(Math.random() * favoritePool.length)];
+
+      return favoriteReaction.replaceAll("{name}", d.name || "Your dragon");
+    }
+  }
+
+  const traitCode = d.trait?.code;
+  const traitReaction = DRAGON_ACTION_REACTIONS[actionKey]?.[traitCode];
+
+  return (traitReaction || fallbackText || "")
+    .replaceAll("{name}", d.name || "Your dragon");
 }
 
 function pickDragonIdleLine(d) {
@@ -3304,6 +3342,7 @@ async function refreshDragonsFromApi() {
         name: raw.name || existing.name || speciesObj.name || "Unnamed",
         element: raw.element || existing.element || "Neutral",
         species: speciesObj.name || existing.species || "Dragon",
+        favoriteActivity: raw.favorite_activity || existing.favoriteActivity || null,
         personality: raw.personality || speciesObj.personality || null,
         img: raw.img_url || existing.img || "",
         rarity: speciesObj.rarity || existing.rarity || "Common",
