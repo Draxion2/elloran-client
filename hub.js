@@ -1374,17 +1374,37 @@ const DRAGON_IDLE_LINES = {
     "{name} keeps glancing toward the food crates.",
     "{name} sniffs the air, clearly hoping for food.",
     "{name} seems distracted by hunger.",
-    "The moment you enter the roost, you hear {name}'s stomach growl."
+    "The moment you enter the roost, you hear {name}'s stomach growl.",
+    "{name} watches every passing crewmember as if they might be carrying a meal.",
+    "{name} paws impatiently at the feeding area.",
+    "{name}'s attention immediately shifts whenever food is mentioned.",
+    "{name} looks more interested in supplies than conversation today.",
+    "{name} lets out a low, hungry rumble.",
+    "{name} keeps checking the same empty bowl, just in case something changed."
   ],
   tired: [
     "{name} lets out a slow breath before settling down.",
     "{name} looks ready to rest for a while.",
-    "{name} quietly curls against the floorboards."
+    "{name} quietly curls against the floorboards.",
+    "{name}'s eyes seem heavier than usual today.",
+    "{name} stretches before searching for a comfortable place to lie down.",
+    "{name} barely reacts to the usual sounds around the ship.",
+    "{name} looks content to simply rest and watch the lantern light.",
+    "{name} suppresses a yawn and lowers their head.",
+    "{name} seems far more interested in sleep than activity.",
+    "{name} shifts into a comfortable position and relaxes."
   ],
   bonded: [
     "{name} seems calmer whenever you're nearby.",
     "{name} watches you with quiet trust.",
-    "{name} stays close as the ship gently rocks."
+    "{name} stays close as the ship gently rocks.",
+    "{name} visibly relaxes when you enter the roost.",
+    "{name} seems content simply sharing the space with you.",
+    "{name} greets your arrival with a familiar rumble.",
+    "{name}'s eyes follow you wherever you move.",
+    "{name} appears happiest when you're close by.",
+    "{name} settles nearby as though your presence is reassuring.",
+    "{name} briefly nudges you before returning to rest."
   ]
 };
 
