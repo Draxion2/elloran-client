@@ -1,4 +1,4 @@
-console.log("hub.js V-06/04/26 dragon-traits-flavor-text-v5 tidy-v1");
+console.log("hub.js V-06/04/26 dragon-traits-action-reactions-v1 tidy-v1");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -1525,6 +1525,90 @@ const DRAGON_TRAIT_IDLE_LINES = {
 ]
 };
 
+const DRAGON_ACTION_REACTIONS = {
+  feed: {
+    AFFECTIONATE: "{name} happily accepts the food and stays close afterward.",
+    PLAYFUL: "{name} devours the meal before nudging you for more attention.",
+    PROTECTIVE: "{name} eats quickly but never stops watching the room.",
+    WATCHFUL: "{name} keeps an eye on their surroundings between bites.",
+    CURIOUS: "{name} investigates the meal carefully before eating.",
+    INDEPENDENT: "{name} accepts the food with quiet self-assurance.",
+    FOOD_LOVING: "{name} eagerly devours every scrap offered.",
+    PICKY_EATER: "{name} sniffs the meal suspiciously before finally taking a bite.",
+    ENERGETIC: "{name} finishes eating so quickly you wonder if they even tasted it.",
+    STUBBORN: "{name} eventually eats, though only after inspecting everything first.",
+    COMPETITIVE: "{name} attacks the meal as if trying to set a record.",
+    CALM: "{name} eats slowly and appears completely content.",
+    RESTLESS: "{name} struggles to stay focused on the meal.",
+    GENTLE: "{name} accepts the food carefully from your hand.",
+    MYSTERIOUS: "{name} studies the meal quietly before taking a deliberate bite."
+  },
+
+  play: {
+    AFFECTIONATE: "{name} stays close throughout the play session, clearly enjoying your attention.",
+    PLAYFUL: "{name} immediately joins in with obvious excitement.",
+    PROTECTIVE: "{name} enjoys the activity while staying close to your side.",
+    WATCHFUL: "{name} plays along, though their eyes still track every sound nearby.",
+    CURIOUS: "{name} turns the game into an excuse to investigate everything around them.",
+    INDEPENDENT: "{name} participates, though only after deciding it was worthwhile.",
+    FOOD_LOVING: "{name} plays for a while, though their attention drifts toward the food crates.",
+    PICKY_EATER: "{name} seems more interested in choosing the game than playing it.",
+    ENERGETIC: "{name} throws themselves into the activity with almost too much excitement.",
+    STUBBORN: "{name} joins in eventually, but only after pretending not to care.",
+    COMPETITIVE: "{name} quickly turns the activity into a challenge.",
+    CALM: "{name} enjoys the game without getting overly excited.",
+    RESTLESS: "{name} moves from one playful motion to the next without slowing down.",
+    GENTLE: "{name} plays carefully, never rougher than they need to be.",
+    MYSTERIOUS: "{name} plays in a strange, quiet way that feels almost ritualistic."
+  },
+
+  groom: {
+    AFFECTIONATE: "{name} leans into the attention appreciatively.",
+    PLAYFUL: "{name} keeps trying to turn grooming into a game.",
+    PROTECTIVE: "{name} allows the grooming but keeps watching the entrance.",
+    WATCHFUL: "{name} remains alert even while you tend to them.",
+    CURIOUS: "{name} inspects every brush and cloth before letting you continue.",
+    INDEPENDENT: "{name} tolerates the grooming with dignified patience.",
+    FOOD_LOVING: "{name} behaves better once food is clearly not off the table later.",
+    PICKY_EATER: "{name} seems very particular about how their scales are cleaned.",
+    ENERGETIC: "{name} makes grooming difficult by constantly shifting around.",
+    STUBBORN: "{name} resists at first, then finally allows you to continue.",
+    COMPETITIVE: "{name} holds still as if determined to prove they can.",
+    CALM: "{name} appears completely at ease during grooming.",
+    RESTLESS: "{name} struggles to remain still while you work.",
+    GENTLE: "{name} closes their eyes and relaxes during the grooming session.",
+    MYSTERIOUS: "{name} grows strangely still as you brush away dust and salt."
+  },
+
+  train: {
+    AFFECTIONATE: "{name} works hard, seeming eager to please you.",
+    PLAYFUL: "{name} treats the training like a game but still gives it effort.",
+    PROTECTIVE: "{name} approaches every exercise with focused discipline.",
+    WATCHFUL: "{name} studies each command carefully before acting.",
+    CURIOUS: "{name} seems fascinated by every new movement and command.",
+    INDEPENDENT: "{name} follows the routine, though clearly on their own terms.",
+    FOOD_LOVING: "{name} trains harder once they suspect food may follow.",
+    PICKY_EATER: "{name} performs well enough, though they seem unimpressed by the reward.",
+    ENERGETIC: "{name} seems disappointed when the training session ends.",
+    STUBBORN: "{name} cooperates eventually, though not without resistance.",
+    COMPETITIVE: "{name} attacks the training session with determination.",
+    CALM: "{name} works steadily through the training routine.",
+    RESTLESS: "{name} throws too much energy into the drills but keeps going.",
+    GENTLE: "{name} follows each command with careful control.",
+    MYSTERIOUS: "{name} moves through the exercises with eerie focus."
+  }
+};
+
+function getDragonActionReaction(actionKey, d, fallbackText) {
+  if (!d) return fallbackText || "";
+
+  const traitCode = d.trait?.code;
+  const reaction = DRAGON_ACTION_REACTIONS[actionKey]?.[traitCode];
+
+  return (reaction || fallbackText || "")
+    .replaceAll("{name}", d.name || "Your dragon");
+}
+
 function pickDragonIdleLine(d) {
   if (!d) return "No dragon is currently resting in the roost.";
 
@@ -2560,7 +2644,11 @@ function initRoost() {
         STATE._onInventoryChange();
       scheduleInventorySave();
       setTemporaryDragonReaction(
-        `${d.name} eagerly snaps up the offered food.`
+        getDragonActionReaction(
+          "feed",
+          d,
+          "{name} eagerly snaps up the offered food."
+        )
       );
       return true;
     } catch (err) {
@@ -2744,8 +2832,12 @@ function initRoost() {
       toast(`${d.name} seems happier.`);
       applyDragonPatch(local, payload.dragon);
       setTemporaryDragonReaction(
-        `${d.name} perks up, clearly enjoying the attention.`
-      );
+  getDragonActionReaction(
+    "play",
+    d,
+    "{name} perks up, clearly enjoying the attention."
+  )
+);
     } catch (err) {
       const serverMsg = extractApiPayloadMessage(err);
       // If it's the expected stamina gate, don't console.error
@@ -2805,7 +2897,13 @@ function initRoost() {
       setCD("groom", CDdur.groom);
       toast(`${d.name} looks cleaner and more relaxed.`);
       applyDragonPatch(local, payload.dragon);
-      setTemporaryDragonReaction(`${d.name} relaxes as you tend to them.`);
+      setTemporaryDragonReaction(
+  getDragonActionReaction(
+    "groom",
+    d,
+    "{name} relaxes as you tend to them."
+  )
+);
     } catch (err) {
       const serverMsg = extractApiPayloadMessage(err);
       // If it's the expected stamina gate, don't console.error
@@ -2872,8 +2970,12 @@ function initRoost() {
       toast(`${local.name} trains hard.`);
       applyDragonPatch(local, payload.dragon);
       setTemporaryDragonReaction(
-        `${local.name} steadies themselves after training.`
-      );
+  getDragonActionReaction(
+    "train",
+    local,
+    "{name} steadies themselves after training."
+  )
+);
     } catch (err) {
       const serverMsg = extractApiPayloadMessage(err);
       // If it's the expected stamina gate, don't console.error
