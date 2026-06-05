@@ -1443,7 +1443,8 @@ function startDragonIdleRotation() {
     clearTimeout(dragonIdleTimer);
   }
 
-  const delay = 30000 + Math.floor(Math.random() * 15000);
+  const delay = 5000;
+  // const delay = 30000 + Math.floor(Math.random() * 15000);
 
   dragonIdleTimer = setTimeout(() => {
     const roostPanel = document.querySelector("#panel-roost");
