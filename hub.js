@@ -1,4 +1,4 @@
-console.log("hub.js V-06/05/26 dragon-bond-v1 tidy-v2");
+console.log("hub.js V-06/05/26 dragon-bond-v2 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -1710,7 +1710,7 @@ function pickDragonIdleLine(d) {
     const bondPool = DRAGON_BOND_IDLE_LINES[bondStage];
 
     // 35% chance to show relationship behavior when not hungry/tired.
-    if (bondPool && Math.random() < 1) {
+    if (bondPool && Math.random() < 0.60) {
       return bondPool[Math.floor(Math.random() * bondPool.length)].replaceAll(
         "{name}",
         d.name || "Your dragon"
