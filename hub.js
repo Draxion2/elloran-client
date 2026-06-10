@@ -3359,6 +3359,7 @@ async function refreshDragonsFromApi() {
         species: speciesObj.name || existing.species || "Dragon",
         favoriteActivity: raw.favorite_activity || existing.favoriteActivity || null,
         personality: raw.personality || speciesObj.personality || null,
+        growthStage: raw.growth_stage || existing.growthStage || "wyrmling",
         img: raw.img_url || existing.img || "",
         rarity: speciesObj.rarity || existing.rarity || "Common",
         size: existing.size || "Small",
