@@ -2184,7 +2184,7 @@ function initRoost() {
       if (kvType) kvType.textContent = "—";
       if (kvTrait) kvTrait.textContent = "—";
       if (kvPersonality) kvPersonality.textContent = "—";
-      if (kvGrowthStage) kvGrowthStage.textContent = formatGrowthStage(a.growthStage);
+      if (kvGrowthStage) kvGrowthStage.textContent = "—";
       // Clear bars + percents
       if (barHP) barHP.style.width = "0%";
       if (barHappy) barHappy.style.width = "0%";
@@ -2299,6 +2299,7 @@ function initRoost() {
         ? `${primary} / ${secondary}`
         : primary;
     }
+    if (kvGrowthStage) kvGrowthStage.textContent = formatGrowthStage(a.growthStage);
     const hpTarget = pct(a.hp, a.hpMax);
     const happyTarget = clamp(a.happiness, 0, 100);
     const hungerTarget = clamp(a.hunger, 0, 100);
