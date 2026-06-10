@@ -1,4 +1,4 @@
-console.log("hub.js V-06/05/26 dragon-bond-v3 tidy-v2");
+console.log("hub.js V-06/05/26 dragon-growth-v1 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -630,6 +630,7 @@ async function loadPlayerHubData() {
           id: Number(raw.id),
           code: raw.code || speciesObj.code || "DRAGON",
           name: raw.name || speciesObj.name || "Unnamed",
+          growthStage: raw.growth_stage || "wyrmling",
           element: raw.element || "Neutral",
           species: speciesObj.name || "Dragon",
           personality: raw.personality || speciesObj.personality || null,
@@ -1874,7 +1875,8 @@ function initRoost() {
   const kvSpecies = $("#kvSpecies"),
     kvType = $("#kvType"),
     kvTrait = $("#kvTrait"),
-    kvPersonality = $("#kvPersonality");
+    kvPersonality = $("#kvPersonality"),
+    kvGrowthStage = $("#kvGrowthStage");
   const barHP = $("#barHP"),
     barHappy = $("#barHappy"),
     barHunger = $("#barHunger");
@@ -2151,6 +2153,17 @@ function initRoost() {
   function recomputeHappiness(d) {
     d.happiness = deriveHappiness(d.mood, d.hunger);
   }
+  function formatGrowthStage(stage){
+  if (!stage) return "—";
+
+  switch(String(stage).toLowerCase()){
+    case "wyrmling": return "Wyrmling";
+    case "juvenile": return "Juvenile";
+    case "adult": return "Adult";
+    case "elder": return "Elder";
+    default: return stage;
+  }
+}
   HUB.renderActive = function () {
     const a = active();
     // ✅ EMPTY STATE: no active dragon selected
@@ -2171,6 +2184,7 @@ function initRoost() {
       if (kvType) kvType.textContent = "—";
       if (kvTrait) kvTrait.textContent = "—";
       if (kvPersonality) kvPersonality.textContent = "—";
+      if (kvGrowthStage) kvGrowthStage.textContent = formatGrowthStage(a.growthStage);
       // Clear bars + percents
       if (barHP) barHP.style.width = "0%";
       if (barHappy) barHappy.style.width = "0%";
