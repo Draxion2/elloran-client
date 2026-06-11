@@ -1,4 +1,4 @@
-console.log("hub.js V-06/05/26 dragon-growth-v1 tidy-v2");
+console.log("hub.js V-06/11/26 dragon-growth-v2 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -631,6 +631,12 @@ async function loadPlayerHubData() {
           code: raw.code || speciesObj.code || "DRAGON",
           name: raw.name || speciesObj.name || "Unnamed",
           growthStage: raw.growth_stage || "wyrmling",
+          canGrow: !!raw.can_grow,
+          growthBlockReason: raw.growth_block_reason || null,
+          nextGrowthStage: raw.next_growth_stage || null,
+          requiredDays: raw.required_days ?? 0,
+          requiredBond: raw.required_bond ?? 0,
+          daysSinceObtained: raw.days_since_obtained ?? 0,
           element: raw.element || "Neutral",
           species: speciesObj.name || "Dragon",
           personality: raw.personality || speciesObj.personality || null,
@@ -1912,6 +1918,9 @@ function initRoost() {
   };
 
   const actionPreview = $("#dragonActionPreview");
+  const growthPanel = $("#growthPanel");
+  const btnGrowDragon = $("#btnGrowDragon");
+  const growthText = growthPanel ? growthPanel.querySelector(".growth-text") : null;
 
   const ACTION_PREVIEWS = {
     feed: {
@@ -3360,6 +3369,12 @@ async function refreshDragonsFromApi() {
         favoriteActivity: raw.favorite_activity || existing.favoriteActivity || null,
         personality: raw.personality || speciesObj.personality || null,
         growthStage: raw.growth_stage || existing.growthStage || "wyrmling",
+        canGrow: !!raw.can_grow,
+        growthBlockReason: raw.growth_block_reason || null,
+        nextGrowthStage: raw.next_growth_stage || null,
+        requiredDays: raw.required_days ?? 0,
+        requiredBond: raw.required_bond ?? 0,
+        daysSinceObtained: raw.days_since_obtained ?? 0,
         img: raw.img_url || existing.img || "",
         rarity: speciesObj.rarity || existing.rarity || "Common",
         size: existing.size || "Small",
