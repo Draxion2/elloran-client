@@ -771,7 +771,20 @@
 
 /* Only when visible and ready */
 .growth-panel.ready{
-  animation:growthPulse 3s ease-in-out infinite;
+  animation:growthReveal .6s ease forwards,
+            growthPulse 3s ease-in-out infinite .6s;
+}
+
+@keyframes growthReveal{
+  0%{
+    opacity:0;
+    transform:translateY(12px) scale(.98);
+  }
+
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
 }
 
 @keyframes growthPulse{
