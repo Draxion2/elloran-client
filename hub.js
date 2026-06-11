@@ -2309,6 +2309,10 @@ function initRoost() {
         : primary;
     }
     if (kvGrowthStage) kvGrowthStage.textContent = formatGrowthStage(a.growthStage);
+    if (growthPanel) {
+      growthPanel.style.display = a.canGrow ? "flex" : "none";
+      growthPanel.classList.toggle("ready", !!a.canGrow);
+    }
     const hpTarget = pct(a.hp, a.hpMax);
     const happyTarget = clamp(a.happiness, 0, 100);
     const hungerTarget = clamp(a.hunger, 0, 100);
