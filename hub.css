@@ -717,6 +717,56 @@
 
 #btnGrowDragon{
   border-color:rgba(184,149,88,.45);
+  position:relative;
+  overflow:hidden;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background .18s ease;
+}
+
+#btnGrowDragon:hover{
+  transform:translateY(-2px);
+
+  border-color:rgba(184,149,88,.75);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(184,149,88,.28),
+      rgba(120,85,40,.18)
+    );
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.35),
+    0 0 18px rgba(184,149,88,.25);
+}
+
+#btnGrowDragon::before{
+  content:"";
+
+  position:absolute;
+  top:0;
+  left:-120%;
+
+  width:80%;
+  height:100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.18),
+      transparent
+    );
+
+  transition:left .8s ease;
+}
+
+#btnGrowDragon:hover::before{
+  left:140%;
 }
 
 /* Only when visible and ready */
