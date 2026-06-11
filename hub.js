@@ -1,4 +1,4 @@
-console.log("hub.js V-06/11/26 dragon-growth-v2 tidy-v2");
+console.log("hub.js V-06/11/26 dragon-growth-v3 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -92,6 +92,7 @@ const voyageDistance = document.getElementById("voyageDistance");
 const btnSetSail = document.getElementById("btnSetSail");
 
 let selectedDestination = null;
+if (btnGrowDragon) btnGrowDragon.onclick = growActiveDragon;
 
 mapRows.forEach((row) => {
   row.addEventListener("click", () => {
@@ -2928,6 +2929,46 @@ function initRoost() {
       return "";
     }
   }
+  async function growActiveDragon() {
+  const a = active();
+
+  if (!a) {
+    toast("No dragon selected.");
+    return;
+  }
+
+  if (!a.canGrow) {
+    toast("This dragon is not ready to grow yet.");
+    return;
+  }
+
+  const confirmed = confirm(
+    "Are you sure you want to age this dragon? This process is permanent."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const payload = await apiFetch(`/players/me/dragons/${a.id}/grow`, {
+      method: "POST"
+    });
+
+    const before = formatGrowthStage(payload.growth_stage_before || a.growthStage);
+    const after = formatGrowthStage(payload.growth_stage_after || payload.growth_stage || a.nextGrowthStage);
+
+    toast(`${a.name} has grown into a ${after}.`);
+
+    await refreshDragonsFromApiSafe();
+
+    setTemporaryDragonReaction(
+      `${a.name} seems different now — older, stronger, and more aware of the world around them.`
+    );
+  } catch (err) {
+    console.error("growActiveDragon failed", err);
+    const serverMsg = extractApiPayloadMessage(err);
+    toast(serverMsg || "Growth failed. Try again.");
+  }
+}
   async function actFeed() {
     if (cdPct("feed") > 0) return;
     const inv = STATE.inventory.find(
