@@ -772,7 +772,7 @@
 /* Only when visible and ready */
 .growth-panel.ready{
   animation:growthReveal .6s ease forwards,
-            growthPulse 3s ease-in-out infinite .6s;
+            growthPulse 1.5s ease-in-out infinite .6s;
 }
 
 @keyframes growthReveal{
