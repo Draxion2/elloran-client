@@ -762,7 +762,7 @@
       transparent
     );
 
-  transition:left .8s ease;
+  transition:left 1.5s ease;
 }
 
 #btnGrowDragon:hover::before{
@@ -771,7 +771,7 @@
 
 /* Only when visible and ready */
 .growth-panel.ready{
-  animation:growthPulse 3s ease-in-out infinite;
+  animation:growthPulse 1s ease-in-out infinite;
 }
 
 @keyframes growthPulse{
