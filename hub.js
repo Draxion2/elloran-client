@@ -1,4 +1,4 @@
-console.log("hub.js V-06/11/26 dragon-growth-v3 tidy-v2");
+console.log("hub.js V-06/11/26 dragon-growth-v4 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2954,26 +2954,88 @@ function initRoost() {
 
   if (!confirmed) return;
 
-  try {
-    const payload = await apiFetch(`/players/me/dragons/${a.id}/grow`, {
-      method: "POST"
-    });
+  const ceremony = document.getElementById("growthCeremony");
+  const small = document.getElementById("growthCeremonySmall");
+  const title = document.getElementById("growthCeremonyTitle");
+  const text = document.getElementById("growthCeremonyText");
+  const btnContinue = document.getElementById("btnGrowthContinue");
 
-    const before = formatGrowthStage(payload.growth_stage_before || a.growthStage);
-    const after = formatGrowthStage(payload.growth_stage_after || payload.growth_stage || a.nextGrowthStage);
-
-    toast(`${a.name} has grown into a ${after}.`);
-
-    await refreshDragonsFromApiSafe();
-
-    setTemporaryDragonReaction(
-      `${a.name} seems different now — older, stronger, and more aware of the world around them.`
-    );
-  } catch (err) {
-    console.error("growActiveDragon failed", err);
-    const serverMsg = extractApiPayloadMessage(err);
-    toast(serverMsg || "Growth failed. Try again.");
+  if (!ceremony || !small || !title || !text || !btnContinue) {
+    toast("Growth ceremony missing.");
+    return;
   }
+
+  btnContinue.style.display = "none";
+  title.classList.remove("show");
+  text.classList.remove("show");
+
+  small.textContent = "Your dragon is changing...";
+  title.textContent = "";
+  text.textContent = "Something ancient stirs within your dragon.";
+
+  ceremony.classList.add("show");
+
+  setTimeout(() => {
+    text.classList.add("show");
+  }, 800);
+
+  setTimeout(() => {
+    text.classList.remove("show");
+
+    setTimeout(() => {
+      text.textContent = `${a.name} rises, trembling with new strength.`;
+      text.classList.add("show");
+    }, 500);
+  }, 2600);
+
+  let payload = null;
+
+  setTimeout(async () => {
+    try {
+      payload = await apiFetch(`/players/me/dragons/${a.id}/grow`, {
+        method: "POST"
+      });
+
+      const after = formatGrowthStage(
+        payload.growth_stage_after ||
+          payload.growth_stage ||
+          a.nextGrowthStage
+      );
+
+      title.textContent = after;
+      title.classList.add("show");
+
+      text.classList.remove("show");
+
+      setTimeout(() => {
+        text.textContent = `${a.name} has matured into a ${after}.`;
+        text.classList.add("show");
+        btnContinue.style.display = "inline-block";
+      }, 500);
+
+      await refreshDragonsFromApiSafe();
+    } catch (err) {
+      console.error("growActiveDragon failed", err);
+      const serverMsg = extractApiPayloadMessage(err);
+
+      text.classList.remove("show");
+
+      setTimeout(() => {
+        title.textContent = "Growth Failed";
+        title.classList.add("show");
+        text.textContent = serverMsg || "Growth failed. Try again.";
+        text.classList.add("show");
+        btnContinue.style.display = "inline-block";
+      }, 500);
+    }
+  }, 5200);
+
+  btnContinue.onclick = () => {
+    ceremony.classList.remove("show");
+    btnContinue.style.display = "none";
+    title.classList.remove("show");
+    text.classList.remove("show");
+  };
 }
   async function actFeed() {
     if (cdPct("feed") > 0) return;
