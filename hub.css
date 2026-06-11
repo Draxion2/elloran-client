@@ -762,7 +762,7 @@
       transparent
     );
 
-  transition:left 5s ease;
+  transition:left 3.5s ease;
 }
 
 #btnGrowDragon:hover::before{
