@@ -92,7 +92,6 @@ const voyageDistance = document.getElementById("voyageDistance");
 const btnSetSail = document.getElementById("btnSetSail");
 
 let selectedDestination = null;
-if (btnGrowDragon) btnGrowDragon.onclick = growActiveDragon;
 
 mapRows.forEach((row) => {
   row.addEventListener("click", () => {
@@ -2309,7 +2308,14 @@ function initRoost() {
         ? `${primary} / ${secondary}`
         : primary;
     }
-    if (kvGrowthStage) kvGrowthStage.textContent = formatGrowthStage(a.growthStage);
+    if (kvGrowthStage) {
+      const daysOld = Number(a.daysSinceObtained ?? 0);
+      const ageName = formatGrowthStage(a.growthStage);
+      kvGrowthStage.textContent =
+        daysOld === 1
+          ? `${ageName} — 1 day old`
+          : `${ageName} — ${daysOld} days old`;
+}
     if (growthPanel) {
       growthPanel.style.display = a.canGrow ? "flex" : "none";
       growthPanel.classList.toggle("ready", !!a.canGrow);
@@ -3262,6 +3268,7 @@ function initRoost() {
   if (btnGroom) btnGroom.onclick = actGroom;
   if (btnTrain) btnTrain.onclick = actTrain;
   if (btnRest) btnRest.onclick = actRest;
+  if (btnGrowDragon) btnGrowDragon.onclick = growActiveDragon;
   if (btnSetActive)
     btnSetActive.onclick = () => {
       const a = active();
