@@ -1,4 +1,4 @@
-/* hub.css V-06/11/26 dragon-growth-1 */
+/* hub.css V-06/11/26 dragon-growth-2 */
 
 :root {
       --ink: #f6ead1;
@@ -685,6 +685,134 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+/* =========================
+   Dragon Growth Ceremony
+========================= */
+
+.growth-ceremony{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(5,8,14,.88);
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+
+  transition:
+    opacity .8s ease,
+    visibility .8s ease;
+}
+
+.growth-ceremony.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.growth-aura{
+  position:absolute;
+  width:420px;
+  height:420px;
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,215,120,.35) 0%,
+      rgba(255,170,60,.15) 45%,
+      transparent 75%
+    );
+
+  animation:growthPulse 3s ease-in-out infinite;
+}
+
+.growth-card{
+  position:relative;
+  z-index:2;
+
+  width:min(90vw,600px);
+
+  text-align:center;
+
+  padding:32px;
+
+  border:1px solid rgba(255,215,120,.25);
+  border-radius:14px;
+
+  background:rgba(15,20,30,.85);
+  backdrop-filter:blur(4px);
+
+  box-shadow:
+    0 0 40px rgba(255,180,60,.15);
+}
+
+.growth-small{
+  color:#c9b47a;
+  font-size:.85rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.growth-title{
+  font-size:2rem;
+  font-weight:700;
+  color:#f7e0a2;
+
+  opacity:0;
+  transform:translateY(10px);
+
+  transition:
+    opacity .8s ease,
+    transform .8s ease;
+}
+
+.growth-title.show{
+  opacity:1;
+  transform:none;
+}
+
+.growth-text-main{
+  margin-top:18px;
+  color:#d9d9d9;
+  line-height:1.6;
+  min-height:60px;
+
+  opacity:0;
+  transition:opacity .8s ease;
+}
+
+.growth-text-main.show{
+  opacity:1;
+}
+
+#btnGrowthContinue{
+  margin-top:20px;
+}
+
+@keyframes growthPulse{
+  0%{
+    transform:scale(.92);
+    opacity:.45;
+  }
+
+  50%{
+    transform:scale(1.08);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(.92);
+    opacity:.45;
+  }
 }
 
 /* ===== Dragon Growth Panel ===== */
