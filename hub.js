@@ -1,4 +1,4 @@
-console.log("hub.js V-06/11/26 dragon-growth-v4 tidy-v2");
+console.log("hub.js V-06/11/26 dragon-growth-v5 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -82,6 +82,37 @@ const SEA_DESTINATIONS = {
       "Dark waters, dangerous reefs, and ambitious captains surround the distant reaches of Tetri."
   }
 };
+
+const GROWTH_SFX = {
+  buildup: "YOUR_BUILDUP_SFX_URL_HERE",
+  reveal: "YOUR_REVEAL_BLAST_SFX_URL_HERE"
+};
+
+let growthBuildupAudio = null;
+
+function playGrowthBuildupSfx(){
+  if (!GROWTH_SFX.buildup) return;
+
+  growthBuildupAudio = new Audio(GROWTH_SFX.buildup);
+  growthBuildupAudio.volume = 0.55;
+  growthBuildupAudio.loop = true;
+  growthBuildupAudio.play().catch(() => {});
+}
+
+function stopGrowthBuildupSfx(){
+  if (!growthBuildupAudio) return;
+  growthBuildupAudio.pause();
+  growthBuildupAudio.currentTime = 0;
+  growthBuildupAudio = null;
+}
+
+function playGrowthRevealSfx(){
+  if (!GROWTH_SFX.reveal) return;
+
+  const sfx = new Audio(GROWTH_SFX.reveal);
+  sfx.volume = 0.75;
+  sfx.play().catch(() => {});
+}
 
 const mapRows = document.querySelectorAll(".map-row");
 
@@ -2974,6 +3005,7 @@ function initRoost() {
   text.textContent = "Something ancient stirs within your dragon.";
 
   ceremony.classList.add("show");
+  playGrowthBuildupSfx();
 
   setTimeout(() => {
     text.classList.add("show");
@@ -3002,6 +3034,8 @@ function initRoost() {
           a.nextGrowthStage
       );
 
+      stopGrowthBuildupSfx();
+      playGrowthRevealSfx();
       title.textContent = after;
       title.classList.add("show");
 
@@ -3021,6 +3055,7 @@ function initRoost() {
       text.classList.remove("show");
 
       setTimeout(() => {
+        stopGrowthBuildupSfx();
         title.textContent = "Growth Failed";
         title.classList.add("show");
         text.textContent = serverMsg || "Growth failed. Try again.";
@@ -3028,7 +3063,7 @@ function initRoost() {
         btnContinue.style.display = "inline-block";
       }, 500);
     }
-  }, 5200);
+  }, 7200);
 
   btnContinue.onclick = () => {
     ceremony.classList.remove("show");
