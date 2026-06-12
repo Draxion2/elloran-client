@@ -1,4 +1,4 @@
-console.log("hub.js V-06/11/26 dragon-growth-v7 tidy-v2");
+console.log("hub.js V-06/12/26 dragon-growth-v8 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -165,6 +165,43 @@ function startHubAmbienceOnce() {
     console.warn("Hub ambience failed:", err);
     hubAmbienceStarted = false;
   });
+}
+
+const GROWTH_STAGE_IMAGES = {
+  SCYTHE_CLAW_MALE_RED: {
+    wyrmling: "WYRMLING_IMAGE_URL_HERE",
+    juvenile: "JUVENILE_IMAGE_URL_HERE",
+    adult: "ADULT_IMAGE_URL_HERE",
+    elder: "ELDER_IMAGE_URL_HERE"
+  }
+};
+
+function getDragonGrowthImage(dragon, stage) {
+  const key =
+    dragon.skinCode ||
+    dragon.skin_code ||
+    dragon.code;
+
+  return GROWTH_STAGE_IMAGES[key]?.[String(stage || "").toLowerCase()] || dragon.img || "";
+}
+
+function swapGrowthCeremonyImage(dragon, stage) {
+  const img = document.getElementById("growthCeremonyDragon");
+  if (!img) return;
+
+  const url = getDragonGrowthImage(dragon, stage);
+  if (!url) return;
+
+  img.classList.remove("show", "flash");
+
+  setTimeout(() => {
+    img.src = url;
+    img.classList.add("flash");
+
+    setTimeout(() => {
+      img.classList.add("show");
+    }, 120);
+  }, 120);
 }
 
 function toast(msg) {
@@ -3034,6 +3071,7 @@ function initRoost() {
 
   ceremony.classList.add("show");
   playGrowthBuildupSfx();
+  swapGrowthCeremonyImage(a, a.growthStage);
 
   setTimeout(() => {
     text.classList.add("show");
@@ -3061,6 +3099,13 @@ function initRoost() {
           payload.growth_stage ||
           a.nextGrowthStage
       );
+
+      const afterRaw =
+        payload.growth_stage_after ||
+          payload.growth_stage ||
+          a.nextGrowthStage;
+
+      swapGrowthCeremonyImage(a, afterRaw);
 
       stopGrowthBuildupSfx();
       playGrowthRevealSfx();
