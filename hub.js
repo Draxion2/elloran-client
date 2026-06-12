@@ -1,4 +1,4 @@
-console.log("hub.js V-06/11/26 dragon-growth-v5 tidy-v2");
+console.log("hub.js V-06/11/26 dragon-growth-v6 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -84,8 +84,8 @@ const SEA_DESTINATIONS = {
 };
 
 const GROWTH_SFX = {
-  buildup: "YOUR_BUILDUP_SFX_URL_HERE",
-  reveal: "YOUR_REVEAL_BLAST_SFX_URL_HERE"
+  buildup: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_buildup.mp3",
+  reveal: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_reveal.mp3"
 };
 
 let growthBuildupAudio = null;
