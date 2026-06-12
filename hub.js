@@ -1,4 +1,4 @@
-console.log("hub.js V-06/11/26 dragon-growth-v6 tidy-v2");
+console.log("hub.js V-06/11/26 dragon-growth-v7 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2966,6 +2966,37 @@ function initRoost() {
       return "";
     }
   }
+  function showGrowthConfirmModal(dragon){
+  return new Promise((resolve) => {
+    const modal = document.getElementById("growthConfirmModal");
+    const btnCancel = document.getElementById("btnGrowthCancel");
+    const btnConfirm = document.getElementById("btnGrowthConfirm");
+
+    if (!modal || !btnCancel || !btnConfirm) {
+      resolve(false);
+      return;
+    }
+
+    modal.classList.add("show");
+
+    const cleanup = (result) => {
+      modal.classList.remove("show");
+
+      btnCancel.onclick = null;
+      btnConfirm.onclick = null;
+      modal.onclick = null;
+
+      resolve(result);
+    };
+
+    btnCancel.onclick = () => cleanup(false);
+    btnConfirm.onclick = () => cleanup(true);
+
+    modal.onclick = (e) => {
+      if (e.target === modal) cleanup(false);
+    };
+  });
+}
   async function growActiveDragon() {
   const a = active();
 
@@ -2979,10 +3010,7 @@ function initRoost() {
     return;
   }
 
-  const confirmed = confirm(
-    "Are you sure you want to age this dragon? This process is permanent."
-  );
-
+  const confirmed = await showGrowthConfirmModal(a);
   if (!confirmed) return;
 
   const ceremony = document.getElementById("growthCeremony");
