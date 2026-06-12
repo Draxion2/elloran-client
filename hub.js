@@ -169,10 +169,10 @@ function startHubAmbienceOnce() {
 
 const GROWTH_STAGE_IMAGES = {
   SCYTHE_CLAW_MALE_RED: {
-    wyrmling: "WYRMLING_IMAGE_URL_HERE",
-    juvenile: "JUVENILE_IMAGE_URL_HERE",
-    adult: "ADULT_IMAGE_URL_HERE",
-    elder: "ELDER_IMAGE_URL_HERE"
+    wyrmling: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_wyrmling.png",
+    juvenile: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_juvenile.png",
+    adult: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_wyrmling.png",
+    elder: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_elder.png"
   }
 };
 
