@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-7 */
+/* hub.css V-06/13/26 dragon-growth-reveal-8 */
 
 :root {
       --ink: #f6ead1;
@@ -1042,9 +1042,9 @@
   background:
     linear-gradient(
       180deg,
-      rgba(184,149,88,.10),
-      rgba(0,0,0,.15)
-    );
+      rgba(212, 175, 110, .28),
+      rgba(92, 62, 26, .22)
+    )
 
   text-align:center;
 }
@@ -1129,12 +1129,16 @@
 
 @keyframes growthPulse{
   0%,100%{
-    box-shadow:0 0 0 rgba(184,149,88,0);
+    box-shadow:
+      0 0 0 rgba(0,0,0,0),
+      0 0 12px rgba(212,175,110,.25);
   }
 
   50%{
     box-shadow:
-      0 0 18px rgba(184,149,88,.25);
+      0 0 18px rgba(212,175,110,.45),
+      0 0 36px rgba(184,149,88,.35),
+      0 0 60px rgba(120,75,25,.20);
   }
 }
 
