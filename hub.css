@@ -1053,6 +1053,7 @@
   color:#f0ddb2;
   font-size:13px;
   line-height:1.4;
+  text-transform:uppercase;
 }
 
 #btnGrowDragon{
@@ -1112,7 +1113,7 @@
 /* Only when visible and ready */
 .growth-panel.ready{
   animation:growthReveal .6s ease forwards,
-            growthPulse 1.5s ease-in-out infinite .6s;
+            growthPulse 3s ease-in-out infinite 1.2s;
 }
 
 @keyframes growthReveal{
