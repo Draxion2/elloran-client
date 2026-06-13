@@ -859,6 +859,10 @@
   filter:drop-shadow(0 18px 26px rgba(0,0,0,.75));
 }
 
+#growthCeremonyDragon {
+    height: 200px;
+}
+
 .growth-small{
   color:#c9b47a;
   font-size:.95rem;
