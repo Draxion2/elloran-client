@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-6 */
+/* hub.css V-06/13/26 dragon-growth-reveal-7 */
 
 :root {
       --ink: #f6ead1;
@@ -859,58 +859,75 @@
   filter:drop-shadow(0 18px 26px rgba(0,0,0,.75));
 }
 
-.growth-dragon-img.awakening{
-  animation: dragonAwaken 1.8s ease-in-out infinite;
+.growth-dragon-img.growth-awakening{
+  animation: dragonGrowthAwaken 1.8s ease-in-out infinite;
 }
 
-.growth-dragon-img.reveal{
-  animation: dragonReveal .8s ease forwards;
+.growth-dragon-img.growth-transforming{
+  animation: dragonGrowthTransform .9s ease-in-out forwards;
 }
 
-@keyframes dragonAwaken {
+.growth-dragon-img.growth-reveal{
+  animation: dragonGrowthReveal .9s ease-out forwards;
+}
+
+@keyframes dragonGrowthAwaken{
   0%,100%{
     filter:
+      drop-shadow(0 18px 26px rgba(0,0,0,.75))
       drop-shadow(0 0 0 rgba(255,215,120,0));
   }
 
   50%{
     filter:
-      drop-shadow(0 0 20px rgba(255,215,120,.45))
-      drop-shadow(0 0 40px rgba(255,180,60,.25));
+      brightness(1.18)
+      drop-shadow(0 18px 26px rgba(0,0,0,.75))
+      drop-shadow(0 0 22px rgba(255,215,120,.55))
+      drop-shadow(0 0 48px rgba(255,170,60,.28));
   }
 }
 
-@keyframes dragonTransform {
+@keyframes dragonGrowthTransform{
   0%{
     transform:scale(1);
     filter:
-      brightness(1);
+      brightness(1.1)
+      drop-shadow(0 18px 26px rgba(0,0,0,.75));
   }
 
-  50%{
+  55%{
     transform:scale(1.08);
     filter:
-      brightness(1.8)
-      drop-shadow(0 0 30px rgba(255,230,180,.8))
-      drop-shadow(0 0 80px rgba(255,200,80,.5));
+      brightness(3)
+      saturate(.25)
+      drop-shadow(0 0 34px rgba(255,245,210,.95))
+      drop-shadow(0 0 86px rgba(255,190,80,.65));
   }
 
   100%{
-    transform:scale(1);
+    transform:scale(1.02);
     filter:
-      brightness(1);
+      brightness(1.4)
+      drop-shadow(0 18px 26px rgba(0,0,0,.75))
+      drop-shadow(0 0 32px rgba(255,215,120,.45));
   }
 }
 
-@keyframes dragonReveal {
+@keyframes dragonGrowthReveal{
   0%{
-    opacity:0;
-    transform:scale(.92);
+    opacity:.35;
+    transform:scale(.94);
+    filter:
+      brightness(2.2)
+      drop-shadow(0 0 40px rgba(255,235,190,.75));
   }
 
   100%{
     opacity:1;
     transform:scale(1);
+    filter:
+      drop-shadow(0 18px 26px rgba(0,0,0,.75))
+      drop-shadow(0 0 18px rgba(255,200,100,.18));
   }
 }
 
