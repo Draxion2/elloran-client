@@ -1,4 +1,4 @@
-console.log("hub.js V-06/12/26 dragon-growth-v8 tidy-v2");
+console.log("hub.js V-06/13/26 dragon-growth-v9 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -192,11 +192,17 @@ function swapGrowthCeremonyImage(dragon, stage) {
   const url = getDragonGrowthImage(dragon, stage);
   if (!url) return;
 
-  img.classList.remove("show", "flash");
+  img.classList.remove(
+    "show",
+    "flash",
+    "growth-awakening",
+    "growth-transforming",
+    "growth-reveal"
+  );
 
   setTimeout(() => {
     img.src = url;
-    img.classList.add("flash");
+    img.classList.add("flash", "growth-reveal");
 
     setTimeout(() => {
       img.classList.add("show");
@@ -3072,6 +3078,11 @@ function initRoost() {
   ceremony.classList.add("show");
   playGrowthBuildupSfx();
   swapGrowthCeremonyImage(a, a.growthStage);
+  const growthImg = document.getElementById("growthCeremonyDragon");
+
+  setTimeout(() => {
+    growthImg?.classList.add("growth-awakening");
+  }, 350);
 
   setTimeout(() => {
     text.classList.add("show");
@@ -3105,7 +3116,11 @@ function initRoost() {
           payload.growth_stage ||
           a.nextGrowthStage;
 
-      swapGrowthCeremonyImage(a, afterRaw);
+      growthImg?.classList.remove("growth-awakening");
+      growthImg?.classList.add("growth-transforming");
+      setTimeout(() => {
+        swapGrowthCeremonyImage(a, afterRaw);
+      }, 450);
 
       stopGrowthBuildupSfx();
       playGrowthRevealSfx();
@@ -3118,6 +3133,9 @@ function initRoost() {
         text.textContent = `${a.name} has matured into a ${after}.`;
         text.classList.add("show");
         btnContinue.style.display = "inline-block";
+
+        growthImg?.classList.remove("growth-transforming");
+        growthImg?.classList.add("growth-reveal");
       }, 500);
 
       await refreshDragonsFromApiSafe();
@@ -3139,6 +3157,14 @@ function initRoost() {
   }, 7200);
 
   btnContinue.onclick = () => {
+    const growthImg = document.getElementById("growthCeremonyDragon");
+    growthImg?.classList.remove(
+      "show",
+      "flash",
+      "growth-awakening",
+      "growth-transforming",
+      "growth-reveal"
+    );
     ceremony.classList.remove("show");
     btnContinue.style.display = "none";
     title.classList.remove("show");
