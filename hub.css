@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-4 */
+/* hub.css V-06/13/26 dragon-growth-reveal-5 */
 
 :root {
       --ink: #f6ead1;
@@ -1149,7 +1149,7 @@
     .dragon-portrait {
       width: 210px;
       height: 210px;
-      background: #0b0e13 center/cover no-repeat;
+      background: #0b0e13 center/contain no-repeat;
       border-radius: 12px;
       position: relative;
       transition: transform .15s ease, filter .2s ease
@@ -1492,7 +1492,7 @@
       width: 68px;
       height: 68px;
       border-radius: 12px;
-      background: #0b0e13 center/cover no-repeat;
+      background: #0b0e13 center/contain no-repeat;
       border: 1px solid var(--line)
     }
 
@@ -1524,7 +1524,7 @@
     .dcard .ph {
       height: 120px;
       border-radius: 8px;
-      background: #0b0e13 center/cover no-repeat
+      background: #0b0e13 center/contain no-repeat
     }
 
     .dcard .meta {
