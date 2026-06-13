@@ -1040,11 +1040,11 @@
   border-radius:12px;
 
   background:
-    linear-gradient(
-      180deg,
-      rgba(212, 175, 110, .28),
-      rgba(92, 62, 26, .22)
-    )
+  linear-gradient(
+    180deg,
+    rgba(212, 175, 110, .28),
+    rgba(92, 62, 26, .22)
+  );
 
   text-align:center;
 }
