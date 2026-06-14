@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v10 tidy-v2");
+console.log("hub.js V-06/14/26 dragon-growth-v10 tidy-v3");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -84,13 +84,15 @@ const SEA_DESTINATIONS = {
 };
 
 const GROWTH_SFX = {
-  buildup: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_buildup.mp3",
-  reveal: "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_reveal.mp3"
+  buildup:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_buildup.mp3",
+  reveal:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_reveal.mp3"
 };
 
 let growthBuildupAudio = null;
 
-function playGrowthBuildupSfx(){
+function playGrowthBuildupSfx() {
   if (!GROWTH_SFX.buildup) return;
 
   growthBuildupAudio = new Audio(GROWTH_SFX.buildup);
@@ -99,14 +101,14 @@ function playGrowthBuildupSfx(){
   growthBuildupAudio.play().catch(() => {});
 }
 
-function stopGrowthBuildupSfx(){
+function stopGrowthBuildupSfx() {
   if (!growthBuildupAudio) return;
   growthBuildupAudio.pause();
   growthBuildupAudio.currentTime = 0;
   growthBuildupAudio = null;
 }
 
-function playGrowthRevealSfx(){
+function playGrowthRevealSfx() {
   if (!GROWTH_SFX.reveal) return;
 
   const sfx = new Audio(GROWTH_SFX.reveal);
@@ -169,20 +171,25 @@ function startHubAmbienceOnce() {
 
 const GROWTH_STAGE_IMAGES = {
   SCYTHE_CLAW_MALE_RED: {
-    wyrmling: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_wyrmling.png",
-    juvenile: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_juvenile.png",
-    adult: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_wyrmling.png",
-    elder: "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_elder.png"
+    wyrmling:
+      "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_wyrmling.png",
+    juvenile:
+      "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_juvenile.png",
+    adult:
+      "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_wyrmling.png",
+    elder:
+      "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/dragon_testing_elder.png"
   }
 };
 
 function getDragonGrowthImage(dragon, stage) {
-  const key =
-    dragon.skinCode ||
-    dragon.skin_code ||
-    dragon.code;
+  const key = dragon.skinCode || dragon.skin_code || dragon.code;
 
-  return GROWTH_STAGE_IMAGES[key]?.[String(stage || "").toLowerCase()] || dragon.img || "";
+  return (
+    GROWTH_STAGE_IMAGES[key]?.[String(stage || "").toLowerCase()] ||
+    dragon.img ||
+    ""
+  );
 }
 
 function swapGrowthCeremonyImage(dragon, stage) {
@@ -1800,8 +1807,10 @@ function getDragonActionReaction(actionKey, d, fallbackText) {
   const traitCode = d.trait?.code;
   const traitReaction = DRAGON_ACTION_REACTIONS[actionKey]?.[traitCode];
 
-  return (traitReaction || fallbackText || "")
-    .replaceAll("{name}", d.name || "Your dragon");
+  return (traitReaction || fallbackText || "").replaceAll(
+    "{name}",
+    d.name || "Your dragon"
+  );
 }
 
 function pickDragonIdleLine(d) {
@@ -1832,7 +1841,7 @@ function pickDragonIdleLine(d) {
     const bondPool = DRAGON_BOND_IDLE_LINES[bondStage];
 
     // 35% chance to show relationship behavior when not hungry/tired.
-    if (bondPool && Math.random() < 0.60) {
+    if (bondPool && Math.random() < 0.6) {
       return bondPool[Math.floor(Math.random() * bondPool.length)].replaceAll(
         "{name}",
         d.name || "Your dragon"
@@ -1998,7 +2007,9 @@ function initRoost() {
   const actionPreview = $("#dragonActionPreview");
   const growthPanel = $("#growthPanel");
   const btnGrowDragon = $("#btnGrowDragon");
-  const growthText = growthPanel ? growthPanel.querySelector(".growth-text") : null;
+  const growthText = growthPanel
+    ? growthPanel.querySelector(".growth-text")
+    : null;
 
   const ACTION_PREVIEWS = {
     feed: {
@@ -2240,17 +2251,22 @@ function initRoost() {
   function recomputeHappiness(d) {
     d.happiness = deriveHappiness(d.mood, d.hunger);
   }
-  function formatGrowthStage(stage){
-  if (!stage) return "—";
+  function formatGrowthStage(stage) {
+    if (!stage) return "—";
 
-  switch(String(stage).toLowerCase()){
-    case "wyrmling": return "Wyrmling";
-    case "juvenile": return "Juvenile";
-    case "adult": return "Adult";
-    case "elder": return "Elder";
-    default: return stage;
+    switch (String(stage).toLowerCase()) {
+      case "wyrmling":
+        return "Wyrmling";
+      case "juvenile":
+        return "Juvenile";
+      case "adult":
+        return "Adult";
+      case "elder":
+        return "Elder";
+      default:
+        return stage;
+    }
   }
-}
   HUB.renderActive = function () {
     const a = active();
     // ✅ EMPTY STATE: no active dragon selected
@@ -2393,7 +2409,7 @@ function initRoost() {
         daysOld === 1
           ? `${ageName} — 1 day old`
           : `${ageName} — ${daysOld} days old`;
-}
+    }
     if (growthPanel) {
       growthPanel.style.display = a.canGrow ? "flex" : "none";
       growthPanel.classList.toggle("ready", !!a.canGrow);
@@ -3025,168 +3041,168 @@ function initRoost() {
       return "";
     }
   }
-  function showGrowthConfirmModal(dragon){
-  return new Promise((resolve) => {
-    const modal = document.getElementById("growthConfirmModal");
-    const btnCancel = document.getElementById("btnGrowthCancel");
-    const btnConfirm = document.getElementById("btnGrowthConfirm");
+  function showGrowthConfirmModal(dragon) {
+    return new Promise((resolve) => {
+      const modal = document.getElementById("growthConfirmModal");
+      const btnCancel = document.getElementById("btnGrowthCancel");
+      const btnConfirm = document.getElementById("btnGrowthConfirm");
 
-    if (!modal || !btnCancel || !btnConfirm) {
-      resolve(false);
+      if (!modal || !btnCancel || !btnConfirm) {
+        resolve(false);
+        return;
+      }
+
+      modal.classList.add("show");
+
+      const cleanup = (result) => {
+        modal.classList.remove("show");
+
+        btnCancel.onclick = null;
+        btnConfirm.onclick = null;
+        modal.onclick = null;
+
+        resolve(result);
+      };
+
+      btnCancel.onclick = () => cleanup(false);
+      btnConfirm.onclick = () => cleanup(true);
+
+      modal.onclick = (e) => {
+        if (e.target === modal) cleanup(false);
+      };
+    });
+  }
+  async function growActiveDragon() {
+    const a = active();
+
+    if (!a) {
+      toast("No dragon selected.");
       return;
     }
 
-    modal.classList.add("show");
-
-    const cleanup = (result) => {
-      modal.classList.remove("show");
-
-      btnCancel.onclick = null;
-      btnConfirm.onclick = null;
-      modal.onclick = null;
-
-      resolve(result);
-    };
-
-    btnCancel.onclick = () => cleanup(false);
-    btnConfirm.onclick = () => cleanup(true);
-
-    modal.onclick = (e) => {
-      if (e.target === modal) cleanup(false);
-    };
-  });
-}
-  async function growActiveDragon() {
-  const a = active();
-
-  if (!a) {
-    toast("No dragon selected.");
-    return;
-  }
-
-  if (!a.canGrow) {
-    toast("This dragon is not ready to grow yet.");
-    return;
-  }
-
-  const confirmed = await showGrowthConfirmModal(a);
-  if (!confirmed) return;
-
-  const ceremony = document.getElementById("growthCeremony");
-  const small = document.getElementById("growthCeremonySmall");
-  const title = document.getElementById("growthCeremonyTitle");
-  const text = document.getElementById("growthCeremonyText");
-  const btnContinue = document.getElementById("btnGrowthContinue");
-
-  if (!ceremony || !small || !title || !text || !btnContinue) {
-    toast("Growth ceremony missing.");
-    return;
-  }
-
-  btnContinue.style.display = "none";
-  title.classList.remove("show");
-  text.classList.remove("show");
-
-  small.textContent = "Your dragon is changing...";
-  title.textContent = "";
-  text.textContent = "Something ancient stirs within your dragon.";
-
-  ceremony.classList.add("show");
-  playGrowthBuildupSfx();
-  swapGrowthCeremonyImage(a, a.growthStage);
-  const growthImg = document.getElementById("growthCeremonyDragon");
-
-  setTimeout(() => {
-    growthImg?.classList.add("growth-awakening");
-  }, 350);
-
-  setTimeout(() => {
-    text.classList.add("show");
-  }, 800);
-
-  setTimeout(() => {
-    text.classList.remove("show");
-
-    setTimeout(() => {
-      text.textContent = `${a.name} rises, trembling with new strength.`;
-      text.classList.add("show");
-    }, 500);
-  }, 2600);
-
-  let payload = null;
-
-  setTimeout(async () => {
-    try {
-      payload = await apiFetch(`/players/me/dragons/${a.id}/grow`, {
-        method: "POST"
-      });
-
-      const after = formatGrowthStage(
-        payload.growth_stage_after ||
-          payload.growth_stage ||
-          a.nextGrowthStage
-      );
-
-      const afterRaw =
-        payload.growth_stage_after ||
-          payload.growth_stage ||
-          a.nextGrowthStage;
-
-      growthImg?.classList.remove("growth-awakening");
-      growthImg?.classList.add("growth-transforming");
-      setTimeout(() => {
-        swapGrowthCeremonyImage(a, afterRaw);
-      }, 450);
-
-      stopGrowthBuildupSfx();
-      playGrowthRevealSfx();
-      title.textContent = after;
-      title.classList.add("show");
-
-      text.classList.remove("show");
-
-      setTimeout(() => {
-        text.textContent = `${a.name} has matured into a ${after}.`;
-        text.classList.add("show");
-        btnContinue.style.display = "inline-block";
-
-        growthImg?.classList.remove("growth-transforming");
-        growthImg?.classList.add("growth-reveal");
-      }, 500);
-
-      await refreshDragonsFromApiSafe();
-    } catch (err) {
-      console.error("growActiveDragon failed", err);
-      const serverMsg = extractApiPayloadMessage(err);
-
-      text.classList.remove("show");
-
-      setTimeout(() => {
-        stopGrowthBuildupSfx();
-        title.textContent = "Growth Failed";
-        title.classList.add("show");
-        text.textContent = serverMsg || "Growth failed. Try again.";
-        text.classList.add("show");
-        btnContinue.style.display = "inline-block";
-      }, 500);
+    if (!a.canGrow) {
+      toast("This dragon is not ready to grow yet.");
+      return;
     }
-  }, 7200);
 
-  btnContinue.onclick = () => {
-    const growthImg = document.getElementById("growthCeremonyDragon");
-    growthImg?.classList.remove(
-      "show",
-      "flash",
-      "growth-awakening",
-      "growth-transforming",
-      "growth-reveal"
-    );
-    ceremony.classList.remove("show");
+    const confirmed = await showGrowthConfirmModal(a);
+    if (!confirmed) return;
+
+    const ceremony = document.getElementById("growthCeremony");
+    const small = document.getElementById("growthCeremonySmall");
+    const title = document.getElementById("growthCeremonyTitle");
+    const text = document.getElementById("growthCeremonyText");
+    const btnContinue = document.getElementById("btnGrowthContinue");
+
+    if (!ceremony || !small || !title || !text || !btnContinue) {
+      toast("Growth ceremony missing.");
+      return;
+    }
+
     btnContinue.style.display = "none";
     title.classList.remove("show");
     text.classList.remove("show");
-  };
-}
+
+    small.textContent = "Your dragon is changing...";
+    title.textContent = "";
+    text.textContent = "Something ancient stirs within your dragon.";
+
+    ceremony.classList.add("show");
+    playGrowthBuildupSfx();
+    swapGrowthCeremonyImage(a, a.growthStage);
+    const growthImg = document.getElementById("growthCeremonyDragon");
+
+    setTimeout(() => {
+      growthImg?.classList.add("growth-awakening");
+    }, 350);
+
+    setTimeout(() => {
+      text.classList.add("show");
+    }, 800);
+
+    setTimeout(() => {
+      text.classList.remove("show");
+
+      setTimeout(() => {
+        text.textContent = `${a.name} rises, trembling with new strength.`;
+        text.classList.add("show");
+      }, 500);
+    }, 2600);
+
+    let payload = null;
+
+    setTimeout(async () => {
+      try {
+        payload = await apiFetch(`/players/me/dragons/${a.id}/grow`, {
+          method: "POST"
+        });
+
+        const after = formatGrowthStage(
+          payload.growth_stage_after ||
+            payload.growth_stage ||
+            a.nextGrowthStage
+        );
+
+        const afterRaw =
+          payload.growth_stage_after ||
+          payload.growth_stage ||
+          a.nextGrowthStage;
+
+        growthImg?.classList.remove("growth-awakening");
+        growthImg?.classList.add("growth-transforming");
+        setTimeout(() => {
+          swapGrowthCeremonyImage(a, afterRaw);
+        }, 450);
+
+        stopGrowthBuildupSfx();
+        playGrowthRevealSfx();
+        title.textContent = after;
+        title.classList.add("show");
+
+        text.classList.remove("show");
+
+        setTimeout(() => {
+          text.textContent = `${a.name} has matured into a ${after}.`;
+          text.classList.add("show");
+          btnContinue.style.display = "inline-block";
+
+          growthImg?.classList.remove("growth-transforming");
+          growthImg?.classList.add("growth-reveal");
+        }, 500);
+
+        await refreshDragonsFromApiSafe();
+      } catch (err) {
+        console.error("growActiveDragon failed", err);
+        const serverMsg = extractApiPayloadMessage(err);
+
+        text.classList.remove("show");
+
+        setTimeout(() => {
+          stopGrowthBuildupSfx();
+          title.textContent = "Growth Failed";
+          title.classList.add("show");
+          text.textContent = serverMsg || "Growth failed. Try again.";
+          text.classList.add("show");
+          btnContinue.style.display = "inline-block";
+        }, 500);
+      }
+    }, 7200);
+
+    btnContinue.onclick = () => {
+      const growthImg = document.getElementById("growthCeremonyDragon");
+      growthImg?.classList.remove(
+        "show",
+        "flash",
+        "growth-awakening",
+        "growth-transforming",
+        "growth-reveal"
+      );
+      ceremony.classList.remove("show");
+      btnContinue.style.display = "none";
+      title.classList.remove("show");
+      text.classList.remove("show");
+    };
+  }
   async function actFeed() {
     if (cdPct("feed") > 0) return;
     const inv = STATE.inventory.find(
@@ -3630,15 +3646,22 @@ async function refreshDragonsFromApi() {
         name: raw.name || existing.name || speciesObj.name || "Unnamed",
         element: raw.element || existing.element || "Neutral",
         species: speciesObj.name || existing.species || "Dragon",
-        favoriteActivity: raw.favorite_activity || existing.favoriteActivity || null,
+        favoriteActivity:
+          raw.favorite_activity || existing.favoriteActivity || null,
         personality: raw.personality || speciesObj.personality || null,
         growthStage: raw.growth_stage || existing.growthStage || "wyrmling",
         canGrow: !!raw.can_grow,
         growthBlockReason: raw.growth_block_reason || null,
         nextGrowthStage: raw.next_growth_stage || null,
         specialization: raw.specialization || existing.specialization || null,
-        dragonSpecializationsId: raw.dragon_specializations_id || existing.dragonSpecializationsId || null,
-        specializationChosenAt: raw.specialization_chosen_at || existing.specializationChosenAt || null,
+        dragonSpecializationsId:
+          raw.dragon_specializations_id ||
+          existing.dragonSpecializationsId ||
+          null,
+        specializationChosenAt:
+          raw.specialization_chosen_at ||
+          existing.specializationChosenAt ||
+          null,
         requiredDays: raw.required_days ?? 0,
         requiredBond: raw.required_bond ?? 0,
         daysSinceObtained: raw.days_since_obtained ?? 0,
