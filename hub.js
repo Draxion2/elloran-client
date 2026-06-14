@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v12 tidy-v4");
+console.log("hub.js V-06/14/26 dragon-growth-v13 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2289,9 +2289,10 @@ function initRoost() {
     img.classList.add("growth-reveal");
   }
 
-  small.textContent = `${a?.name || "Your dragon"} has chosen a path...`;
-  title.textContent = spec?.name || "Specialization";
-  text.textContent = spec?.description || "A new purpose settles into your dragon’s heart.";
+  small.textContent = `${(a?.name || "Your dragon").toUpperCase()} HAS CHOSEN A PATH`;
+  title.textContent = (spec?.name || "Specialization").toUpperCase();
+  text.textContent =
+    spec?.description || "A new purpose settles into your dragon’s heart.";
 
   title.classList.remove("show");
   text.classList.remove("show");
