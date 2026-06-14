@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v15 tidy-v4");
+console.log("hub.js V-06/14/26 dragon-growth-v16 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2236,6 +2236,35 @@ function initRoost() {
     Unique: "Unique"
   };
 
+  function formatSpecEffect(effect) {
+  if (!effect || typeof effect !== "object") return "";
+
+  const labels = {
+    bond_gain_pct: "Bond gain",
+    dragon_crit_pct: "Dragon crit chance",
+    dragon_damage_pct: "Dragon damage",
+    dragon_defense_pct: "Dragon defense",
+    dragon_hp_pct: "Dragon max HP",
+    encounter_chance_pct: "Encounter chance",
+    explore_success_pct: "Explore success",
+    flee_success_pct: "Flee success",
+    harvest_success_pct: "Harvest success",
+    healing_effect_pct: "Healing effects",
+    hunt_success_pct: "Hunt success",
+    rest_bonus_pct: "Rest recovery",
+    travel_progress_pct: "Travel progress",
+    travel_risk_reduction_pct: "Travel risk reduction"
+  };
+
+  const parts = Object.entries(effect).map(([key, value]) => {
+    const label = labels[key] || key;
+    const sign = Number(value) > 0 ? "+" : "";
+    return `${sign}${value}% ${label}`;
+  });
+
+  return parts.join(", ");
+}
+
   async function openSpecializationModal() {
     const a = active();
     if (!a) return toast("No dragon selected.");
@@ -2268,6 +2297,7 @@ function initRoost() {
       <button class="spec-choice" data-spec-id="${s.id}">
         <strong>${s.name}</strong>
         <span>${s.description || ""}</span>
+        <em>${formatSpecEffect(s.effect_json)}</em>
       </button>
     `
         )
