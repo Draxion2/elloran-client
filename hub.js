@@ -2332,14 +2332,14 @@ function initRoost() {
   playSpecializationChooseSfx();
 
   setTimeout(() => {
-    playSpecializationChooseSfx();
+    playSpecializationRevealSfx();
     title.classList.add("show");
   }, 500);
 
   setTimeout(() => {
     text.classList.add("show");
     btnContinue.style.display = "inline-block";
-  }, 1100);
+  }, 500);
 
   btnContinue.onclick = () => {
     ceremony.classList.remove("show");
