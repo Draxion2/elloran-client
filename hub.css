@@ -1104,7 +1104,7 @@ body {
 }
 
 #btnGrowDragon:hover,
-btnChooseSpecialization:hover {
+#btnChooseSpecialization:hover {
   transform: translateY(-2px);
 
   border-color: rgba(184, 149, 88, 0.75);
