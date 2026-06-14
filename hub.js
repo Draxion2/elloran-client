@@ -2455,6 +2455,7 @@ function initRoost() {
       if (kvTrait) kvTrait.textContent = "—";
       if (kvPersonality) kvPersonality.textContent = "—";
       if (kvGrowthStage) kvGrowthStage.textContent = "—";
+      if (kvSpecialization) kvSpecialization.textContent = "—";
       // Clear bars + percents
       if (barHP) barHP.style.width = "0%";
       if (barHappy) barHappy.style.width = "0%";
@@ -2591,8 +2592,16 @@ function initRoost() {
       specializationPanel.style.display = canSpecialize ? "flex" : "none";
     }
     if (kvSpecialization) {
-      kvSpecialization.textContent = a.specialization?.name || "—";
+      const specBlock = kvSpecialization.closest(".kvblock");
+
+    if (a.specialization?.name) {
+      kvSpecialization.textContent = a.specialization.name;
+      if (specBlock) specBlock.style.display = "";
+    } else {
+      kvSpecialization.textContent = "";
+      if (specBlock) specBlock.style.display = "none";
     }
+  }
     const hpTarget = pct(a.hp, a.hpMax);
     const happyTarget = clamp(a.happiness, 0, 100);
     const hungerTarget = clamp(a.hunger, 0, 100);
