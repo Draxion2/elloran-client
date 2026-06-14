@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v13 tidy-v4");
+console.log("hub.js V-06/14/26 dragon-growth-v14 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2286,7 +2286,14 @@ function initRoost() {
   if (img && a?.img) {
     img.src = a.img;
     img.classList.remove("show", "flash", "growth-reveal");
-    img.classList.add("growth-reveal");
+
+    setTimeout(() => {
+      img.classList.add("flash", "growth-reveal");
+
+      setTimeout(() => {
+        img.classList.add("show");
+      }, 120);
+    }, 120);
   }
 
   small.textContent = `${(a?.name || "Your dragon").toUpperCase()} HAS CHOSEN A PATH`;
