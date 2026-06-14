@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v11 tidy-v3");
+console.log("hub.js V-06/14/26 dragon-growth-v11 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2214,77 +2214,87 @@ function initRoost() {
   };
 
   async function openSpecializationModal() {
-  const a = active();
-  if (!a) return toast("No dragon selected.");
+    const a = active();
+    if (!a) return toast("No dragon selected.");
 
-  const modal = document.getElementById("specializationModal");
-  const choicesEl = document.getElementById("specializationChoices");
-  const btnCancel = document.getElementById("btnSpecCancel");
+    const modal = document.getElementById("specializationModal");
+    const choicesEl = document.getElementById("specializationChoices");
+    const btnCancel = document.getElementById("btnSpecCancel");
 
-  if (!modal || !choicesEl || !btnCancel) {
-    toast("Specialization modal missing.");
-    return;
-  }
+    if (!modal || !choicesEl || !btnCancel) {
+      toast("Specialization modal missing.");
+      return;
+    }
 
-  choicesEl.innerHTML = `<div class="growth-confirm-text">Loading paths...</div>`;
-  modal.classList.add("show");
+    choicesEl.innerHTML = `<div class="growth-confirm-text">Loading paths...</div>`;
+    modal.classList.add("show");
 
-  btnCancel.onclick = () => {
-    modal.classList.remove("show");
-  };
+    btnCancel.onclick = () => {
+      modal.classList.remove("show");
+    };
 
-  try {
-    const payload = await apiFetch(`/players/me/dragons/${a.id}/specializations`);
-    const specs = payload.specializations || [];
+    try {
+      const payload = await apiFetch(
+        `/players/me/dragons/${a.id}/specializations`
+      );
+      const specs = payload.specializations || [];
 
-    choicesEl.innerHTML = specs.map((s) => `
+      choicesEl.innerHTML = specs
+        .map(
+          (s) => `
       <button class="spec-choice" data-spec-id="${s.id}">
         <strong>${s.name}</strong>
         <span>${s.description || ""}</span>
       </button>
-    `).join("");
+    `
+        )
+        .join("");
 
-    choicesEl.querySelectorAll(".spec-choice").forEach((btn) => {
-      btn.onclick = async () => {
-        const specId = Number(btn.dataset.specId);
-        await chooseSpecialization(specId);
-        modal.classList.remove("show");
-      };
-    });
-  } catch (err) {
-    console.error("openSpecializationModal failed", err);
-    choicesEl.innerHTML = `<div class="growth-confirm-text">Could not load specializations.</div>`;
+      choicesEl.querySelectorAll(".spec-choice").forEach((btn) => {
+        btn.onclick = async () => {
+          const specId = Number(btn.dataset.specId);
+          await chooseSpecialization(specId);
+          modal.classList.remove("show");
+        };
+      });
+    } catch (err) {
+      console.error("openSpecializationModal failed", err);
+      choicesEl.innerHTML = `<div class="growth-confirm-text">Could not load specializations.</div>`;
+    }
   }
-}
 
-async function chooseSpecialization(specId) {
-  const a = active();
-  if (!a) return;
+  async function chooseSpecialization(specId) {
+    const a = active();
+    if (!a) return;
 
-  try {
-    const payload = await apiFetch(`/players/me/dragons/${a.id}/specialize`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        dragon_specializations_id: specId
-      })
-    });
+    try {
+      const payload = await apiFetch(`/players/me/dragons/${a.id}/specialize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          dragon_specializations_id: specId
+        })
+      });
 
-    toast(`${a.name} has chosen ${payload.specialization?.name || "a path"}.`);
-    await refreshDragonsFromApiSafe();
-  } catch (err) {
-    console.error("chooseSpecialization failed", err);
-    toast(extractApiPayloadMessage(err) || "Could not choose specialization.");
+      toast(
+        `${a.name} has chosen ${payload.specialization?.name || "a path"}.`
+      );
+      await refreshDragonsFromApiSafe();
+    } catch (err) {
+      console.error("chooseSpecialization failed", err);
+      toast(
+        extractApiPayloadMessage(err) || "Could not choose specialization."
+      );
+    }
   }
-}
   const btnChooseSpecialization = $("#btnChooseSpecialization");
 
-if (btnChooseSpecialization) {
-  btnChooseSpecialization.onclick = openSpecializationModal;
-}
-  
+  if (btnChooseSpecialization) {
+    btnChooseSpecialization.onclick = openSpecializationModal;
+  }
+
   function applyRoostTheme(element) {
     const name = THEME[element] || "Neutral";
     root.className = "diorama roost-theme-" + name;
