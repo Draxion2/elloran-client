@@ -2334,12 +2334,12 @@ function initRoost() {
   setTimeout(() => {
     playSpecializationRevealSfx();
     title.classList.add("show");
-  }, 500);
+  }, 1200);
 
   setTimeout(() => {
     text.classList.add("show");
     btnContinue.style.display = "inline-block";
-  }, 500);
+  }, 2100);
 
   btnContinue.onclick = () => {
     ceremony.classList.remove("show");
