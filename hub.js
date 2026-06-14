@@ -2398,6 +2398,15 @@ function initRoost() {
       growthPanel.style.display = a.canGrow ? "flex" : "none";
       growthPanel.classList.toggle("ready", !!a.canGrow);
     }
+    const specializationPanel = $("#specializationPanel");
+
+    if (specializationPanel) {
+      const canSpecialize =
+        (a.growthStage === "adult" || a.growthStage === "elder") &&
+        !a.dragonSpecializationsId;
+
+      specializationPanel.style.display = canSpecialize ? "flex" : "none";
+    }
     if (kvSpecialization) {
       kvSpecialization.textContent = a.specialization?.name || "—";
     }
