@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-8 */
+/* hub.css V-06/13/26 dragon-growth-reveal-9 */
 
 :root {
       --ink: #f6ead1;
@@ -684,6 +684,44 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.spec-card{
+  width:min(92vw,620px);
+}
+
+.spec-choices{
+  display:grid;
+  gap:12px;
+  margin:18px 0 20px;
+}
+
+.spec-choice{
+  text-align:left;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid rgba(184,149,88,.28);
+  background:linear-gradient(180deg, rgba(184,149,88,.12), rgba(0,0,0,.18));
+  color:#f6ead1;
+  cursor:pointer;
+}
+
+.spec-choice:hover{
+  border-color:rgba(230,190,115,.65);
+  box-shadow:0 0 18px rgba(184,149,88,.22);
+  transform:translateY(-1px);
+}
+
+.spec-choice strong{
+  display:block;
+  color:#f7e0a2;
+  margin-bottom:5px;
+}
+
+.spec-choice span{
+  color:#c9bfa9;
+  font-size:13px;
+  line-height:1.45;
 }
 
 .growth-confirm-modal{
