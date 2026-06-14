@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-9 tidy-1*/
+/* hub.css V-06/13/26 dragon-growth-reveal-10 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -693,6 +693,20 @@ body {
 
 .spec-card {
   width: min(92vw, 620px);
+  position:relative;
+}
+
+.spec-card::before{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  border-radius:24px;
+  background:radial-gradient(
+    circle,
+    rgba(212,175,110,.18),
+    transparent 70%
+  );
+  z-index:-1;
 }
 
 .spec-choices {
@@ -703,7 +717,8 @@ body {
 
 .spec-choice {
   text-align: left;
-  padding: 14px;
+  padding: 18px;
+  min-height:88px;
   border-radius: 12px;
   border: 1px solid rgba(184, 149, 88, 0.28);
   background: linear-gradient(
@@ -713,6 +728,10 @@ body {
   );
   color: #f6ead1;
   cursor: pointer;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
 }
 
 .spec-choice:hover {
@@ -725,6 +744,7 @@ body {
   display: block;
   color: #f7e0a2;
   margin-bottom: 5px;
+  transform:translateY(-3px);
 }
 
 .spec-choice span {
