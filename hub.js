@@ -2253,6 +2253,7 @@ function initRoost() {
       choicesEl.querySelectorAll(".spec-choice").forEach((btn) => {
         btn.onclick = async () => {
           const specId = Number(btn.dataset.specId);
+          const spec = specs.find((s) => Number(s.id) === specId);
           const confirmed = await showSpecConfirmModal(spec);
           if (!confirmed) return;
 
@@ -2297,6 +2298,40 @@ function initRoost() {
   if (btnChooseSpecialization) {
     btnChooseSpecialization.onclick = openSpecializationModal;
   }
+
+  function showSpecConfirmModal(spec) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("specConfirmModal");
+    const title = document.getElementById("specConfirmTitle");
+    const text = document.getElementById("specConfirmText");
+    const btnCancel = document.getElementById("btnSpecConfirmCancel");
+    const btnChoose = document.getElementById("btnSpecConfirmChoose");
+
+    if (!modal || !title || !text || !btnCancel || !btnChoose) {
+      resolve(false);
+      return;
+    }
+
+    title.textContent = `Choose ${spec.name}?`;
+    text.textContent = `${spec.description || "This path will shape your dragon."} This choice is permanent.`;
+
+    modal.classList.add("show");
+
+    const cleanup = (result) => {
+      modal.classList.remove("show");
+      btnCancel.onclick = null;
+      btnChoose.onclick = null;
+      modal.onclick = null;
+      resolve(result);
+    };
+
+    btnCancel.onclick = () => cleanup(false);
+    btnChoose.onclick = () => cleanup(true);
+    modal.onclick = (e) => {
+      if (e.target === modal) cleanup(false);
+    };
+  });
+}
 
   function applyRoostTheme(element) {
     const name = THEME[element] || "Neutral";
