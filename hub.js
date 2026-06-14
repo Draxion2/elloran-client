@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v11 tidy-v4");
+console.log("hub.js V-06/14/26 dragon-growth-v12 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2267,6 +2267,55 @@ function initRoost() {
     }
   }
 
+  function showSpecCeremony(payload) {
+  const a = active();
+  const spec = payload?.specialization;
+
+  const ceremony = document.getElementById("specCeremony");
+  const img = document.getElementById("specCeremonyDragon");
+  const small = document.getElementById("specCeremonySmall");
+  const title = document.getElementById("specCeremonyTitle");
+  const text = document.getElementById("specCeremonyText");
+  const btnContinue = document.getElementById("btnSpecContinue");
+
+  if (!ceremony || !small || !title || !text || !btnContinue) {
+    toast("Specialization ceremony missing.");
+    return;
+  }
+
+  if (img && a?.img) {
+    img.src = a.img;
+    img.classList.remove("show", "flash", "growth-reveal");
+    img.classList.add("growth-reveal");
+  }
+
+  small.textContent = `${a?.name || "Your dragon"} has chosen a path...`;
+  title.textContent = spec?.name || "Specialization";
+  text.textContent = spec?.description || "A new purpose settles into your dragon’s heart.";
+
+  title.classList.remove("show");
+  text.classList.remove("show");
+  btnContinue.style.display = "none";
+
+  ceremony.classList.add("show");
+
+  setTimeout(() => {
+    title.classList.add("show");
+  }, 500);
+
+  setTimeout(() => {
+    text.classList.add("show");
+    btnContinue.style.display = "inline-block";
+  }, 1100);
+
+  btnContinue.onclick = () => {
+    ceremony.classList.remove("show");
+    btnContinue.style.display = "none";
+    title.classList.remove("show");
+    text.classList.remove("show");
+  };
+}
+
   async function chooseSpecialization(specId) {
     const a = active();
     if (!a) return;
@@ -2282,9 +2331,7 @@ function initRoost() {
         })
       });
 
-      toast(
-        `${a.name} has chosen ${payload.specialization?.name || "a path"}.`
-      );
+      showSpecCeremony(payload);
       await refreshDragonsFromApiSafe();
     } catch (err) {
       console.error("chooseSpecialization failed", err);
