@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-11 tidy-1*/
+/* hub.css V-06/13/26 dragon-growth-reveal-12 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -751,6 +751,43 @@ body {
   color: #c9bfa9;
   font-size: 13px;
   line-height: 1.45;
+}
+
+.spec-ceremony-glow{
+  position:absolute;
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(212,175,110,.35) 0%,
+      rgba(212,175,110,.18) 35%,
+      transparent 75%
+    );
+
+  filter:blur(14px);
+
+  animation:specGlowPulse 3s ease-in-out infinite;
+}
+
+@keyframes specGlowPulse{
+  0%{
+    transform:scale(.92);
+    opacity:.45;
+  }
+
+  50%{
+    transform:scale(1.02);
+    opacity:.95;
+  }
+
+  100%{
+    transform:scale(.92);
+    opacity:.45;
+  }
 }
 
 .growth-confirm-modal {
