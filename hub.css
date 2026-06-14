@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-10 tidy-1*/
+/* hub.css V-06/13/26 dragon-growth-reveal-11 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -1103,7 +1103,8 @@ body {
     box-shadow 0.18s ease, background 0.18s ease;
 }
 
-#btnGrowDragon:hover {
+#btnGrowDragon:hover,
+btnChooseSpecialization:hover {
   transform: translateY(-2px);
 
   border-color: rgba(184, 149, 88, 0.75);
@@ -1142,7 +1143,8 @@ body {
 }
 
 /* Only when visible and ready */
-.growth-panel.ready {
+.growth-panel.ready,
+#specializationPanel {
   animation: growthReveal 0.6s ease forwards,
     growthPulse 4s ease-in-out infinite 1.2s;
 }
