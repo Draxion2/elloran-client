@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v14 tidy-v4");
+console.log("hub.js V-06/14/26 dragon-growth-v15 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -89,6 +89,29 @@ const GROWTH_SFX = {
   reveal:
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_age_reveal.mp3"
 };
+
+const SPECIALIZATION_SFX = {
+  choose:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_special_chosen.mp3",
+  reveal:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_special_reveal.mp3"
+};
+
+function playSpecializationChooseSfx() {
+  if (!SPECIALIZATION_SFX.choose) return;
+
+  const sfx = new Audio(SPECIALIZATION_SFX.choose);
+  sfx.volume = 0.65;
+  sfx.play().catch(() => {});
+}
+
+function playSpecializationRevealSfx() {
+  if (!SPECIALIZATION_SFX.reveal) return;
+
+  const sfx = new Audio(SPECIALIZATION_SFX.reveal);
+  sfx.volume = 0.7;
+  sfx.play().catch(() => {});
+}
 
 let growthBuildupAudio = null;
 
@@ -2306,8 +2329,10 @@ function initRoost() {
   btnContinue.style.display = "none";
 
   ceremony.classList.add("show");
+  playSpecializationChooseSfx();
 
   setTimeout(() => {
+    playSpecializationChooseSfx();
     title.classList.add("show");
   }, 500);
 
