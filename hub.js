@@ -1,4 +1,4 @@
-console.log("hub.js V-06/13/26 dragon-growth-v9 tidy-v2");
+console.log("hub.js V-06/14/26 dragon-growth-v10 tidy-v2");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -708,6 +708,9 @@ async function loadPlayerHubData() {
           canGrow: !!raw.can_grow,
           growthBlockReason: raw.growth_block_reason || null,
           nextGrowthStage: raw.next_growth_stage || null,
+          specialization: raw.specialization || null,
+          dragonSpecializationsId: raw.dragon_specializations_id || null,
+          specializationChosenAt: raw.specialization_chosen_at || null,
           requiredDays: raw.required_days ?? 0,
           requiredBond: raw.required_bond ?? 0,
           daysSinceObtained: raw.days_since_obtained ?? 0,
@@ -1956,6 +1959,7 @@ function initRoost() {
     kvType = $("#kvType"),
     kvTrait = $("#kvTrait"),
     kvPersonality = $("#kvPersonality"),
+    kvSpecialization = $("#kvSpecialization"),
     kvGrowthStage = $("#kvGrowthStage");
   const barHP = $("#barHP"),
     barHappy = $("#barHappy"),
@@ -2393,6 +2397,9 @@ function initRoost() {
     if (growthPanel) {
       growthPanel.style.display = a.canGrow ? "flex" : "none";
       growthPanel.classList.toggle("ready", !!a.canGrow);
+    }
+    if (kvSpecialization) {
+      kvSpecialization.textContent = a.specialization?.name || "—";
     }
     const hpTarget = pct(a.hp, a.hpMax);
     const happyTarget = clamp(a.happiness, 0, 100);
@@ -3620,6 +3627,9 @@ async function refreshDragonsFromApi() {
         canGrow: !!raw.can_grow,
         growthBlockReason: raw.growth_block_reason || null,
         nextGrowthStage: raw.next_growth_stage || null,
+        specialization: raw.specialization || existing.specialization || null,
+        dragonSpecializationsId: raw.dragon_specializations_id || existing.dragonSpecializationsId || null,
+        specializationChosenAt: raw.specialization_chosen_at || existing.specializationChosenAt || null,
         requiredDays: raw.required_days ?? 0,
         requiredBond: raw.required_bond ?? 0,
         daysSinceObtained: raw.days_since_obtained ?? 0,
