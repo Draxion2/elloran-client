@@ -1,4 +1,4 @@
-/* hub.css V-06/13/26 dragon-growth-reveal-12 tidy-1*/
+/* hub.css V-06/13/26 dragon-growth-reveal-13 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -732,6 +732,15 @@ body {
     transform .18s ease,
     box-shadow .18s ease,
     border-color .18s ease;
+}
+
+.spec-choice em{
+  display:block;
+  margin-top:8px;
+  color:#d8bd79;
+  font-size:12px;
+  font-style:normal;
+  letter-spacing:.03em;
 }
 
 .spec-choice:hover {
