@@ -2253,7 +2253,10 @@ function initRoost() {
       choicesEl.querySelectorAll(".spec-choice").forEach((btn) => {
         btn.onclick = async () => {
           const specId = Number(btn.dataset.specId);
-          await chooseSpecialization(specId);
+          const confirmed = await showSpecConfirmModal(spec);
+          if (!confirmed) return;
+
+          await chooseSpecialization(spec.id);
           modal.classList.remove("show");
         };
       });
@@ -3735,15 +3738,20 @@ async function refreshDragonsFromApi() {
         canGrow: !!raw.can_grow,
         growthBlockReason: raw.growth_block_reason || null,
         nextGrowthStage: raw.next_growth_stage || null,
-        specialization: raw.specialization || existing.specialization || null,
+        specialization:
+          raw.hasOwnProperty("specialization")
+            ? raw.specialization
+            : existing.specialization || null,
+
         dragonSpecializationsId:
-          raw.dragon_specializations_id ||
-          existing.dragonSpecializationsId ||
-          null,
+          raw.hasOwnProperty("dragon_specializations_id")
+            ? raw.dragon_specializations_id
+            : existing.dragonSpecializationsId || null,
+
         specializationChosenAt:
-          raw.specialization_chosen_at ||
-          existing.specializationChosenAt ||
-          null,
+          raw.hasOwnProperty("specialization_chosen_at")
+            ? raw.specialization_chosen_at
+            : existing.specializationChosenAt || null,
         requiredDays: raw.required_days ?? 0,
         requiredBond: raw.required_bond ?? 0,
         daysSinceObtained: raw.days_since_obtained ?? 0,
