@@ -1,4 +1,4 @@
-console.log("hub.js V-06/14/26 dragon-growth-v16 tidy-v4");
+console.log("hub.js V-06/19/26 dragon-hatchery-1 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -1965,6 +1965,204 @@ function setTemporaryDragonReaction(text, duration = 12000) {
   }, duration);
 }
 
+/* ================= Hatchery Placeholder Wiring ================= */
+
+let hatcheryMounted = false;
+
+const HATCHERY_PLACEHOLDER = {
+  activeEgg: null,
+  storage: []
+};
+
+/*
+Expected future API shape:
+
+GET /players/me/dragon-eggs
+
+{
+  active_egg: {
+    id: 1,
+    egg_name: "Shadow Egg",
+    egg_color: "shadow",
+    stage: "stirring",
+    incubation_started_at: 1780000000000,
+    hatch_ready_at: 1780259200000,
+    hatch_duration_ms: 259200000
+  },
+  storage: [
+    {
+      id: 2,
+      egg_name: "Azure Egg",
+      egg_color: "azure",
+      source: "discovery"
+    }
+  ]
+}
+*/
+
+function formatHatcheryTime(ms) {
+  ms = Math.max(0, Number(ms || 0));
+
+  const totalMinutes = Math.ceil(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+function getEggStageFromProgress(progressPct) {
+  if (progressPct >= 100) return "Ready to Hatch";
+  if (progressPct >= 66) return "Cracking";
+  if (progressPct >= 33) return "Stirring";
+  return "Dormant";
+}
+
+function renderHatchery(payload = HATCHERY_PLACEHOLDER) {
+  const activeEgg = payload.activeEgg || payload.active_egg || null;
+  const storage = payload.storage || [];
+
+  const badge = document.getElementById("hatcheryTabBadge");
+  const eggName = document.getElementById("hatcheryEggName");
+  const eggFlavor = document.getElementById("hatcheryEggFlavor");
+  const eggStageText = document.getElementById("hatcheryEggStageText");
+  const eggTimer = document.getElementById("hatcheryEggTimer");
+  const progressFill = document.getElementById("hatcheryProgressFill");
+  const hatchBtn = document.getElementById("hatchEggBtn");
+  const eggStorageCount = document.getElementById("eggStorageCount");
+  const eggList = document.getElementById("hatcheryEggList");
+
+  if (badge) {
+    const totalEggs = storage.length + (activeEgg ? 1 : 0);
+    badge.textContent = totalEggs;
+  }
+
+  if (eggStorageCount) {
+    eggStorageCount.textContent =
+      storage.length === 1 ? "1 Egg" : `${storage.length} Eggs`;
+  }
+
+  if (!activeEgg) {
+    if (eggName) eggName.textContent = "No Egg Incubating";
+    if (eggFlavor) {
+      eggFlavor.textContent =
+        "The chamber is quiet. No egg rests beneath the warming lanterns.";
+    }
+    if (eggStageText) eggStageText.textContent = "—";
+    if (eggTimer) eggTimer.textContent = "—";
+    if (progressFill) progressFill.style.width = "0%";
+    if (hatchBtn) hatchBtn.disabled = true;
+  } else {
+    const nowMs = Date.now();
+    const startedAt = Number(activeEgg.incubation_started_at || nowMs);
+    const readyAt = Number(activeEgg.hatch_ready_at || nowMs);
+    const duration = Math.max(1, readyAt - startedAt);
+    const elapsed = Math.max(0, nowMs - startedAt);
+    const progress = Math.max(0, Math.min(100, Math.round((elapsed / duration) * 100)));
+    const msLeft = Math.max(0, readyAt - nowMs);
+    const ready = msLeft <= 0;
+
+    if (eggName) eggName.textContent = activeEgg.egg_name || "Unknown Egg";
+    if (eggStageText) {
+      eggStageText.textContent = activeEgg.stage || getEggStageFromProgress(progress);
+    }
+    if (eggTimer) {
+      eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
+    }
+    if (progressFill) progressFill.style.width = `${progress}%`;
+    if (hatchBtn) hatchBtn.disabled = !ready;
+
+    if (eggFlavor) {
+      if (ready) {
+        eggFlavor.textContent =
+          "The egg trembles beneath the lantern glow. Something inside is ready to meet the world.";
+      } else if (progress >= 66) {
+        eggFlavor.textContent =
+          "Thin cracks spread across the shell as faint movement stirs within.";
+      } else if (progress >= 33) {
+        eggFlavor.textContent =
+          "The egg shifts now and then, warmed by the chamber's steady light.";
+      } else {
+        eggFlavor.textContent =
+          "The shell remains warm and still beneath the hatchery lanterns.";
+      }
+    }
+  }
+
+  if (eggList) {
+    if (!storage.length) {
+      eggList.innerHTML = `
+        <div class="hatchery-empty">
+          No eggs have been discovered yet.
+        </div>
+      `;
+    } else {
+      eggList.innerHTML = storage
+        .map(
+          (egg) => `
+            <div class="hatchery-egg-row" data-egg-id="${egg.id}">
+              <div class="hatchery-egg-thumb"></div>
+
+              <div class="hatchery-egg-meta">
+                <strong>${egg.egg_name || "Unknown Egg"}</strong>
+                <span>${egg.source || "Discovery"} • Waiting in storage</span>
+              </div>
+
+              <button class="btn-sm hatchery-incubate-btn" data-egg-id="${egg.id}">
+                Incubate
+              </button>
+            </div>
+          `
+        )
+        .join("");
+    }
+  }
+}
+
+function initHatcheryTabs() {
+  const tabRoost = document.getElementById("roostTabRoost");
+  const tabHatchery = document.getElementById("roostTabHatchery");
+  const roostView = document.getElementById("roostView");
+  const hatcheryView = document.getElementById("hatcheryView");
+
+  if (!tabRoost || !tabHatchery || !roostView || !hatcheryView) return;
+
+  function setRoostTab(tab) {
+    const showHatchery = tab === "hatchery";
+
+    tabRoost.classList.toggle("active", !showHatchery);
+    tabHatchery.classList.toggle("active", showHatchery);
+
+    roostView.classList.toggle("active", !showHatchery);
+    hatcheryView.classList.toggle("active", showHatchery);
+  }
+
+  tabRoost.onclick = () => setRoostTab("roost");
+  tabHatchery.onclick = () => setRoostTab("hatchery");
+}
+
+function initHatchery() {
+  if (hatcheryMounted) {
+    renderHatchery();
+    return;
+  }
+
+  hatcheryMounted = true;
+
+  initHatcheryTabs();
+  renderHatchery();
+
+  const hatchBtn = document.getElementById("hatchEggBtn");
+
+  if (hatchBtn) {
+    hatchBtn.onclick = () => {
+      toast("Hatching is not wired yet.");
+    };
+  }
+}
+
 function initRoost() {
   if (roostMounted) {
     HUB.renderActive?.();
@@ -1975,6 +2173,7 @@ function initRoost() {
   const root = $("#roostRoot"),
     diorama = root;
   if (!root) return;
+  initHatchery();
 
   function ensureRosterTimer() {
     if (rosterTimerInterval) return;
