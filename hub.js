@@ -103,7 +103,7 @@ const HATCH_SFX = {
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_buildup.mp3",
   reveal:
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_reveal.mp3",
-  hatchlings:
+  hatchlings: [
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling.mp3",
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling2.mp3",
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling3.mp3",
@@ -114,6 +114,7 @@ const HATCH_SFX = {
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling8.mp3",
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling9.mp3",
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling10.mp3"
+  ]
 };
 
 let hatchBuildupAudio = null;
