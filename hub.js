@@ -1,4 +1,4 @@
-console.log("hub.js V-06/20/26 dragon-hatchery-2 tidy-v4");
+console.log("hub.js V-06/20/26 dragon-hatchery-3 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2070,6 +2070,7 @@ function renderHatchery(payload = hatcheryState) {
 
   const badge = document.getElementById("hatcheryTabBadge");
   const eggName = document.getElementById("hatcheryEggName");
+  const eggImg = document.querySelector(".hatchery-egg-img");
   const eggFlavor = document.getElementById("hatcheryEggFlavor");
   const eggStageText = document.getElementById("hatcheryEggStageText");
   const eggTimer = document.getElementById("hatcheryEggTimer");
@@ -2098,6 +2099,7 @@ function renderHatchery(payload = hatcheryState) {
         "The chamber is quiet. No egg rests beneath the warming lanterns.";
     }
     if (eggStageText) eggStageText.textContent = "—";
+    if (eggImg) eggImg.removeAttribute("src");
     if (eggTimer) eggTimer.textContent = "—";
     if (progressFill) progressFill.style.width = "0%";
     if (hatchBtn) hatchBtn.disabled = true;
@@ -2111,6 +2113,10 @@ function renderHatchery(payload = hatcheryState) {
     const ready = !!activeEgg.can_hatch;
 
     if (eggName) eggName.textContent = egg.egg_name || "Unknown Egg";
+    if (eggImg) {
+      eggImg.src = egg.img_url || "";
+      eggImg.alt = egg.egg_name || "Dragon egg";
+    }
     if (eggStageText) eggStageText.textContent = incubation.stage || "warm";
     if (eggTimer) eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
     if (progressFill) progressFill.style.width = `${progress}%`;
