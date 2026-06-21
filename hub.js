@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-10 tidy-v4");
+console.log("hub.js V-06/21/26 dragon-hatchery-11 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2126,6 +2126,10 @@ function startHatchCeremony(payload, eggSnapshot) {
   const dragonEl = document.getElementById("ceremonyDragon");
   const textEl = document.getElementById("hatchCeremonyText");
   const btnContinue = document.getElementById("hatchCeremonyContinue");
+  const flashEl = document.getElementById("hatchFlash");
+
+  window.HATCH_CEREMONY_ACTIVE = true;
+  document.body.classList.add("ceremony-lock");
 
   if (!overlay || !eggEl || !dragonEl || !textEl || !btnContinue) {
     toast(`${payload.dragon?.name || "A dragon"} has hatched!`);
@@ -2178,21 +2182,38 @@ function startHatchCeremony(payload, eggSnapshot) {
   }, 8200);
 
   setTimeout(() => {
-    eggEl.style.display = "none";
+  eggEl.classList.remove("hatching");
+  eggEl.classList.add("hatching-hard");
+}, 9400);
 
-    if (dragon.img_url) {
-      dragonEl.src = dragon.img_url;
-    }
+setTimeout(() => {
+  eggEl.classList.remove("hatching-hard");
+  eggEl.classList.add("fade-out");
 
-    dragonEl.style.display = "block";
-    dragonEl.classList.add("reveal");
+  if (flashEl) {
+    flashEl.classList.remove("burst");
+    void flashEl.offsetWidth;
+    flashEl.classList.add("burst");
+  }
+}, 10600);
 
-    textEl.classList.remove("show");
-    setTimeout(() => {
-      textEl.textContent = `${hatch.species_name || dragon.species_name || dragon.name || "A dragon"} has hatched.`;
-      textEl.classList.add("show");
-    }, 600);
-  }, 11200);
+setTimeout(() => {
+  eggEl.style.display = "none";
+
+  if (dragon.img_url) {
+    dragonEl.src = dragon.img_url;
+  }
+
+  dragonEl.style.display = "block";
+  dragonEl.classList.add("reveal");
+
+  textEl.classList.remove("show");
+
+  setTimeout(() => {
+    textEl.textContent = `${hatch.species_name || dragon.species_name || dragon.name || "A dragon"} has hatched.`;
+    textEl.classList.add("show");
+  }, 600);
+}, 11600);
 
   setTimeout(() => {
     textEl.classList.remove("show");
@@ -2208,7 +2229,7 @@ function startHatchCeremony(payload, eggSnapshot) {
 
   setTimeout(() => {
     btnContinue.classList.add("show");
-  }, 17000);
+  }, 18000);
 
   btnContinue.onclick = async () => {
     overlay.classList.remove("active");
@@ -2223,6 +2244,8 @@ function startHatchCeremony(payload, eggSnapshot) {
     dragonEl.style.display = "none";
     dragonEl.classList.remove("reveal");
 
+    window.HATCH_CEREMONY_ACTIVE = false;
+    document.body.classList.remove("ceremony-lock");
     await refreshDragonsFromApiSafe();
     await fetchHatcheryState();
   };
