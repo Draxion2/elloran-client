@@ -1,6 +1,7 @@
-console.log("hub.js V-06/20/26 dragon-hatchery-6 tidy-v4");
+console.log("hub.js V-06/20/26 dragon-hatchery-7 tidy-v4");
 
 /* ===== Tiny utils ===== */
+window.HATCHERY_TEST_MODE = false;
 window.HUB = window.HUB || {};
 const $ = (sel) => document.querySelector(sel);
 const panels = {
@@ -271,18 +272,11 @@ function tweenNumber({ from, to, duration = 350, onUpdate }) {
 }
 let dragonsRefreshBlockedUntil = 0;
 async function refreshHubLiveDataSafe() {
-  async function refreshHubLiveDataSafe() {
 
-  if (window.HATCHERY_TEST_MODE) {
+  if (window.HATCHERY_TEST_MODE === true) {
     return;
   }
 
-  await refreshDragonsFromApiSafe();
-
-  if (hatcheryMounted) {
-    await fetchHatcheryState();
-  }
-}
   await refreshDragonsFromApiSafe();
 
   if (hatcheryMounted) {
