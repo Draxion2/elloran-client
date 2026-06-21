@@ -2099,7 +2099,10 @@ function renderHatchery(payload = hatcheryState) {
         "The chamber is quiet. No egg rests beneath the warming lanterns.";
     }
     if (eggStageText) eggStageText.textContent = "—";
-    if (eggImg) eggImg.removeAttribute("src");
+    if (eggImg) {
+      eggImg.style.backgroundImage = "";
+      eggImg.removeAttribute("aria-label");
+    }
     if (eggTimer) eggTimer.textContent = "—";
     if (progressFill) progressFill.style.width = "0%";
     if (hatchBtn) hatchBtn.disabled = true;
@@ -2114,8 +2117,10 @@ function renderHatchery(payload = hatcheryState) {
 
     if (eggName) eggName.textContent = egg.egg_name || "Unknown Egg";
     if (eggImg) {
-      eggImg.src = egg.img_url || "";
-      eggImg.alt = egg.egg_name || "Dragon egg";
+      eggImg.style.backgroundImage = egg.img_url
+        ? `url('${egg.img_url}')`
+        : "";
+      eggImg.setAttribute("aria-label", egg.egg_name || "Dragon egg");
     }
     if (eggStageText) eggStageText.textContent = incubation.stage || "warm";
     if (eggTimer) eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
