@@ -2089,6 +2089,16 @@ function startHatcheryTimer() {
       Math.min(100, Math.floor((elapsedSeconds / durationSeconds) * 100))
     );
 
+    console.log({
+  startedAt,
+  readyAt,
+  now,
+  durationSeconds,
+  elapsedSeconds,
+  secondsRemaining,
+  percentComplete
+});
+
     let stage = "warm";
 
     if (percentComplete >= 100) {
