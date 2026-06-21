@@ -1,4 +1,4 @@
-/* hub.css V-06/21/26 dragon-hatchery-8 tidy-2*/
+/* hub.css V-06/21/26 dragon-hatchery-9 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -1345,6 +1345,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   }
 }
 
+
 /* Diorama (16:9) */
 .diorama {
   position: relative;
@@ -2074,12 +2075,51 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 #ceremonyDragon {
+  position: relative;
+  z-index: 2;
   width: 340px;
   max-width: 90%;
   height: auto;
   display: none;
   opacity: 0;
   filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.8));
+}
+
+.dragon-rarity-glow {
+  position: absolute;
+
+  width: 380px;
+  height: 380px;
+
+  border-radius: 50%;
+
+  opacity: 0;
+
+  filter: blur(60px);
+
+  transform: scale(.75);
+
+  transition:
+    opacity .8s ease,
+    transform .8s ease;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dragon-rarity-glow.active {
+  opacity: .35;
+  transform: scale(1);
+}
+
+.hatch-rarity {
+  margin-bottom: 10px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: .18em;
+  text-transform: uppercase;
 }
 
 #ceremonyDragon.reveal {
