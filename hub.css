@@ -1,4 +1,4 @@
-/* hub.css V-06/21/26 dragon-hatchery-5 tidy-1*/
+/* hub.css V-06/21/26 dragon-hatchery-6 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -656,6 +656,55 @@ body {
 
 .hatch-ceremony-overlay.active {
   display: flex;
+}
+
+.hatch-ceremony-card {
+  width: min(700px, 92vw);
+
+  padding: 32px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255,220,140,.25);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20,18,16,.98),
+      rgba(8,8,8,.98)
+    );
+
+  box-shadow:
+    0 0 40px rgba(255,180,60,.15);
+}
+
+.hatch-ceremony-stage {
+  position: relative;
+
+  height: 340px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#ceremonyEgg {
+  width: 180px;
+  height: 220px;
+
+  border-radius: 50% 50% 46% 46%;
+
+  background:
+    radial-gradient(circle at 35% 24%, rgba(255,255,255,.35), transparent 18%),
+    linear-gradient(145deg, #5d4630, #24170f 62%, #100a07);
+
+  border: 1px solid rgba(255,220,140,.2);
+}
+
+#hatchCeremonyText {
+  text-align: center;
+  margin-top: 20px;
+  color: #f6ead1;
 }
 
 .roost-tabs {
