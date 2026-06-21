@@ -271,6 +271,18 @@ function tweenNumber({ from, to, duration = 350, onUpdate }) {
 }
 let dragonsRefreshBlockedUntil = 0;
 async function refreshHubLiveDataSafe() {
+  async function refreshHubLiveDataSafe() {
+
+  if (window.HATCHERY_TEST_MODE) {
+    return;
+  }
+
+  await refreshDragonsFromApiSafe();
+
+  if (hatcheryMounted) {
+    await fetchHatcheryState();
+  }
+}
   await refreshDragonsFromApiSafe();
 
   if (hatcheryMounted) {
