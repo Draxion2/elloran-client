@@ -2136,6 +2136,8 @@ function startHatchCeremony(payload, eggSnapshot) {
 
   const dragon = payload.dragon || {};
   const hatch = payload.hatch || {};
+  console.log("HATCH PAYLOAD", payload);
+  console.log("DRAGON IMG", dragon.img_url);
   const eggImg = eggSnapshot?.img_url || "";
 
   overlay.classList.add("active");
