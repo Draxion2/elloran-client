@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-8 tidy-v4");
+console.log("hub.js V-06/21/26 dragon-hatchery-9 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -269,6 +269,59 @@ function tweenNumber({ from, to, duration = 350, onUpdate }) {
     }
   }
   requestAnimationFrame(frame);
+}
+function normalizeHatcheryState(payload) {
+  if (!payload?.has_egg || !payload.incubation) return payload;
+
+  const inc = payload.incubation;
+  const startedAt = Number(inc.incubation_started_at || 0);
+  const readyAt = Number(inc.hatch_ready_at || 0);
+  const now = Date.now();
+
+  if (!startedAt || !readyAt) return payload;
+
+  if (readyAt <= startedAt) {
+    return {
+      ...payload,
+      can_hatch: true,
+      incubation: {
+        ...inc,
+        seconds_remaining: 0,
+        percent_complete: 100,
+        stage: "ready"
+      }
+    };
+  }
+
+  const durationSeconds = Math.max(1, Math.floor((readyAt - startedAt) / 1000));
+  const elapsedSeconds = Math.max(0, Math.floor((now - startedAt) / 1000));
+  const secondsRemaining = Math.max(0, Math.floor((readyAt - now) / 1000));
+
+  const percentComplete = Math.max(
+    0,
+    Math.min(100, Math.floor((elapsedSeconds / durationSeconds) * 100))
+  );
+
+  let stage = "warm";
+
+  if (percentComplete >= 100) {
+    stage = "ready";
+  } else if (percentComplete >= 66) {
+    stage = "cracking";
+  } else if (percentComplete >= 33) {
+    stage = "restless";
+  }
+
+  return {
+    ...payload,
+    can_hatch: secondsRemaining <= 0,
+    incubation: {
+      ...inc,
+      seconds_remaining: secondsRemaining,
+      percent_complete: percentComplete,
+      stage
+    }
+  };
 }
 let dragonsRefreshBlockedUntil = 0;
 async function refreshHubLiveDataSafe() {
@@ -2039,8 +2092,8 @@ let hatcheryTimer = null;
 async function fetchHatcheryState() {
   try {
     const payload = await apiFetch("/players/me/dragons/hatchery");
-    hatcheryState = payload;
-    renderHatchery(payload);
+    hatcheryState = normalizeHatcheryState(payload);
+    renderHatchery(hatcheryState);
     startHatcheryTimer();
   } catch (err) {
     console.error("fetchHatcheryState failed", err);
@@ -2074,64 +2127,7 @@ function startHatcheryTimer() {
   hatcheryTimer = setInterval(() => {
     if (!hatcheryState || !hatcheryState.has_egg) return;
 
-    const inc = hatcheryState.incubation;
-    if (!inc) return;
-
-    const startedAt = Number(inc.incubation_started_at || 0);
-    const readyAt = Number(inc.hatch_ready_at || 0);
-    const now = Date.now();
-
-    if (!startedAt || !readyAt) {
-      renderHatchery(hatcheryState);
-      return;
-    }
-
-    if (readyAt <= startedAt) {
-      hatcheryState = {
-        ...hatcheryState,
-        can_hatch: true,
-        incubation: {
-          ...inc,
-          seconds_remaining: 0,
-          percent_complete: 100,
-          stage: "ready"
-        }
-    };
-
-    renderHatchery(hatcheryState);
-    return;
-  }
-
-    const durationSeconds = Math.max(1, Math.floor((readyAt - startedAt) / 1000));
-    const elapsedSeconds = Math.max(0, Math.floor((now - startedAt) / 1000));
-    const secondsRemaining = Math.max(0, Math.floor((readyAt - now) / 1000));
-
-    const percentComplete = Math.max(
-      0,
-      Math.min(100, Math.floor((elapsedSeconds / durationSeconds) * 100))
-    );
-
-    let stage = "warm";
-
-    if (percentComplete >= 100) {
-      stage = "ready";
-    } else if (percentComplete >= 66) {
-      stage = "cracking";
-    } else if (percentComplete >= 33) {
-      stage = "restless";
-    }
-
-    hatcheryState = {
-      ...hatcheryState,
-      can_hatch: secondsRemaining <= 0,
-      incubation: {
-        ...inc,
-        seconds_remaining: secondsRemaining,
-        percent_complete: percentComplete,
-        stage
-      }
-    };
-
+    hatcheryState = normalizeHatcheryState(hatcheryState);
     renderHatchery(hatcheryState);
   }, 1000);
 }
