@@ -1,4 +1,4 @@
-/* hub.css V-06/20/26 dragon-hatchery-4 tidy-1*/
+/* hub.css V-06/21/26 dragon-hatchery-5 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -1676,6 +1676,155 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* =========================
+   Dragon Hatch Ceremony
+========================= */
+
+.hatch-ceremony .growth-card {
+  border-color: rgba(255, 220, 140, 0.35);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 22, 30, 0.96),
+      rgba(8, 10, 16, 0.96)
+    );
+
+  box-shadow:
+    0 0 50px rgba(255, 180, 60, 0.22),
+    inset 0 0 30px rgba(255, 220, 140, 0.04);
+}
+
+.hatch-stage {
+  position: relative;
+}
+
+.hatch-aura {
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 210, 120, 0.42) 0%,
+      rgba(255, 170, 60, 0.18) 45%,
+      transparent 75%
+    );
+}
+
+.hatch-ceremony-egg {
+  width: 180px;
+  height: 220px;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  transform-origin: center bottom;
+}
+
+.hatch-ceremony-egg.hatching {
+  animation: hatchCeremonyShake 1.2s ease-in-out infinite;
+}
+
+.hatch-ceremony-dragon {
+  display: none;
+  opacity: 0;
+}
+
+.hatch-ceremony-dragon.reveal {
+  display: block;
+  animation: hatchDragonReveal 1.4s ease forwards;
+}
+
+.hatch-reveal-details {
+  margin-top: 18px;
+
+  display: grid;
+  gap: 10px;
+
+  padding: 14px;
+
+  border: 1px solid rgba(255, 215, 120, 0.18);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.03),
+      rgba(0,0,0,0.12)
+    );
+}
+
+.hatch-reveal-details div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hatch-reveal-details span {
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.hatch-reveal-details strong {
+  color: #f7e0a2;
+}
+
+@keyframes hatchCeremonyShake {
+
+  0%,100% {
+    transform: rotate(0deg);
+  }
+
+  15% {
+    transform: rotate(-3deg);
+  }
+
+  30% {
+    transform: rotate(4deg);
+  }
+
+  45% {
+    transform: rotate(-4deg);
+  }
+
+  60% {
+    transform: rotate(3deg);
+  }
+
+  75% {
+    transform: rotate(-2deg);
+  }
+
+  90% {
+    transform: rotate(1deg);
+  }
+}
+
+@keyframes hatchDragonReveal {
+
+  0% {
+    opacity: 0;
+    transform: scale(.85);
+    filter:
+      brightness(3)
+      drop-shadow(0 0 40px rgba(255,245,210,.95));
+  }
+
+  50% {
+    opacity: .7;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter:
+      drop-shadow(0 18px 26px rgba(0,0,0,.75))
+      drop-shadow(0 0 24px rgba(255,200,100,.2));
+  }
 }
 
 /* ===== Roost HUD (Stamina + Tier) ===== */
