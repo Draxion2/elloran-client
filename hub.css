@@ -1,4 +1,4 @@
-/* hub.css V-06/20/26 dragon-hatchery-3 tidy-1*/
+/* hub.css V-06/20/26 dragon-hatchery-4 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -764,35 +764,119 @@ body {
   border: none;
   border-radius: 0;
   box-shadow: none;
-}
-
-.hatchery-egg-img.has-real-egg {
-  animation: hatcheryEggTwitch 9s ease-in-out infinite;
   transform-origin: center bottom;
 }
 
-@keyframes hatcheryEggTwitch {
+/* Mostly still */
+.hatchery-egg-img.has-real-egg.egg-stage-warm {
+  animation: hatcheryEggWarm 12s ease-in-out infinite;
+}
 
-  0%,
-  86%,
-  100% {
+/* Occasional movement */
+.hatchery-egg-img.has-real-egg.egg-stage-restless {
+  animation: hatcheryEggRestless 8s ease-in-out infinite;
+}
+
+/* Stronger wobble */
+.hatchery-egg-img.has-real-egg.egg-stage-cracking {
+  animation: hatcheryEggCracking 5s ease-in-out infinite;
+}
+
+/* Almost ready */
+.hatchery-egg-img.has-real-egg.egg-stage-ready {
+  animation: hatcheryEggReady 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(255, 210, 120, 0.35));
+}
+
+@keyframes hatcheryEggWarm {
+  0%, 92%, 100% {
     transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  88% {
-    transform: translate(-50%, -50%) rotate(-1deg);
-  }
-
-  90% {
-    transform: translate(-50%, -50%) rotate(1.5deg);
-  }
-
-  92% {
-    transform: translate(-50%, -50%) rotate(-1deg);
   }
 
   94% {
+    transform: translate(-50%, -50%) rotate(-0.5deg);
+  }
+
+  96% {
+    transform: translate(-50%, -50%) rotate(0.5deg);
+  }
+
+  98% {
     transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes hatcheryEggRestless {
+  0%, 84%, 100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  86% {
+    transform: translate(-50%, -50%) rotate(-1deg);
+  }
+
+  88% {
+    transform: translate(-50%, -50%) rotate(1.25deg);
+  }
+
+  90% {
+    transform: translate(-50%, -50%) rotate(-0.75deg);
+  }
+
+  92% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes hatcheryEggCracking {
+  0%, 72%, 100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  75% {
+    transform: translate(-50%, -50%) rotate(-1.5deg);
+  }
+
+  78% {
+    transform: translate(-50%, -50%) rotate(2deg);
+  }
+
+  81% {
+    transform: translate(-50%, -50%) rotate(-1.25deg);
+  }
+
+  84% {
+    transform: translate(-50%, -50%) rotate(0.5deg);
+  }
+
+  87% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes hatcheryEggReady {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+
+  18% {
+    transform: translate(-50%, -50%) rotate(-1.5deg) scale(1.01);
+  }
+
+  28% {
+    transform: translate(-50%, -50%) rotate(2deg) scale(1.015);
+  }
+
+  38% {
+    transform: translate(-50%, -50%) rotate(-1deg) scale(1.01);
+  }
+
+  52% {
+    transform: translate(-50%, -50%) rotate(1deg) scale(1.015);
+  }
+
+  68% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
   }
 }
 
