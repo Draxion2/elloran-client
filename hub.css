@@ -1,4 +1,4 @@
-/* hub.css V-06/21/26 dragon-hatchery-7 tidy-1*/
+/* hub.css V-06/21/26 dragon-hatchery-8 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -31,8 +31,9 @@ body {
   background: #0b0d10;
 }
 
-body.ceremony-lock {
-  cursor: wait;
+body.ceremony-lock,
+.hatch-ceremony-overlay.active {
+  cursor: none;
 }
 
 body.ceremony-lock button,
@@ -666,7 +667,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   align-items: center;
   justify-content: center;
 
-  background: rgba(0,0,0,.88);
+  background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(6px);
 }
 
@@ -681,17 +682,15 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
   border-radius: 20px;
 
-  border: 1px solid rgba(255,220,140,.25);
+  border: 1px solid rgba(255, 220, 140, 0.25);
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(20,18,16,.98),
-      rgba(8,8,8,.98)
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(20, 18, 16, 0.98),
+    rgba(8, 8, 8, 0.98)
+  );
 
-  box-shadow:
-    0 0 40px rgba(255,180,60,.15);
+  box-shadow: 0 0 40px rgba(255, 180, 60, 0.15);
 }
 
 .hatch-ceremony-stage {
@@ -710,11 +709,14 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
   border-radius: 50% 50% 46% 46%;
 
-  background:
-    radial-gradient(circle at 35% 24%, rgba(255,255,255,.35), transparent 18%),
+  background: radial-gradient(
+      circle at 35% 24%,
+      rgba(255, 255, 255, 0.35),
+      transparent 18%
+    ),
     linear-gradient(145deg, #5d4630, #24170f 62%, #100a07);
 
-  border: 1px solid rgba(255,220,140,.2);
+  border: 1px solid rgba(255, 220, 140, 0.2);
 }
 
 #hatchCeremonyText {
@@ -753,8 +755,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
     rgba(35, 25, 15, 0.95)
   );
 
-  box-shadow:
-    0 0 16px rgba(255, 185, 80, 0.18),
+  box-shadow: 0 0 16px rgba(255, 185, 80, 0.18),
     inset 0 0 10px rgba(255, 220, 130, 0.08);
 
   font-family: inherit;
@@ -771,8 +772,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 #hatchCeremonyContinue:hover {
   transform: translateY(-1px);
   border-color: rgba(255, 225, 150, 0.75);
-  box-shadow:
-    0 0 26px rgba(255, 190, 80, 0.3),
+  box-shadow: 0 0 26px rgba(255, 190, 80, 0.3),
     inset 0 0 12px rgba(255, 230, 150, 0.12);
 }
 
@@ -790,19 +790,41 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 @keyframes ceremonyEggHatchShake {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  20% { transform: rotate(-3deg) scale(1.01); }
-  40% { transform: rotate(4deg) scale(1.015); }
-  60% { transform: rotate(-4deg) scale(1.01); }
-  80% { transform: rotate(2deg) scale(1); }
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  20% {
+    transform: rotate(-3deg) scale(1.01);
+  }
+  40% {
+    transform: rotate(4deg) scale(1.015);
+  }
+  60% {
+    transform: rotate(-4deg) scale(1.01);
+  }
+  80% {
+    transform: rotate(2deg) scale(1);
+  }
 }
 
 @keyframes ceremonyEggHatchHard {
-  0%, 100% { transform: rotate(0deg) scale(1.02); }
-  20% { transform: rotate(-7deg) scale(1.04); }
-  40% { transform: rotate(8deg) scale(1.05); }
-  60% { transform: rotate(-8deg) scale(1.04); }
-  80% { transform: rotate(5deg) scale(1.03); }
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1.02);
+  }
+  20% {
+    transform: rotate(-7deg) scale(1.04);
+  }
+  40% {
+    transform: rotate(8deg) scale(1.05);
+  }
+  60% {
+    transform: rotate(-8deg) scale(1.04);
+  }
+  80% {
+    transform: rotate(5deg) scale(1.03);
+  }
 }
 
 @keyframes ceremonyEggFadeOut {
@@ -951,9 +973,16 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   border: 1px solid rgba(184, 149, 88, 0.22);
   border-radius: 16px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255, 204, 120, 0.18), transparent 34%),
-    radial-gradient(circle at 50% 80%, rgba(184, 149, 88, 0.12), transparent 48%),
+  background: radial-gradient(
+      circle at 50% 38%,
+      rgba(255, 204, 120, 0.18),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 50% 80%,
+      rgba(184, 149, 88, 0.12),
+      transparent 48%
+    ),
     linear-gradient(180deg, #17110d, #080706);
   box-shadow: inset 0 0 38px rgba(0, 0, 0, 0.55);
 }
@@ -1002,13 +1031,14 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 /* Almost ready */
 .hatchery-egg-img.has-real-egg.egg-stage-ready {
   animation: hatcheryEggReady 2s ease-in-out infinite;
-  filter:
-    drop-shadow(0 0 18px rgba(255,210,120,.45))
-    drop-shadow(0 0 36px rgba(255,170,60,.25));
+  filter: drop-shadow(0 0 18px rgba(255, 210, 120, 0.45))
+    drop-shadow(0 0 36px rgba(255, 170, 60, 0.25));
 }
 
 @keyframes hatcheryEggWarm {
-  0%, 92%, 100% {
+  0%,
+  92%,
+  100% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
 
@@ -1026,7 +1056,9 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 @keyframes hatcheryEggRestless {
-  0%, 70%, 100% {
+  0%,
+  70%,
+  100% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
 
@@ -1052,7 +1084,9 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 @keyframes hatcheryEggCracking {
-  0%, 55%, 100% {
+  0%,
+  55%,
+  100% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
 
@@ -1082,7 +1116,8 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 @keyframes hatcheryEggReady {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%) rotate(0deg) scale(1);
   }
 
@@ -1131,8 +1166,11 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   height: 190px;
   transform: translate(-50%, -50%);
   border-radius: 50% 50% 46% 46%;
-  background:
-    radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.38), transparent 18%),
+  background: radial-gradient(
+      circle at 35% 24%,
+      rgba(255, 255, 255, 0.38),
+      transparent 18%
+    ),
     radial-gradient(circle at 62% 72%, rgba(0, 0, 0, 0.2), transparent 32%),
     linear-gradient(145deg, #5d4630, #24170f 62%, #100a07);
   border: 1px solid rgba(255, 224, 160, 0.24);
@@ -1241,8 +1279,11 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   width: 54px;
   height: 64px;
   border-radius: 50% 50% 46% 46%;
-  background:
-    radial-gradient(circle at 35% 24%, rgba(255, 255, 255, 0.32), transparent 18%),
+  background: radial-gradient(
+      circle at 35% 24%,
+      rgba(255, 255, 255, 0.32),
+      transparent 18%
+    ),
     linear-gradient(145deg, #5d4630, #24170f 62%, #100a07);
   border: 1px solid rgba(255, 224, 160, 0.2);
 }
@@ -1362,20 +1403,20 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
 .spec-card {
   width: min(92vw, 620px);
-  position:relative;
+  position: relative;
 }
 
-.spec-card::before{
-  content:"";
-  position:absolute;
-  inset:-40px;
-  border-radius:24px;
-  background:radial-gradient(
+.spec-card::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  border-radius: 24px;
+  background: radial-gradient(
     circle,
-    rgba(212,175,110,.18),
+    rgba(212, 175, 110, 0.18),
     transparent 70%
   );
-  z-index:-1;
+  z-index: -1;
 }
 
 .spec-choices {
@@ -1387,7 +1428,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 .spec-choice {
   text-align: left;
   padding: 18px;
-  min-height:88px;
+  min-height: 88px;
   border-radius: 12px;
   border: 1px solid rgba(184, 149, 88, 0.28);
   background: linear-gradient(
@@ -1397,19 +1438,17 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   );
   color: #f6ead1;
   cursor: pointer;
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    border-color .18s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
 
-.spec-choice em{
-  display:block;
-  margin-top:8px;
-  color:#d8bd79;
-  font-size:12px;
-  font-style:normal;
-  letter-spacing:.03em;
+.spec-choice em {
+  display: block;
+  margin-top: 8px;
+  color: #d8bd79;
+  font-size: 12px;
+  font-style: normal;
+  letter-spacing: 0.03em;
 }
 
 .spec-choice:hover {
@@ -1422,7 +1461,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   display: block;
   color: #f7e0a2;
   margin-bottom: 5px;
-  transform:translateY(-3px);
+  transform: translateY(-3px);
 }
 
 .spec-choice span {
@@ -1431,40 +1470,39 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   line-height: 1.45;
 }
 
-.spec-ceremony-glow{
-  position:absolute;
-  width:320px;
-  height:320px;
-  border-radius:50%;
-  pointer-events:none;
+.spec-ceremony-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  pointer-events: none;
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(212,175,110,.35) 0%,
-      rgba(212,175,110,.18) 35%,
-      transparent 75%
-    );
+  background: radial-gradient(
+    circle,
+    rgba(212, 175, 110, 0.35) 0%,
+    rgba(212, 175, 110, 0.18) 35%,
+    transparent 75%
+  );
 
-  filter:blur(14px);
+  filter: blur(14px);
 
-  animation:specGlowPulse 3s ease-in-out infinite;
+  animation: specGlowPulse 3s ease-in-out infinite;
 }
 
-@keyframes specGlowPulse{
-  0%{
-    transform:scale(.92);
-    opacity:.45;
+@keyframes specGlowPulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.45;
   }
 
-  50%{
-    transform:scale(1.02);
-    opacity:.95;
+  50% {
+    transform: scale(1.02);
+    opacity: 0.95;
   }
 
-  100%{
-    transform:scale(.92);
-    opacity:.45;
+  100% {
+    transform: scale(0.92);
+    opacity: 0.45;
   }
 }
 
@@ -1902,15 +1940,13 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 .hatch-ceremony .growth-card {
   border-color: rgba(255, 220, 140, 0.35);
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(18, 22, 30, 0.96),
-      rgba(8, 10, 16, 0.96)
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(18, 22, 30, 0.96),
+    rgba(8, 10, 16, 0.96)
+  );
 
-  box-shadow:
-    0 0 50px rgba(255, 180, 60, 0.22),
+  box-shadow: 0 0 50px rgba(255, 180, 60, 0.22),
     inset 0 0 30px rgba(255, 220, 140, 0.04);
 }
 
@@ -1919,13 +1955,12 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 .hatch-aura {
-  background:
-    radial-gradient(
-      circle,
-      rgba(255, 210, 120, 0.42) 0%,
-      rgba(255, 170, 60, 0.18) 45%,
-      transparent 75%
-    );
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 120, 0.42) 0%,
+    rgba(255, 170, 60, 0.18) 45%,
+    transparent 75%
+  );
 }
 
 .hatch-ceremony-egg {
@@ -1964,12 +1999,11 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   border: 1px solid rgba(255, 215, 120, 0.18);
   border-radius: 12px;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.03),
-      rgba(0,0,0,0.12)
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.12)
+  );
 }
 
 .hatch-reveal-details div {
@@ -1982,7 +2016,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   color: var(--muted);
   text-transform: uppercase;
   font-size: 12px;
-  letter-spacing: .08em;
+  letter-spacing: 0.08em;
 }
 
 .hatch-reveal-details strong {
@@ -1990,8 +2024,8 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 @keyframes hatchCeremonyShake {
-
-  0%,100% {
+  0%,
+  100% {
     transform: rotate(0deg);
   }
 
@@ -2021,26 +2055,22 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 @keyframes hatchDragonReveal {
-
   0% {
     opacity: 0;
-    transform: scale(.85);
-    filter:
-      brightness(3)
-      drop-shadow(0 0 40px rgba(255,245,210,.95));
+    transform: scale(0.85);
+    filter: brightness(3) drop-shadow(0 0 40px rgba(255, 245, 210, 0.95));
   }
 
   50% {
-    opacity: .7;
+    opacity: 0.7;
     transform: scale(1.05);
   }
 
   100% {
     opacity: 1;
     transform: scale(1);
-    filter:
-      drop-shadow(0 18px 26px rgba(0,0,0,.75))
-      drop-shadow(0 0 24px rgba(255,200,100,.2));
+    filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.75))
+      drop-shadow(0 0 24px rgba(255, 200, 100, 0.2));
   }
 }
 
@@ -2050,7 +2080,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   height: auto;
   display: none;
   opacity: 0;
-  filter: drop-shadow(0 22px 32px rgba(0,0,0,.8));
+  filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.8));
 }
 
 #ceremonyDragon.reveal {
@@ -2062,9 +2092,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   0% {
     opacity: 0;
     transform: scale(0.72);
-    filter:
-      brightness(2.8)
-      drop-shadow(0 0 40px rgba(255,245,210,.9));
+    filter: brightness(2.8) drop-shadow(0 0 40px rgba(255, 245, 210, 0.9));
   }
 
   55% {
@@ -2075,9 +2103,8 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   100% {
     opacity: 1;
     transform: scale(1);
-    filter:
-      drop-shadow(0 22px 32px rgba(0,0,0,.8))
-      drop-shadow(0 0 24px rgba(255,200,100,.25));
+    filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.8))
+      drop-shadow(0 0 24px rgba(255, 200, 100, 0.25));
   }
 }
 
