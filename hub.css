@@ -1,4 +1,4 @@
-/* hub.css V-06/19/26 dragon-hatchery-1 tidy-1*/
+/* hub.css V-06/20/26 dragon-hatchery-2 tidy-1*/
 
 :root {
   --ink: #f6ead1;
@@ -758,6 +758,12 @@ body {
   );
   filter: blur(8px);
   animation: hatcheryWarmth 5s ease-in-out infinite;
+}
+
+.hatchery-egg-img.has-real-egg {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .hatchery-egg-img {
