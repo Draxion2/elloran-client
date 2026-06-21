@@ -1,4 +1,4 @@
-console.log("hub.js V-06/20/26 dragon-hatchery-5 tidy-v4");
+console.log("hub.js V-06/20/26 dragon-hatchery-6 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
