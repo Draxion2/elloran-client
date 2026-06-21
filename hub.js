@@ -1,4 +1,4 @@
-console.log("hub.js V-06/20/26 dragon-hatchery-4 tidy-v4");
+console.log("hub.js V-06/20/26 dragon-hatchery-5 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2101,7 +2101,13 @@ function renderHatchery(payload = hatcheryState) {
     if (eggStageText) eggStageText.textContent = "—";
     if (eggImg) {
       eggImg.style.background = "";
-      eggImg.classList.remove("has-real-egg");
+      eggImg.classList.remove(
+        "has-real-egg",
+        "egg-stage-warm",
+        "egg-stage-restless",
+        "egg-stage-cracking",
+        "egg-stage-ready"
+      );
       eggImg.removeAttribute("aria-label");
     }
     if (eggTimer) eggTimer.textContent = "—";
@@ -2121,7 +2127,18 @@ function renderHatchery(payload = hatcheryState) {
       eggImg.style.background = egg.img_url
         ? `transparent url("${egg.img_url}") center / contain no-repeat`
         : "";
+
       eggImg.classList.toggle("has-real-egg", !!egg.img_url);
+
+      eggImg.classList.remove(
+        "egg-stage-warm",
+        "egg-stage-restless",
+        "egg-stage-cracking",
+        "egg-stage-ready"
+      );
+
+      eggImg.classList.add(`egg-stage-${incubation.stage || "warm"}`);
+
       eggImg.setAttribute("aria-label", egg.egg_name || "Dragon egg");
     }
     if (eggStageText) eggStageText.textContent = incubation.stage || "warm";
