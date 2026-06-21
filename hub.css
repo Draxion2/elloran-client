@@ -640,6 +640,24 @@ body {
    Roost Tabs + Hatchery
 ========================= */
 
+.hatch-ceremony-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(6px);
+}
+
+.hatch-ceremony-overlay.active {
+  display: flex;
+}
+
 .roost-tabs {
   max-width: 1200px;
   margin: 0 auto 14px;
