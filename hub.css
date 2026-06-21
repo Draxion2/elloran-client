@@ -766,6 +766,36 @@ body {
   box-shadow: none;
 }
 
+.hatchery-egg-img.has-real-egg {
+  animation: hatcheryEggTwitch 9s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes hatcheryEggTwitch {
+
+  0%,
+  86%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  88% {
+    transform: translate(-50%, -50%) rotate(-1deg);
+  }
+
+  90% {
+    transform: translate(-50%, -50%) rotate(1.5deg);
+  }
+
+  92% {
+    transform: translate(-50%, -50%) rotate(-1deg);
+  }
+
+  94% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
 .hatchery-egg-img {
   position: absolute;
   left: 50%;
