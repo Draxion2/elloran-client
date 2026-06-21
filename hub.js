@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-9 tidy-v4");
+console.log("hub.js V-06/21/26 dragon-hatchery-10 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2105,20 +2105,125 @@ async function hatchActiveEgg() {
   const btn = document.getElementById("hatchEggBtn");
   if (btn) btn.disabled = true;
 
+  const eggSnapshot = hatcheryState?.egg || null;
+
   try {
     const payload = await apiFetch("/players/me/dragons/hatchery/hatch", {
       method: "POST"
     });
 
-    toast(`${payload.dragon?.name || "A dragon"} has hatched!`);
-
-    await refreshDragonsFromApiSafe();
-    await fetchHatcheryState();
+    startHatchCeremony(payload, eggSnapshot);
   } catch (err) {
     console.error("hatchActiveEgg failed", err);
     toast(extractApiPayloadMessage(err) || "Could not hatch egg.");
     await fetchHatcheryState();
   }
+}
+
+function startHatchCeremony(payload, eggSnapshot) {
+  const overlay = document.getElementById("hatchCeremonyOverlay");
+  const eggEl = document.getElementById("ceremonyEgg");
+  const dragonEl = document.getElementById("ceremonyDragon");
+  const textEl = document.getElementById("hatchCeremonyText");
+  const btnContinue = document.getElementById("hatchCeremonyContinue");
+
+  if (!overlay || !eggEl || !dragonEl || !textEl || !btnContinue) {
+    toast(`${payload.dragon?.name || "A dragon"} has hatched!`);
+    refreshDragonsFromApiSafe();
+    fetchHatcheryState();
+    return;
+  }
+
+  const dragon = payload.dragon || {};
+  const hatch = payload.hatch || {};
+  const eggImg = eggSnapshot?.img_url || "";
+
+  overlay.classList.add("active");
+
+  eggEl.style.background = eggImg
+    ? `transparent url("${eggImg}") center / contain no-repeat`
+    : "";
+
+  eggEl.className = "";
+  eggEl.classList.add("hatching");
+
+  dragonEl.src = "";
+  dragonEl.style.display = "none";
+  dragonEl.classList.remove("reveal");
+
+  textEl.classList.remove("show");
+  btnContinue.classList.remove("show");
+
+  setTimeout(() => {
+    textEl.textContent = "The egg trembles beneath the lantern light...";
+    textEl.classList.add("show");
+  }, 600);
+
+  setTimeout(() => {
+    textEl.classList.remove("show");
+    setTimeout(() => {
+      textEl.textContent = "Thin cracks race across the shell.";
+      textEl.classList.add("show");
+    }, 500);
+  }, 4200);
+
+  setTimeout(() => {
+    textEl.classList.remove("show");
+    setTimeout(() => {
+      textEl.textContent = "A brilliant warmth spills from within.";
+      textEl.classList.add("show");
+    }, 500);
+  }, 8200);
+
+  setTimeout(() => {
+    eggEl.style.display = "none";
+
+    if (dragon.img_url) {
+      dragonEl.src = dragon.img_url;
+    }
+
+    dragonEl.style.display = "block";
+    dragonEl.classList.add("reveal");
+
+    textEl.classList.remove("show");
+    setTimeout(() => {
+      textEl.textContent = `${hatch.species_name || dragon.species_name || dragon.name || "A dragon"} has hatched.`;
+      textEl.classList.add("show");
+    }, 600);
+  }, 11200);
+
+  setTimeout(() => {
+    textEl.classList.remove("show");
+    setTimeout(() => {
+      textEl.innerHTML = `
+        <strong>${hatch.species_name || dragon.species_name || dragon.name || "Unknown Dragon"}</strong><br>
+        ${hatch.gender || "Unknown"} • ${hatch.trait_name || "Unknown Trait"}<br>
+        Favorite Activity: ${dragon.favorite_activity || "Unknown"}
+      `;
+      textEl.classList.add("show");
+    }, 500);
+  }, 14500);
+
+  setTimeout(() => {
+    btnContinue.classList.add("show");
+  }, 17000);
+
+  btnContinue.onclick = async () => {
+    overlay.classList.remove("active");
+    btnContinue.classList.remove("show");
+    textEl.classList.remove("show");
+
+    eggEl.style.display = "";
+    eggEl.className = "";
+    eggEl.style.background = "";
+
+    dragonEl.src = "";
+    dragonEl.style.display = "none";
+    dragonEl.classList.remove("reveal");
+
+    await refreshDragonsFromApiSafe();
+    await fetchHatcheryState();
+  };
 }
 
 function startHatcheryTimer() {
