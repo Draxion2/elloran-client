@@ -1,4 +1,4 @@
-console.log("hub.js V-06/20/26 dragon-hatchery-7 tidy-v4");
+console.log("hub.js V-06/21/26 dragon-hatchery-8 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2081,10 +2081,26 @@ function startHatcheryTimer() {
     const readyAt = Number(inc.hatch_ready_at || 0);
     const now = Date.now();
 
-    if (!startedAt || !readyAt || readyAt <= startedAt) {
+    if (!startedAt || !readyAt) {
       renderHatchery(hatcheryState);
       return;
     }
+
+    if (readyAt <= startedAt) {
+      hatcheryState = {
+        ...hatcheryState,
+        can_hatch: true,
+        incubation: {
+          ...inc,
+          seconds_remaining: 0,
+          percent_complete: 100,
+          stage: "ready"
+        }
+    };
+
+    renderHatchery(hatcheryState);
+    return;
+  }
 
     const durationSeconds = Math.max(1, Math.floor((readyAt - startedAt) / 1000));
     const elapsedSeconds = Math.max(0, Math.floor((now - startedAt) / 1000));
