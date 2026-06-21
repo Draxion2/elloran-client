@@ -1,4 +1,4 @@
-console.log("hub.js V-06/19/26 dragon-hatchery-1 tidy-v4");
+console.log("hub.js V-06/20/26 dragon-hatchery-2 tidy-v4");
 
 /* ===== Tiny utils ===== */
 window.HUB = window.HUB || {};
@@ -2020,9 +2020,53 @@ function getEggStageFromProgress(progressPct) {
   return "Dormant";
 }
 
-function renderHatchery(payload = HATCHERY_PLACEHOLDER) {
-  const activeEgg = payload.activeEgg || payload.active_egg || null;
-  const storage = payload.storage || [];
+let hatcheryState = null;
+let hatcheryTimer = null;
+
+async function fetchHatcheryState() {
+  try {
+    const payload = await apiFetch("/players/me/dragons/hatchery");
+    hatcheryState = payload;
+    renderHatchery(payload);
+    startHatcheryTimer();
+  } catch (err) {
+    console.error("fetchHatcheryState failed", err);
+    toast("Could not load hatchery.");
+  }
+}
+
+async function hatchActiveEgg() {
+  const btn = document.getElementById("hatchEggBtn");
+  if (btn) btn.disabled = true;
+
+  try {
+    const payload = await apiFetch("/players/me/dragons/hatchery/hatch", {
+      method: "POST"
+    });
+
+    toast(`${payload.dragon?.name || "A dragon"} has hatched!`);
+
+    await refreshDragonsFromApiSafe();
+    await fetchHatcheryState();
+  } catch (err) {
+    console.error("hatchActiveEgg failed", err);
+    toast(extractApiPayloadMessage(err) || "Could not hatch egg.");
+    await fetchHatcheryState();
+  }
+}
+
+function startHatcheryTimer() {
+  if (hatcheryTimer) clearInterval(hatcheryTimer);
+
+  hatcheryTimer = setInterval(() => {
+    if (!hatcheryState || !hatcheryState.has_egg) return;
+    renderHatchery(hatcheryState);
+  }, 1000);
+}
+
+function renderHatchery(payload = hatcheryState) {
+  const activeEgg = payload?.has_egg ? payload : null;
+  const storage = payload?.storage || [];
 
   const badge = document.getElementById("hatcheryTabBadge");
   const eggName = document.getElementById("hatcheryEggName");
@@ -2034,6 +2078,9 @@ function renderHatchery(payload = HATCHERY_PLACEHOLDER) {
   const eggStorageCount = document.getElementById("eggStorageCount");
   const eggList = document.getElementById("hatcheryEggList");
 
+  const egg = activeEgg?.egg || null;
+  const incubation = activeEgg?.incubation || null;
+
   if (badge) {
     const totalEggs = storage.length + (activeEgg ? 1 : 0);
     badge.textContent = totalEggs;
@@ -2044,7 +2091,7 @@ function renderHatchery(payload = HATCHERY_PLACEHOLDER) {
       storage.length === 1 ? "1 Egg" : `${storage.length} Eggs`;
   }
 
-  if (!activeEgg) {
+    if (!egg || !incubation) {
     if (eggName) eggName.textContent = "No Egg Incubating";
     if (eggFlavor) {
       eggFlavor.textContent =
@@ -2055,22 +2102,17 @@ function renderHatchery(payload = HATCHERY_PLACEHOLDER) {
     if (progressFill) progressFill.style.width = "0%";
     if (hatchBtn) hatchBtn.disabled = true;
   } else {
-    const nowMs = Date.now();
-    const startedAt = Number(activeEgg.incubation_started_at || nowMs);
-    const readyAt = Number(activeEgg.hatch_ready_at || nowMs);
-    const duration = Math.max(1, readyAt - startedAt);
-    const elapsed = Math.max(0, nowMs - startedAt);
-    const progress = Math.max(0, Math.min(100, Math.round((elapsed / duration) * 100)));
-    const msLeft = Math.max(0, readyAt - nowMs);
-    const ready = msLeft <= 0;
+    const secondsLeft = Math.max(0, Number(incubation.seconds_remaining || 0));
+    const msLeft = secondsLeft * 1000;
+    const progress = Math.max(
+      0,
+      Math.min(100, Number(incubation.percent_complete || 0))
+    );
+    const ready = !!activeEgg.can_hatch;
 
-    if (eggName) eggName.textContent = activeEgg.egg_name || "Unknown Egg";
-    if (eggStageText) {
-      eggStageText.textContent = activeEgg.stage || getEggStageFromProgress(progress);
-    }
-    if (eggTimer) {
-      eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
-    }
+    if (eggName) eggName.textContent = egg.egg_name || "Unknown Egg";
+    if (eggStageText) eggStageText.textContent = incubation.stage || "warm";
+    if (eggTimer) eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
     if (progressFill) progressFill.style.width = `${progress}%`;
     if (hatchBtn) hatchBtn.disabled = !ready;
 
@@ -2145,21 +2187,19 @@ function initHatcheryTabs() {
 
 function initHatchery() {
   if (hatcheryMounted) {
-    renderHatchery();
+    fetchHatcheryState();
     return;
   }
 
   hatcheryMounted = true;
 
   initHatcheryTabs();
-  renderHatchery();
+  fetchHatcheryState();
 
   const hatchBtn = document.getElementById("hatchEggBtn");
 
   if (hatchBtn) {
-    hatchBtn.onclick = () => {
-      toast("Hatching is not wired yet.");
-    };
+    hatchBtn.onclick = hatchActiveEgg;
   }
 }
 
