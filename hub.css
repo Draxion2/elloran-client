@@ -702,9 +702,62 @@ body {
 }
 
 #hatchCeremonyText {
+  min-height: 54px;
+  margin: 18px auto 20px;
+  max-width: 560px;
+
   text-align: center;
-  margin-top: 20px;
-  color: #f6ead1;
+  color: #d9cfb8;
+  font-size: 1rem;
+  line-height: 1.6;
+
+  opacity: 0;
+  transform: translateY(8px);
+
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+#hatchCeremonyText.show {
+  opacity: 1;
+  transform: none;
+}
+
+#hatchCeremonyContinue {
+  display: none;
+  margin: 10px auto 0;
+  padding: 10px 24px;
+
+  border: 1px solid rgba(255, 220, 140, 0.45);
+  border-radius: 999px;
+
+  color: #f7e0a2;
+  background: linear-gradient(
+    180deg,
+    rgba(80, 55, 25, 0.95),
+    rgba(35, 25, 15, 0.95)
+  );
+
+  box-shadow:
+    0 0 16px rgba(255, 185, 80, 0.18),
+    inset 0 0 10px rgba(255, 220, 130, 0.08);
+
+  font-family: inherit;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+#hatchCeremonyContinue.show {
+  display: block;
+}
+
+#hatchCeremonyContinue:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 225, 150, 0.75);
+  box-shadow:
+    0 0 26px rgba(255, 190, 80, 0.3),
+    inset 0 0 12px rgba(255, 230, 150, 0.12);
 }
 
 .roost-tabs {
