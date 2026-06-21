@@ -31,8 +31,7 @@ body {
   background: #0b0d10;
 }
 
-body.ceremony-lock,
-.hatch-ceremony-overlay.active {
+body.ceremony-lock {
   cursor: none;
 }
 
