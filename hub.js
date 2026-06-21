@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-11 tidy-v4");
+console.log("hub.js V-06/21/26 dragon-hatchery-12 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -325,7 +325,6 @@ function normalizeHatcheryState(payload) {
 }
 let dragonsRefreshBlockedUntil = 0;
 async function refreshHubLiveDataSafe() {
-
   if (window.HATCHERY_TEST_MODE === true) {
     return;
   }
@@ -2182,45 +2181,54 @@ function startHatchCeremony(payload, eggSnapshot) {
   }, 8200);
 
   setTimeout(() => {
-  eggEl.classList.remove("hatching");
-  eggEl.classList.add("hatching-hard");
-}, 9400);
-
-setTimeout(() => {
-  eggEl.classList.remove("hatching-hard");
-  eggEl.classList.add("fade-out");
-
-  if (flashEl) {
-    flashEl.classList.remove("burst");
-    void flashEl.offsetWidth;
-    flashEl.classList.add("burst");
-  }
-}, 10600);
-
-setTimeout(() => {
-  eggEl.style.display = "none";
-
-  if (dragon.img_url) {
-    dragonEl.src = dragon.img_url;
-  }
-
-  dragonEl.style.display = "block";
-  dragonEl.classList.add("reveal");
-
-  textEl.classList.remove("show");
+    eggEl.classList.remove("hatching");
+    eggEl.classList.add("hatching-hard");
+  }, 9400);
 
   setTimeout(() => {
-    textEl.textContent = `${hatch.species_name || dragon.species_name || dragon.name || "A dragon"} has hatched.`;
-    textEl.classList.add("show");
-  }, 600);
-}, 11600);
+    eggEl.classList.remove("hatching-hard");
+    eggEl.classList.add("fade-out");
+
+    if (flashEl) {
+      flashEl.classList.remove("burst");
+      void flashEl.offsetWidth;
+      flashEl.classList.add("burst");
+    }
+  }, 10600);
+
+  setTimeout(() => {
+    eggEl.style.display = "none";
+
+    if (dragon.img_url) {
+      dragonEl.src = dragon.img_url;
+    }
+
+    dragonEl.style.display = "block";
+    dragonEl.classList.add("reveal");
+
+    textEl.classList.remove("show");
+
+    setTimeout(() => {
+      textEl.textContent = `${
+        hatch.species_name || dragon.species_name || dragon.name || "A dragon"
+      } has hatched.`;
+      textEl.classList.add("show");
+    }, 600);
+  }, 11600);
 
   setTimeout(() => {
     textEl.classList.remove("show");
     setTimeout(() => {
       textEl.innerHTML = `
-        <strong>${hatch.species_name || dragon.species_name || dragon.name || "Unknown Dragon"}</strong><br>
-        ${hatch.gender || "Unknown"} • ${hatch.trait_name || "Unknown Trait"}<br>
+        <strong>${
+          hatch.species_name ||
+          dragon.species_name ||
+          dragon.name ||
+          "Unknown Dragon"
+        }</strong><br>
+        ${hatch.gender || "Unknown"} • ${
+        hatch.trait_name || "Unknown Trait"
+      }<br>
         Favorite Activity: ${dragon.favorite_activity || "Unknown"}
       `;
       textEl.classList.add("show");
@@ -2228,6 +2236,7 @@ setTimeout(() => {
   }, 14500);
 
   setTimeout(() => {
+    document.body.classList.remove("ceremony-lock");
     btnContinue.classList.add("show");
   }, 18000);
 
@@ -2290,7 +2299,7 @@ function renderHatchery(payload = hatcheryState) {
       storage.length === 1 ? "1 Egg" : `${storage.length} Eggs`;
   }
 
-    if (!egg || !incubation) {
+  if (!egg || !incubation) {
     if (eggName) eggName.textContent = "No Egg Incubating";
     if (eggFlavor) {
       eggFlavor.textContent =
@@ -2340,7 +2349,8 @@ function renderHatchery(payload = hatcheryState) {
       eggImg.setAttribute("aria-label", egg.egg_name || "Dragon egg");
     }
     if (eggStageText) eggStageText.textContent = incubation.stage || "warm";
-    if (eggTimer) eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
+    if (eggTimer)
+      eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
     if (progressFill) progressFill.style.width = `${progress}%`;
     if (hatchBtn) hatchBtn.disabled = !ready;
 
@@ -2380,7 +2390,9 @@ function renderHatchery(payload = hatcheryState) {
                 <span>${egg.source || "Discovery"} • Waiting in storage</span>
               </div>
 
-              <button class="btn-sm hatchery-incubate-btn" data-egg-id="${egg.id}">
+              <button class="btn-sm hatchery-incubate-btn" data-egg-id="${
+                egg.id
+              }">
                 Incubate
               </button>
             </div>
@@ -2704,33 +2716,33 @@ function initRoost() {
   };
 
   function formatSpecEffect(effect) {
-  if (!effect || typeof effect !== "object") return "";
+    if (!effect || typeof effect !== "object") return "";
 
-  const labels = {
-    bond_gain_pct: "Bond gain",
-    dragon_crit_pct: "Dragon crit chance",
-    dragon_damage_pct: "Dragon damage",
-    dragon_defense_pct: "Dragon defense",
-    dragon_hp_pct: "Dragon max HP",
-    encounter_chance_pct: "Encounter chance",
-    explore_success_pct: "Explore success",
-    flee_success_pct: "Flee success",
-    harvest_success_pct: "Harvest success",
-    healing_effect_pct: "Healing effects",
-    hunt_success_pct: "Hunt success",
-    rest_bonus_pct: "Rest recovery",
-    travel_progress_pct: "Travel progress",
-    travel_risk_reduction_pct: "Travel risk reduction"
-  };
+    const labels = {
+      bond_gain_pct: "Bond gain",
+      dragon_crit_pct: "Dragon crit chance",
+      dragon_damage_pct: "Dragon damage",
+      dragon_defense_pct: "Dragon defense",
+      dragon_hp_pct: "Dragon max HP",
+      encounter_chance_pct: "Encounter chance",
+      explore_success_pct: "Explore success",
+      flee_success_pct: "Flee success",
+      harvest_success_pct: "Harvest success",
+      healing_effect_pct: "Healing effects",
+      hunt_success_pct: "Hunt success",
+      rest_bonus_pct: "Rest recovery",
+      travel_progress_pct: "Travel progress",
+      travel_risk_reduction_pct: "Travel risk reduction"
+    };
 
-  const parts = Object.entries(effect).map(([key, value]) => {
-    const label = labels[key] || key;
-    const sign = Number(value) > 0 ? "+" : "";
-    return `${sign}${value}% ${label}`;
-  });
+    const parts = Object.entries(effect).map(([key, value]) => {
+      const label = labels[key] || key;
+      const sign = Number(value) > 0 ? "+" : "";
+      return `${sign}${value}% ${label}`;
+    });
 
-  return parts.join(", ");
-}
+    return parts.join(", ");
+  }
 
   async function openSpecializationModal() {
     const a = active();
@@ -2788,63 +2800,65 @@ function initRoost() {
   }
 
   function showSpecCeremony(payload) {
-  const a = active();
-  const spec = payload?.specialization;
+    const a = active();
+    const spec = payload?.specialization;
 
-  const ceremony = document.getElementById("specCeremony");
-  const img = document.getElementById("specCeremonyDragon");
-  const small = document.getElementById("specCeremonySmall");
-  const title = document.getElementById("specCeremonyTitle");
-  const text = document.getElementById("specCeremonyText");
-  const btnContinue = document.getElementById("btnSpecContinue");
+    const ceremony = document.getElementById("specCeremony");
+    const img = document.getElementById("specCeremonyDragon");
+    const small = document.getElementById("specCeremonySmall");
+    const title = document.getElementById("specCeremonyTitle");
+    const text = document.getElementById("specCeremonyText");
+    const btnContinue = document.getElementById("btnSpecContinue");
 
-  if (!ceremony || !small || !title || !text || !btnContinue) {
-    toast("Specialization ceremony missing.");
-    return;
-  }
+    if (!ceremony || !small || !title || !text || !btnContinue) {
+      toast("Specialization ceremony missing.");
+      return;
+    }
 
-  if (img && a?.img) {
-    img.src = a.img;
-    img.classList.remove("show", "flash", "growth-reveal");
-
-    setTimeout(() => {
-      img.classList.add("flash", "growth-reveal");
+    if (img && a?.img) {
+      img.src = a.img;
+      img.classList.remove("show", "flash", "growth-reveal");
 
       setTimeout(() => {
-        img.classList.add("show");
+        img.classList.add("flash", "growth-reveal");
+
+        setTimeout(() => {
+          img.classList.add("show");
+        }, 120);
       }, 120);
-    }, 120);
-  }
+    }
 
-  small.textContent = `${(a?.name || "Your dragon").toUpperCase()} HAS CHOSEN A PATH`;
-  title.textContent = (spec?.name || "Specialization").toUpperCase();
-  text.textContent =
-    spec?.description || "A new purpose settles into your dragon’s heart.";
+    small.textContent = `${(
+      a?.name || "Your dragon"
+    ).toUpperCase()} HAS CHOSEN A PATH`;
+    title.textContent = (spec?.name || "Specialization").toUpperCase();
+    text.textContent =
+      spec?.description || "A new purpose settles into your dragon’s heart.";
 
-  title.classList.remove("show");
-  text.classList.remove("show");
-  btnContinue.style.display = "none";
-
-  ceremony.classList.add("show");
-  playSpecializationChooseSfx();
-
-  setTimeout(() => {
-    playSpecializationRevealSfx();
-    title.classList.add("show");
-  }, 1600);
-
-  setTimeout(() => {
-    text.classList.add("show");
-    btnContinue.style.display = "inline-block";
-  }, 2800);
-
-  btnContinue.onclick = () => {
-    ceremony.classList.remove("show");
-    btnContinue.style.display = "none";
     title.classList.remove("show");
     text.classList.remove("show");
-  };
-}
+    btnContinue.style.display = "none";
+
+    ceremony.classList.add("show");
+    playSpecializationChooseSfx();
+
+    setTimeout(() => {
+      playSpecializationRevealSfx();
+      title.classList.add("show");
+    }, 1600);
+
+    setTimeout(() => {
+      text.classList.add("show");
+      btnContinue.style.display = "inline-block";
+    }, 2800);
+
+    btnContinue.onclick = () => {
+      ceremony.classList.remove("show");
+      btnContinue.style.display = "none";
+      title.classList.remove("show");
+      text.classList.remove("show");
+    };
+  }
 
   async function chooseSpecialization(specId) {
     const a = active();
@@ -2877,38 +2891,40 @@ function initRoost() {
   }
 
   function showSpecConfirmModal(spec) {
-  return new Promise((resolve) => {
-    const modal = document.getElementById("specConfirmModal");
-    const title = document.getElementById("specConfirmTitle");
-    const text = document.getElementById("specConfirmText");
-    const btnCancel = document.getElementById("btnSpecConfirmCancel");
-    const btnChoose = document.getElementById("btnSpecConfirmChoose");
+    return new Promise((resolve) => {
+      const modal = document.getElementById("specConfirmModal");
+      const title = document.getElementById("specConfirmTitle");
+      const text = document.getElementById("specConfirmText");
+      const btnCancel = document.getElementById("btnSpecConfirmCancel");
+      const btnChoose = document.getElementById("btnSpecConfirmChoose");
 
-    if (!modal || !title || !text || !btnCancel || !btnChoose) {
-      resolve(false);
-      return;
-    }
+      if (!modal || !title || !text || !btnCancel || !btnChoose) {
+        resolve(false);
+        return;
+      }
 
-    title.textContent = `Choose ${spec.name}?`;
-    text.textContent = `${spec.description || "This path will shape your dragon."} This choice is permanent.`;
+      title.textContent = `Choose ${spec.name}?`;
+      text.textContent = `${
+        spec.description || "This path will shape your dragon."
+      } This choice is permanent.`;
 
-    modal.classList.add("show");
+      modal.classList.add("show");
 
-    const cleanup = (result) => {
-      modal.classList.remove("show");
-      btnCancel.onclick = null;
-      btnChoose.onclick = null;
-      modal.onclick = null;
-      resolve(result);
-    };
+      const cleanup = (result) => {
+        modal.classList.remove("show");
+        btnCancel.onclick = null;
+        btnChoose.onclick = null;
+        modal.onclick = null;
+        resolve(result);
+      };
 
-    btnCancel.onclick = () => cleanup(false);
-    btnChoose.onclick = () => cleanup(true);
-    modal.onclick = (e) => {
-      if (e.target === modal) cleanup(false);
-    };
-  });
-}
+      btnCancel.onclick = () => cleanup(false);
+      btnChoose.onclick = () => cleanup(true);
+      modal.onclick = (e) => {
+        if (e.target === modal) cleanup(false);
+      };
+    });
+  }
 
   function applyRoostTheme(element) {
     const name = THEME[element] || "Neutral";
@@ -3124,14 +3140,14 @@ function initRoost() {
     if (kvSpecialization) {
       const specBlock = kvSpecialization.closest(".kvblock");
 
-    if (a.specialization?.name) {
-      kvSpecialization.textContent = a.specialization.name;
-      if (specBlock) specBlock.style.display = "";
-    } else {
-      kvSpecialization.textContent = "";
-      if (specBlock) specBlock.style.display = "none";
+      if (a.specialization?.name) {
+        kvSpecialization.textContent = a.specialization.name;
+        if (specBlock) specBlock.style.display = "";
+      } else {
+        kvSpecialization.textContent = "";
+        if (specBlock) specBlock.style.display = "none";
+      }
     }
-  }
     const hpTarget = pct(a.hp, a.hpMax);
     const happyTarget = clamp(a.happiness, 0, 100);
     const hungerTarget = clamp(a.hunger, 0, 100);
@@ -4359,20 +4375,17 @@ async function refreshDragonsFromApi() {
         canGrow: !!raw.can_grow,
         growthBlockReason: raw.growth_block_reason || null,
         nextGrowthStage: raw.next_growth_stage || null,
-        specialization:
-          raw.hasOwnProperty("specialization")
-            ? raw.specialization
-            : existing.specialization || null,
+        specialization: raw.hasOwnProperty("specialization")
+          ? raw.specialization
+          : existing.specialization || null,
 
-        dragonSpecializationsId:
-          raw.hasOwnProperty("dragon_specializations_id")
-            ? raw.dragon_specializations_id
-            : existing.dragonSpecializationsId || null,
+        dragonSpecializationsId: raw.hasOwnProperty("dragon_specializations_id")
+          ? raw.dragon_specializations_id
+          : existing.dragonSpecializationsId || null,
 
-        specializationChosenAt:
-          raw.hasOwnProperty("specialization_chosen_at")
-            ? raw.specialization_chosen_at
-            : existing.specializationChosenAt || null,
+        specializationChosenAt: raw.hasOwnProperty("specialization_chosen_at")
+          ? raw.specialization_chosen_at
+          : existing.specializationChosenAt || null,
         requiredDays: raw.required_days ?? 0,
         requiredBond: raw.required_bond ?? 0,
         daysSinceObtained: raw.days_since_obtained ?? 0,
