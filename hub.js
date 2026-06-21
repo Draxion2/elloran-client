@@ -102,7 +102,9 @@ const HATCH_SFX = {
   buildup:
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_buildup.mp3",
   reveal:
-    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_reveal.mp3"
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_reveal.mp3",
+  hatchling:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling.mp3",
 };
 
 let hatchBuildupAudio = null;
@@ -129,6 +131,14 @@ function playHatchRevealSfx() {
 
   const sfx = new Audio(HATCH_SFX.reveal);
   sfx.volume = 0.75;
+  sfx.play().catch(() => {});
+}
+
+function playHatchlingSfx() {
+  if (!HATCH_SFX.hatchling) return;
+
+  const sfx = new Audio(HATCH_SFX.hatchling);
+  sfx.volume = 0.8;
   sfx.play().catch(() => {});
 }
 
@@ -2243,6 +2253,7 @@ function startHatchCeremony(payload, eggSnapshot) {
 
     dragonEl.style.display = "block";
     dragonEl.classList.add("reveal");
+    playHatchlingSfx();
 
     textEl.classList.remove("show");
 
