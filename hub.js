@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-12 tidy-v5");
+console.log("hub.js V-06/21/26 dragon-hatchery-v13 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -97,6 +97,41 @@ const SPECIALIZATION_SFX = {
   reveal:
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_special_reveal.mp3"
 };
+
+const HATCH_SFX = {
+  buildup:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_buildup.mp3",
+  reveal:
+    "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_reveal.mp3"
+};
+
+let hatchBuildupAudio = null;
+
+function playHatchBuildupSfx() {
+  if (!HATCH_SFX.buildup) return;
+
+  hatchBuildupAudio = new Audio(HATCH_SFX.buildup);
+  hatchBuildupAudio.volume = 0.55;
+  hatchBuildupAudio.loop = true;
+  hatchBuildupAudio.play().catch(() => {});
+}
+
+function stopHatchBuildupSfx() {
+  if (!hatchBuildupAudio) return;
+
+  hatchBuildupAudio.pause();
+  hatchBuildupAudio.currentTime = 0;
+  hatchBuildupAudio = null;
+}
+
+function playHatchRevealSfx() {
+  if (!HATCH_SFX.reveal) return;
+
+  const sfx = new Audio(HATCH_SFX.reveal);
+  sfx.volume = 0.75;
+  sfx.play().catch(() => {});
+}
+
 
 function playSpecializationChooseSfx() {
   if (!SPECIALIZATION_SFX.choose) return;
@@ -2144,6 +2179,7 @@ function startHatchCeremony(payload, eggSnapshot) {
   const eggImg = eggSnapshot?.img_url || "";
 
   overlay.classList.add("active");
+  playHatchBuildupSfx();
 
   eggEl.style.background = eggImg
     ? `transparent url("${eggImg}") center / contain no-repeat`
@@ -2191,6 +2227,8 @@ function startHatchCeremony(payload, eggSnapshot) {
 
     if (flashEl) {
       flashEl.classList.remove("burst");
+      stopHatchBuildupSfx();
+      playHatchRevealSfx();
       void flashEl.offsetWidth;
       flashEl.classList.add("burst");
     }
@@ -2255,6 +2293,7 @@ function startHatchCeremony(payload, eggSnapshot) {
 
     window.HATCH_CEREMONY_ACTIVE = false;
     document.body.classList.remove("ceremony-lock");
+    stopHatchBuildupSfx();
     await refreshDragonsFromApiSafe();
     await fetchHatcheryState();
   };
