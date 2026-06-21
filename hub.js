@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-v14 tidy-v5");
+console.log("hub.js V-06/21/26 dragon-hatchery-v15 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -115,6 +115,14 @@ const HATCH_SFX = {
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling9.mp3",
     "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/sfx_dragon_hatching_hatchling10.mp3"
   ]
+};
+
+const RARITY_GLOWS = {
+  COMMON: "#999696",
+  UNCOMMON: "#FFFFFF",
+  RARE: "#99CCFF",
+  VERY_RARE: "#D169FA",
+  LEGENDARY: "#ffd700"
 };
 
 let hatchBuildupAudio = null;
@@ -2185,6 +2193,7 @@ function startHatchCeremony(payload, eggSnapshot) {
   const textEl = document.getElementById("hatchCeremonyText");
   const btnContinue = document.getElementById("hatchCeremonyContinue");
   const flashEl = document.getElementById("hatchFlash");
+  const rarityGlow = document.getElementById("dragonRarityGlow");
 
   window.HATCH_CEREMONY_ACTIVE = true;
   document.body.classList.add("ceremony-lock");
@@ -2201,6 +2210,12 @@ function startHatchCeremony(payload, eggSnapshot) {
   console.log("HATCH PAYLOAD", payload);
   console.log("DRAGON IMG", dragon.img_url);
   const eggImg = eggSnapshot?.img_url || "";
+  const rarity = (hatch.rarity || dragon.rarity || "COMMON").toUpperCase();
+  const glowColor = RARITY_GLOWS[rarity] || RARITY_GLOWS.COMMON;
+
+  if (rarityGlow) {
+    rarityGlow.style.background = glowColor;
+  }
 
   overlay.classList.add("active");
   playHatchBuildupSfx();
@@ -2265,6 +2280,9 @@ function startHatchCeremony(payload, eggSnapshot) {
       dragonEl.src = dragon.img_url;
     }
 
+    if (rarityGlow) {
+      rarityGlow.classList.add("active");
+    }
     dragonEl.style.display = "block";
     dragonEl.classList.add("reveal");
     playHatchlingSfx();
@@ -2283,16 +2301,26 @@ function startHatchCeremony(payload, eggSnapshot) {
     textEl.classList.remove("show");
     setTimeout(() => {
       textEl.innerHTML = `
-        <strong>${
-          hatch.species_name ||
-          dragon.species_name ||
-          dragon.name ||
-          "Unknown Dragon"
-        }</strong><br>
+        <div
+          class="hatch-rarity"
+          style="color:${glowColor}"
+        >
+          ${rarity.replaceAll("_", " ")}
+        </div>
+        <strong>
+          ${
+            hatch.species_name ||
+            dragon.species_name ||
+            dragon.name ||
+            "Unknown Dragon"
+          }
+        </strong><br>
         ${hatch.gender || "Unknown"} • ${
         hatch.trait_name || "Unknown Trait"
-      }<br>
-        Favorite Activity: ${dragon.favorite_activity || "Unknown"}
+        }<br>
+
+        Favorite Activity:
+        ${dragon.favorite_activity || "Unknown"}
       `;
       textEl.classList.add("show");
     }, 500);
@@ -2318,6 +2346,7 @@ function startHatchCeremony(payload, eggSnapshot) {
 
     window.HATCH_CEREMONY_ACTIVE = false;
     document.body.classList.remove("ceremony-lock");
+    rarityGlow?.classList.remove("active");
     stopHatchBuildupSfx();
     await refreshDragonsFromApiSafe();
     await fetchHatcheryState();
