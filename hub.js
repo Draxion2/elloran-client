@@ -270,6 +270,13 @@ function tweenNumber({ from, to, duration = 350, onUpdate }) {
   requestAnimationFrame(frame);
 }
 let dragonsRefreshBlockedUntil = 0;
+async function refreshHubLiveDataSafe() {
+  await refreshDragonsFromApiSafe();
+
+  if (hatcheryMounted) {
+    await fetchHatcheryState();
+  }
+}
 async function refreshDragonsFromApiSafe() {
   const now = Date.now();
   if (now < dragonsRefreshBlockedUntil) return;
@@ -2060,6 +2067,49 @@ function startHatcheryTimer() {
 
   hatcheryTimer = setInterval(() => {
     if (!hatcheryState || !hatcheryState.has_egg) return;
+
+    const inc = hatcheryState.incubation;
+    if (!inc) return;
+
+    const startedAt = Number(inc.incubation_started_at || 0);
+    const readyAt = Number(inc.hatch_ready_at || 0);
+    const now = Date.now();
+
+    if (!startedAt || !readyAt || readyAt <= startedAt) {
+      renderHatchery(hatcheryState);
+      return;
+    }
+
+    const durationSeconds = Math.max(1, Math.floor((readyAt - startedAt) / 1000));
+    const elapsedSeconds = Math.max(0, Math.floor((now - startedAt) / 1000));
+    const secondsRemaining = Math.max(0, Math.floor((readyAt - now) / 1000));
+
+    const percentComplete = Math.max(
+      0,
+      Math.min(100, Math.floor((elapsedSeconds / durationSeconds) * 100))
+    );
+
+    let stage = "warm";
+
+    if (percentComplete >= 100) {
+      stage = "ready";
+    } else if (percentComplete >= 66) {
+      stage = "cracking";
+    } else if (percentComplete >= 33) {
+      stage = "restless";
+    }
+
+    hatcheryState = {
+      ...hatcheryState,
+      can_hatch: secondsRemaining <= 0,
+      incubation: {
+        ...inc,
+        seconds_remaining: secondsRemaining,
+        percent_complete: percentComplete,
+        stage
+      }
+    };
+
     renderHatchery(hatcheryState);
   }, 1000);
 }
@@ -4246,8 +4296,9 @@ async function refreshDragonsFromApi() {
 }
 /* ================= Kick off API load ================= */
 loadPlayerHubData();
-window.addEventListener("focus", () => refreshDragonsFromApiSafe());
-window.addEventListener("pageshow", () => refreshDragonsFromApiSafe());
+window.addEventListener("focus", () => refreshHubLiveDataSafe());
+window.addEventListener("pageshow", () => refreshHubLiveDataSafe());
+
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") refreshDragonsFromApiSafe();
+  if (document.visibilityState === "visible") refreshHubLiveDataSafe();
 });
