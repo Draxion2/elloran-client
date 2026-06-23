@@ -1,4 +1,4 @@
-console.log("hub.js V-06/21/26 dragon-hatchery-v15 tidy-v5");
+console.log("hub.js V-06/23/26 dragon-food-v1 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -3680,17 +3680,17 @@ function initRoost() {
   async function feedItemToDragon(drId, itemId) {
     const d = STATE.dragons.byId[drId];
     const it = STATE.items.find((x) => x.id === itemId);
-    if (!d || !it) return false;
+    if (!d) return false;
     // don’t even hit the API if they’re full
     if (d.hunger <= 0) {
       toast(`${d.name} isn’t hungry right now.`);
       return false;
     }
-    const isFood = (it.tags || []).some(
-      (t) => t === "FOOD" || t === "MEDICINE"
-    );
+    const isFood =
+      it.category === "Consumable" &&
+      it.subcategory === "Dragon Food";
     if (!isFood) {
-      toast("That isn’t edible.");
+      toast("That isn't dragon food.");
       return false;
     }
     try {
@@ -4018,16 +4018,113 @@ function initRoost() {
       text.classList.remove("show");
     };
   }
-  async function actFeed() {
-    if (cdPct("feed") > 0) return;
-    const inv = STATE.inventory.find(
-      (s) =>
-        s && (s.item.tags || []).some((t) => t === "FOOD" || t === "MEDICINE")
-    );
-    if (!inv) return toast("No FOOD in inventory.");
-    const ok = await feedItemToDragon(STATE.dragons.activeId, inv.item.id);
-    if (ok) setCD("feed", CDdur.feed);
+  async function openDragonFoodModal() {
+  const d = active();
+
+  if (!d) return toast("No dragon selected.");
+  if (d.hunger <= 0) return toast(`${d.name} isn't hungry right now.`);
+
+  const modal = document.getElementById("dragonFoodModal");
+  const list = document.getElementById("dragonFoodList");
+  const cancel = document.getElementById("btnDragonFoodCancel");
+
+  if (!modal || !list || !cancel) {
+    toast("Dragon food picker missing.");
+    return;
   }
+
+  list.innerHTML = `<div class="dragon-food-empty">Loading dragon food...</div>`;
+  modal.classList.add("show");
+
+  cancel.onclick = () => {
+    modal.classList.remove("show");
+  };
+
+  try {
+    const payload = await apiFetch("/players/me/dragon-food");
+    const foods = payload.items || [];
+
+    if (!foods.length) {
+      list.innerHTML = `
+        <div class="dragon-food-empty">
+          You have no dragon food available.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = foods
+      .map((food) => {
+        const feed = food.effect_json?.on_feed_dragon || {};
+        const hungerReduce = feed.hunger_reduce ?? 25;
+        const moodBonus = feed.mood_bonus ?? 0;
+        const img = food.img_url
+          ? `style="background-image:url('${food.img_url}')"`
+          : "";
+
+        return `
+          <div class="dragon-food-item">
+            <div class="dragon-food-thumb" ${img}></div>
+
+            <div class="dragon-food-info">
+              <strong>${food.name}</strong>
+              <div class="dragon-food-meta">
+                ${food.rarity || "Common"} • Qty: ${food.qty}
+              </div>
+              <div class="dragon-food-effects">
+                Hunger -${hungerReduce} • Mood +${moodBonus}
+              </div>
+            </div>
+
+            <button
+              class="btn-sm dragon-food-feed-btn"
+              data-item-id="${food.items_id}"
+            >
+              Feed
+            </button>
+          </div>
+        `;
+      })
+      .join("");
+
+    list.querySelectorAll(".dragon-food-feed-btn").forEach((btn) => {
+      btn.onclick = async () => {
+        const itemId = Number(btn.dataset.itemId);
+        btn.disabled = true;
+
+        const ok = await feedItemToDragon(d.id, itemId);
+
+        if (ok) {
+          modal.classList.remove("show");
+          setCD("feed", CDdur.feed);
+        } else {
+          btn.disabled = false;
+        }
+      };
+    });
+  } catch (err) {
+    console.error("openDragonFoodModal failed", err);
+    list.innerHTML = `
+      <div class="dragon-food-empty">
+        Could not load dragon food.
+      </div>
+    `;
+  }
+}
+  async function actFeed() {
+  if (cdPct("feed") > 0) return;
+
+  const d = active();
+  if (!d) return toast("No active dragon.");
+
+  const locks = getDragonLocks(d);
+  if (locks.feed) {
+    toast(locks.reason || "Can't feed right now.");
+    return;
+  }
+
+  await openDragonFoodModal();
+}
   async function actPlay() {
     // Use the same cooldown slot you already use for "play"
     if (cdPct("play") > 0) return;
