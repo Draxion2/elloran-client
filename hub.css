@@ -1,4 +1,4 @@
-/* hub.css V-06/21/26 dragon-hatchery-9 tidy-2*/
+/* hub.css V-06/23/26 dragon-food-1 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -1503,6 +1503,99 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   100% {
     transform: scale(0.92);
     opacity: 0.45;
+  }
+}
+
+/* =========================
+   Dragon Food Picker
+========================= */
+
+.dragon-food-card {
+  width: min(92vw, 560px);
+}
+
+.dragon-food-list {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 20px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.dragon-food-empty {
+  padding: 24px 18px;
+  border: 1px dashed rgba(248, 232, 200, 0.18);
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
+
+.dragon-food-item {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  gap: 12px;
+  align-items: center;
+
+  padding: 10px;
+  border: 1px solid rgba(184, 149, 88, 0.22);
+  border-radius: 12px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(184, 149, 88, 0.1),
+    rgba(0, 0, 0, 0.18)
+  );
+}
+
+.dragon-food-thumb {
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #0b0e13 center/contain no-repeat;
+}
+
+.dragon-food-info {
+  text-align: left;
+  min-width: 0;
+}
+
+.dragon-food-info strong {
+  display: block;
+  color: #f7e0a2;
+  margin-bottom: 4px;
+}
+
+.dragon-food-meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dragon-food-effects {
+  margin-top: 4px;
+  color: #dbeafe;
+  font-size: 12px;
+}
+
+.dragon-food-feed-btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .dragon-food-item {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .dragon-food-feed-btn {
+    grid-column: 1 / -1;
+  }
+
+  .dragon-food-thumb {
+    width: 48px;
+    height: 48px;
   }
 }
 
