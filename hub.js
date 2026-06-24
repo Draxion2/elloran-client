@@ -1,4 +1,4 @@
-console.log("hub.js V-06/23/26 dragon-food-v1 tidy-v5");
+console.log("hub.js V-06/24/26 dragon-hatch-polish-1 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2194,6 +2194,10 @@ function startHatchCeremony(payload, eggSnapshot) {
   const btnContinue = document.getElementById("hatchCeremonyContinue");
   const flashEl = document.getElementById("hatchFlash");
   const rarityGlow = document.getElementById("dragonRarityGlow");
+  const namePrompt = document.getElementById("hatchNamePrompt");
+  const nameInput = document.getElementById("hatchNameInput");
+  const nameSubmit = document.getElementById("hatchNameSubmit");
+  const nameSkip = document.getElementById("hatchNameSkip");
 
   window.HATCH_CEREMONY_ACTIVE = true;
   document.body.classList.add("ceremony-lock");
@@ -2233,6 +2237,11 @@ function startHatchCeremony(payload, eggSnapshot) {
 
   textEl.classList.remove("show");
   btnContinue.classList.remove("show");
+
+  namePrompt?.classList.remove("show");
+  if (nameInput) nameInput.value = "";
+  if (nameSubmit) nameSubmit.disabled = false;
+  if (nameSkip) nameSkip.disabled = false;
 
   setTimeout(() => {
     textEl.textContent = "The egg trembles beneath the lantern light...";
@@ -2327,9 +2336,80 @@ function startHatchCeremony(payload, eggSnapshot) {
   }, 14500);
 
   setTimeout(() => {
-    document.body.classList.remove("ceremony-lock");
+  document.body.classList.remove("ceremony-lock");
+
+  if (namePrompt && nameInput && nameSubmit && nameSkip) {
+    namePrompt.classList.add("show");
+    nameInput.focus();
+
+    const finishNaming = () => {
+      namePrompt.classList.remove("show");
+      btnContinue.classList.add("show");
+    };
+
+    nameSubmit.onclick = async () => {
+      const newName = nameInput.value.trim().slice(0, 24);
+
+      if (!newName) {
+        toast("Enter a name or keep the default.");
+        return;
+      }
+
+      nameSubmit.disabled = true;
+      nameSkip.disabled = true;
+
+      try {
+        const renamePayload = await apiFetch(`/players/me/dragons/${dragon.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: newName
+          })
+        });
+
+        const updatedDragon = renamePayload?.dragon || renamePayload;
+        dragon.name = updatedDragon.name || newName;
+
+        textEl.innerHTML = `
+          <div
+            class="hatch-rarity"
+            style="color:${glowColor}"
+          >
+            ${rarity.replaceAll("_", " ")}
+          </div>
+          <strong>${dragon.name}</strong><br>
+          ${hatch.gender || "Unknown"} • ${
+          hatch.trait_name || "Unknown Trait"
+        }<br>
+
+          Favorite Activity:
+          ${dragon.favorite_activity || "Unknown"}
+        `;
+
+        finishNaming();
+      } catch (err) {
+        console.error("Hatch rename failed", err);
+        toast(extractApiPayloadMessage(err) || "Could not rename dragon.");
+        nameSubmit.disabled = false;
+        nameSkip.disabled = false;
+      }
+    };
+
+    nameSkip.onclick = () => {
+      finishNaming();
+    };
+
+    nameInput.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        nameSubmit.click();
+      }
+    };
+  } else {
     btnContinue.classList.add("show");
-  }, 18000);
+  }
+}, 18000);
 
   btnContinue.onclick = async () => {
     overlay.classList.remove("active");
