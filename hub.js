@@ -1,4 +1,4 @@
-console.log("hub.js V-06/24/26 dragon-hatch-polish-1 tidy-v5");
+console.log("hub.js V-06/24/26 dragon-hatch-polish-2 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -890,6 +890,7 @@ async function loadPlayerHubData() {
           mood: raw.mood ?? 60,
           hunger: raw.hunger ?? 40,
           bond: raw.bond ?? 0,
+          relationships: raw.relationships || [],
           rest_until_at:
             raw.rest_until_at != null ? parseInt(raw.rest_until_at, 10) : null,
           action_points_current:
@@ -1823,6 +1824,24 @@ const DRAGON_BOND_IDLE_LINES = {
   ]
 };
 
+const DRAGON_RELATIONSHIP_IDLE_LINES = {
+  friend: [
+    "{name} seems more relaxed while {other} is nearby.",
+    "{name} glances toward {other} with growing comfort.",
+    "{name} settles close enough to {other} to share the lantern warmth.",
+    "{name} gives {other} a quiet, familiar rumble.",
+    "{name} appears curious whenever {other} moves through the roost."
+  ],
+
+  rival: [
+    "{name} keeps a wary eye on {other}.",
+    "{name} watches {other} from across the roost.",
+    "A low tension lingers between {name} and {other}.",
+    "{name} stiffens slightly whenever {other} gets too close.",
+    "{name} seems unwilling to turn their back on {other}."
+  ]
+};
+
 const DRAGON_FAVORITE_ACTIVITY_REACTIONS = {
   feed: [
     "{name} seems especially pleased with today's meal.",
@@ -1968,6 +1987,30 @@ function getDragonActionReaction(actionKey, d, fallbackText) {
   );
 }
 
+function getDragonRelationshipIdleLine(d) {
+  const relationships = Array.isArray(d.relationships) ? d.relationships : [];
+
+  if (!relationships.length) return null;
+
+  const valid = relationships.filter((rel) =>
+    rel &&
+    rel.relationship_type &&
+    rel.dragon_name &&
+    DRAGON_RELATIONSHIP_IDLE_LINES[rel.relationship_type]
+  );
+
+  if (!valid.length) return null;
+
+  const rel = valid[Math.floor(Math.random() * valid.length)];
+  const pool = DRAGON_RELATIONSHIP_IDLE_LINES[rel.relationship_type];
+
+  const line = pool[Math.floor(Math.random() * pool.length)];
+
+  return line
+    .replaceAll("{name}", d.name || "Your dragon")
+    .replaceAll("{other}", rel.dragon_name || "another dragon");
+}
+
 function pickDragonIdleLine(d) {
   if (!d) return "No dragon is currently resting in the roost.";
 
@@ -1992,6 +2035,10 @@ function pickDragonIdleLine(d) {
   } else if (Number(d.hp || 0) < Number(d.hpMax || 1) * 0.4) {
     pool = DRAGON_IDLE_LINES.tired;
   } else {
+    const relationshipLine = getDragonRelationshipIdleLine(d);
+    if (relationshipLine && Math.random() < 0.35) {
+      return relationshipLine;
+    }
     const bondStage = getBondStage(d.bond);
     const bondPool = DRAGON_BOND_IDLE_LINES[bondStage];
 
@@ -4669,6 +4716,7 @@ async function refreshDragonsFromApi() {
         mood: raw.mood ?? existing.mood ?? 60,
         hunger: raw.hunger ?? existing.hunger ?? 40,
         bond: raw.bond ?? existing.bond ?? 0,
+        relationships: raw.relationships || existing.relationships || [],
         rest_until_at:
           raw.rest_until_at != null
             ? parseInt(raw.rest_until_at, 10)
