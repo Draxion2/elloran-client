@@ -42,6 +42,13 @@ body.ceremony-lock select {
   pointer-events: none;
 }
 
+body.ceremony-lock #hatchNamePrompt,
+body.ceremony-lock #hatchNamePrompt input,
+body.ceremony-lock #hatchNamePrompt button {
+  pointer-events: auto;
+  cursor: auto;
+}
+
 body.ceremony-lock #hatchCeremonyContinue.show {
   pointer-events: auto;
   cursor: pointer;
