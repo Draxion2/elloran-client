@@ -1,4 +1,4 @@
-/* hub.css V-06/24/26 dragon-hatch-polish-1 tidy-2*/
+/* hub.css V-06/24/26 dragon-breeding-1 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -2649,6 +2649,17 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   font-size: 11px;
   border: 1px solid var(--line);
   color: var(--muted);
+}
+
+.dragon-gender-symbol {
+  display: inline-block;
+  margin-left: 6px;
+  color: #d9c78b;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+  text-shadow: 0 0 6px rgba(255, 220, 120, 0.15);
 }
 
 .bar {
