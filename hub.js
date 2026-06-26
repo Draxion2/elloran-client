@@ -1,4 +1,4 @@
-console.log("hub.js V-06/24/26 dragon-hatch-polish-2 tidy-v5");
+console.log("hub.js V-06/26/26 dragon-breeding-1 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -866,6 +866,7 @@ async function loadPlayerHubData() {
           id: Number(raw.id),
           code: raw.code || speciesObj.code || "DRAGON",
           name: raw.name || speciesObj.name || "Unnamed",
+          gender: raw.gender || null,
           growthStage: raw.growth_stage || "wyrmling",
           canGrow: !!raw.can_grow,
           growthBlockReason: raw.growth_block_reason || null,
@@ -3321,7 +3322,15 @@ function initRoost() {
     if (cap)
       cap.textContent = `Roost: ${Object.keys(STATE.dragons.byId).length} / 12`;
     if (portrait) portrait.style.backgroundImage = `url('${a.img}')`;
-    if (dName) dName.textContent = a.name;
+    if (dName) {
+      const genderSymbol =
+        a.gender === "Male" ? "♂" :
+        a.gender === "Female" ? "♀" : "";
+      dName.innerHTML = `
+        ${a.name}
+        ${genderSymbol ? `<span class="dragon-gender-symbol">${genderSymbol}</span>` : ""}
+      `;
+    }
     if (chipEl) chipEl.textContent = a.element;
     if (badgeR) badgeR.textContent = a.rarity;
     if (badgeS) badgeS.textContent = a.size;
@@ -4683,6 +4692,7 @@ async function refreshDragonsFromApi() {
         id: raw.id,
         code: raw.code || existing.code || speciesObj.code || "DRAGON",
         name: raw.name || existing.name || speciesObj.name || "Unnamed",
+        gender: raw.gender || existing.gender || null,
         element: raw.element || existing.element || "Neutral",
         species: speciesObj.name || existing.species || "Dragon",
         favoriteActivity:
