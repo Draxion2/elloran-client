@@ -3568,11 +3568,18 @@ function initRoost() {
         ph.className = "ph";
         ph.style.backgroundImage = `url('${dr.img}')`;
         const name = document.createElement("div");
-        name.innerHTML = `<strong>${dr.name}</strong> ${
-          dr.id === STATE.dragons.activeId
-            ? '<span class="mark">⚓ Active</span>'
-            : ""
-        }`;
+        const genderSymbol =
+          dr.gender === "Male" ? "♂" :
+          dr.gender === "Female" ? "♀" : "";
+        name.innerHTML = `
+          <strong>${dr.name}</strong>
+          ${genderSymbol ? `<span class="dragon-gender-symbol">${genderSymbol}</span>` : ""}
+          ${
+            dr.id === STATE.dragons.activeId
+              ? '<span class="mark">⚓ Active</span>'
+              : ""
+          }
+        `;
         const meta = document.createElement("div");
         meta.className = "meta";
         meta.textContent = `${dr.species} • ${dr.element}`;
@@ -3638,13 +3645,20 @@ function initRoost() {
       img.style.backgroundImage = `url('${dr.img}')`;
       const mid = document.createElement("div");
       mid.innerHTML = `
-  <div style="display:flex; align-items:center; gap:8px">
-    <strong>${dr.name}</strong>
-    ${
-      dr.id === STATE.dragons.activeId
-        ? '<span class="mark">⚓ Active</span>'
-        : ""
-    }
+        <div style="display:flex; align-items:center; gap:8px">
+          <strong>${dr.name}</strong>
+          ${
+            dr.gender === "Male"
+              ? '<span class="dragon-gender-symbol">♂</span>'
+              : dr.gender === "Female"
+              ? '<span class="dragon-gender-symbol">♀</span>'
+              : ""
+          }
+          ${
+            dr.id === STATE.dragons.activeId
+              ? '<span class="mark">⚓ Active</span>'
+              : ""
+          }
     ${STATE.favorites.has(dr.id) ? '<span class="mark">⭐ Fav</span>' : ""}
     <span class="badge">${dr.element}</span>
     <span class="badge">${dr.rarity}</span>
