@@ -2780,23 +2780,73 @@ async function renderChronicleDragonHeader(dragonId) {
 }
 
 function renderChronicleDragonSelect() {
-  const select = document.getElementById("chronicleDragonSelect");
-  if (!select) return;
+  const listEl = document.getElementById("chronicleDragonList");
+  if (!listEl) return;
 
   const dragons = Object.values(STATE.dragons.byId || {}).sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
-  select.innerHTML =
-    `<option value="">Select Dragon</option>` +
-    dragons
-      .map((d) => `<option value="${d.id}">${d.name} — ${d.species}</option>`)
-      .join("");
+  if (!dragons.length) {
+    listEl.innerHTML = `
+      <div class="chronicle-empty">
+        No dragons are currently in your roost.
+      </div>
+    `;
+    return;
+  }
 
-  select.onchange = () => {
-    const id = Number(select.value);
-    renderChronicleDragonHeader(id);
-  };
+  const selectedId = Number(listEl.dataset.selectedDragonId || 0);
+
+  listEl.innerHTML = dragons
+    .map((d) => {
+      const genderSymbol =
+        d.gender === "Male" ? "♂" :
+        d.gender === "Female" ? "♀" : "";
+
+      const isSelected = Number(d.id) === selectedId;
+
+      return `
+        <button
+          type="button"
+          class="chronicle-dragon-card ${isSelected ? "active" : ""}"
+          data-dragon-id="${d.id}"
+        >
+          <div
+            class="chronicle-dragon-thumb"
+            style="background-image:url('${d.img || ""}')"
+          ></div>
+
+          <div class="chronicle-dragon-info">
+            <div class="chronicle-dragon-name">
+              ${d.name}
+              ${genderSymbol ? `<span class="dragon-gender-symbol">${genderSymbol}</span>` : ""}
+            </div>
+
+            <div class="chronicle-dragon-meta">
+              ${d.species} • ${formatGrowthStage(d.growthStage)}
+            </div>
+          </div>
+        </button>
+      `;
+    })
+    .join("");
+
+  listEl.querySelectorAll(".chronicle-dragon-card").forEach((card) => {
+    card.onclick = () => {
+      const id = Number(card.dataset.dragonId);
+
+      listEl.dataset.selectedDragonId = String(id);
+
+      listEl
+        .querySelectorAll(".chronicle-dragon-card")
+        .forEach((el) => el.classList.remove("active"));
+
+      card.classList.add("active");
+
+      renderChronicleDragonHeader(id);
+    };
+  });
 }
 
 function initHatcheryTabs() {
