@@ -889,6 +889,68 @@ body.ceremony-lock #hatchCeremonyContinue.show {
    Roost Chronicles
 ========================= */
 
+/* Chronicle category accents */
+
+.chronicle-entry {
+  overflow: hidden;
+}
+
+.chronicle-entry::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  border-radius: 999px;
+  background: rgba(184, 149, 88, 0.45);
+}
+
+.chronicle-entry-life::before {
+  background: #6ec36e;
+}
+
+.chronicle-entry-growth::before {
+  background: #ffdf9e;
+}
+
+.chronicle-entry-relationships::before {
+  background: #e88fb3;
+}
+
+.chronicle-entry-rivalries::before {
+  background: #e36b6b;
+}
+
+.chronicle-entry-specialization::before {
+  background: #93c5fd;
+}
+
+.chronicle-entry-life .chronicle-icon {
+  border-color: rgba(110, 195, 110, 0.45);
+  background: rgba(110, 195, 110, 0.14);
+}
+
+.chronicle-entry-growth .chronicle-icon {
+  border-color: rgba(255, 223, 158, 0.45);
+  background: rgba(255, 223, 158, 0.14);
+}
+
+.chronicle-entry-relationships .chronicle-icon {
+  border-color: rgba(232, 143, 179, 0.45);
+  background: rgba(232, 143, 179, 0.14);
+}
+
+.chronicle-entry-rivalries .chronicle-icon {
+  border-color: rgba(227, 107, 107, 0.45);
+  background: rgba(227, 107, 107, 0.14);
+}
+
+.chronicle-entry-specialization .chronicle-icon {
+  border-color: rgba(147, 197, 253, 0.45);
+  background: rgba(147, 197, 253, 0.14);
+}
+
 .chronicle-filters {
   display: flex;
   gap: 8px;
