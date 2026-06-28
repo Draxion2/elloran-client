@@ -889,6 +889,47 @@ body.ceremony-lock #hatchCeremonyContinue.show {
    Roost Chronicles
 ========================= */
 
+.chronicle-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+}
+
+.chronicle-filter {
+  appearance: none;
+  border: 1px solid rgba(248, 232, 200, 0.12);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: linear-gradient(180deg, #15100c, #100d0a);
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: transform 0.16s ease, border-color 0.16s ease, color 0.16s ease,
+    box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.chronicle-filter:hover {
+  transform: translateY(-1px);
+  color: #f6ead1;
+  border-color: rgba(184, 149, 88, 0.45);
+}
+
+.chronicle-filter.active {
+  color: #f7e0a2;
+  border-color: rgba(184, 149, 88, 0.65);
+  background: linear-gradient(
+    180deg,
+    rgba(184, 149, 88, 0.22),
+    rgba(18, 14, 11, 0.96)
+  );
+  box-shadow: inset 0 0 12px rgba(184, 149, 88, 0.08),
+    0 0 14px rgba(184, 149, 88, 0.12);
+}
+
 .chronicle-section-divider {
   margin: 18px 0 14px;
   padding: 12px 0 10px;
