@@ -2818,12 +2818,12 @@ function renderChronicleDragonSelect() {
           ></div>
 
           <div class="chronicle-dragon-info">
-            <div class="chronicle-dragon-name">
+            <div class="chronicle-picker-name">
               ${d.name}
               ${genderSymbol ? `<span class="dragon-gender-symbol">${genderSymbol}</span>` : ""}
             </div>
 
-            <div class="chronicle-dragon-meta">
+            <div class="chronicle-picker-meta">
               ${d.species} • ${formatGrowthStage(d.growthStage)}
             </div>
           </div>
