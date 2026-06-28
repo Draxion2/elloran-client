@@ -889,6 +889,28 @@ body.ceremony-lock #hatchCeremonyContinue.show {
    Roost Chronicles
 ========================= */
 
+.chronicle-section-divider {
+  margin: 18px 0 14px;
+  padding: 12px 0 10px;
+  border-top: 1px solid rgba(184, 149, 88, 0.28);
+  border-bottom: 1px solid rgba(248, 232, 200, 0.08);
+}
+
+.chronicle-section-divider h4 {
+  margin: 0;
+  color: #f7e0a2;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chronicle-section-divider p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .chronicles-wrap {
   max-width: 1200px;
   margin: 0 auto;
