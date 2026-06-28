@@ -1,4 +1,4 @@
-console.log("hub.js V-06/26/26 dragon-breeding-1 tidy-v5");
+console.log("hub.js V-06/27/26 dragon-breeding-2 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2627,23 +2627,31 @@ function renderHatchery(payload = hatcheryState) {
 function initHatcheryTabs() {
   const tabRoost = document.getElementById("roostTabRoost");
   const tabHatchery = document.getElementById("roostTabHatchery");
+  const tabChronicles = document.getElementById("roostTabChronicles");
+
   const roostView = document.getElementById("roostView");
   const hatcheryView = document.getElementById("hatcheryView");
+  const chroniclesView = document.getElementById("chroniclesView");
 
-  if (!tabRoost || !tabHatchery || !roostView || !hatcheryView) return;
+  if (!tabRoost || !tabHatchery || !tabChronicles || !roostView || !hatcheryView || !chroniclesView) return;
 
   function setRoostTab(tab) {
-    const showHatchery = tab === "hatchery";
+    tabRoost.classList.toggle("active", tab === "roost");
+    tabHatchery.classList.toggle("active", tab === "hatchery");
+    tabChronicles.classList.toggle("active", tab === "chronicles");
 
-    tabRoost.classList.toggle("active", !showHatchery);
-    tabHatchery.classList.toggle("active", showHatchery);
+    roostView.classList.toggle("active", tab === "roost");
+    hatcheryView.classList.toggle("active", tab === "hatchery");
+    chroniclesView.classList.toggle("active", tab === "chronicles");
 
-    roostView.classList.toggle("active", !showHatchery);
-    hatcheryView.classList.toggle("active", showHatchery);
+    if (tab === "chronicles") {
+      renderChronicleDragonSelect();
+    }
   }
 
   tabRoost.onclick = () => setRoostTab("roost");
   tabHatchery.onclick = () => setRoostTab("hatchery");
+  tabChronicles.onclick = () => setRoostTab("chronicles");
 }
 
 function initHatchery() {
@@ -2799,6 +2807,55 @@ function initRoost() {
         "Send your dragon to rest and recover. Resting removes them from active duty for a while."
     }
   };
+
+  function renderChronicleDragonSelect() {
+  const select = document.getElementById("chronicleDragonSelect");
+  if (!select) return;
+
+  const dragons = Object.values(STATE.dragons.byId || {}).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  select.innerHTML =
+    `<option value="">Select Dragon</option>` +
+    dragons
+      .map((d) => `<option value="${d.id}">${d.name} — ${d.species}</option>`)
+      .join("");
+
+  select.onchange = () => {
+    const id = Number(select.value);
+    renderChronicleDragonHeader(id);
+  };
+}
+
+  function renderChronicleDragonHeader(dragonId) {
+  const d = STATE.dragons.byId[dragonId];
+
+  const header = document.getElementById("chronicleDragonHeader");
+  const portrait = document.getElementById("chronicleDragonPortrait");
+  const name = document.getElementById("chronicleDragonName");
+  const meta = document.getElementById("chronicleDragonMeta");
+  const timeline = document.getElementById("chronicleTimeline");
+
+  if (!header || !portrait || !name || !meta || !timeline) return;
+
+  if (!d) {
+    header.style.display = "none";
+    timeline.innerHTML = `<div class="chronicle-empty">No dragon selected.</div>`;
+    return;
+  }
+
+  header.style.display = "flex";
+  portrait.style.backgroundImage = `url('${d.img}')`;
+  name.textContent = d.name;
+  meta.textContent = `${d.species} • ${d.element} • ${formatGrowthStage(d.growthStage)}`;
+
+  timeline.innerHTML = `
+    <div class="chronicle-empty">
+      Chronicle entries will appear here once the history route is connected.
+    </div>
+  `;
+}
 
   function showDragonActionPreview(actionKey) {
     if (!actionPreview) return;
