@@ -1,4 +1,4 @@
-console.log("hub.js V-06/27/26 dragon-breeding-3 tidy-v5");
+console.log("hub.js V-06/27/26 dragon-breeding-4 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
