@@ -2715,6 +2715,25 @@ function getChronicleDescription(entry, dragon) {
   return descriptions[eventCode] || entry.description || "";
 }
 
+function initChronicleFilters() {
+  const filters = document.getElementById("chronicleFilters");
+  if (!filters) return;
+
+  filters.querySelectorAll(".chronicle-filter").forEach((btn) => {
+    btn.onclick = () => {
+      currentChronicleFilter = btn.dataset.chronicleFilter || "all";
+
+      filters
+        .querySelectorAll(".chronicle-filter")
+        .forEach((el) => el.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      renderChronicleTimeline();
+    };
+  });
+}
+
 async function renderChronicleDragonHeader(dragonId) {
   const d = STATE.dragons.byId[dragonId];
 
@@ -2752,23 +2771,9 @@ async function renderChronicleDragonHeader(dragonId) {
       return;
     }
 
-    timeline.innerHTML = history
-      .map((entry) => {
-        return `
-          <div class="chronicle-entry">
-            <div class="chronicle-icon">${getChronicleIcon(entry.event_code)}</div>
-
-            <div>
-              <div class="chronicle-title">${entry.title || "Chronicle Entry"}</div>
-              <div class="chronicle-date">${formatChronicleDate(entry.created_at)}</div>
-              <div class="chronicle-description">
-                ${getChronicleDescription(entry, d)}
-              </div>
-            </div>
-          </div>
-        `;
-      })
-      .join("");
+    currentChronicleDragonId = dragonId;
+    currentChronicleHistory = history;
+    renderChronicleTimeline();
   } catch (err) {
     console.error("fetchDragonHistory failed", err);
     timeline.innerHTML = `
@@ -2777,6 +2782,78 @@ async function renderChronicleDragonHeader(dragonId) {
       </div>
     `;
   }
+}
+
+let currentChronicleDragonId = null;
+let currentChronicleHistory = [];
+let currentChronicleFilter = "all";
+
+function getChronicleCategory(eventCode) {
+  const life = ["HATCHED", "NAMED"];
+  const growth = ["GREW_JUVENILE", "GREW_ADULT", "GREW_ELDER"];
+  const relationships = [
+    "FRIENDSHIP_FORMED",
+    "CRUSH_DEVELOPED",
+    "COURTSHIP_STARTED",
+    "DEVOTED",
+    "BONDED_PAIR",
+    "CLOSE_FRIENDS",
+    "LIFELONG_FRIENDS"
+  ];
+  const rivalries = ["RIVALRY_FORMED", "RIVALRY_RESOLVED"];
+  const specialization = ["SPECIALIZATION_CHOSEN"];
+
+  if (life.includes(eventCode)) return "life";
+  if (growth.includes(eventCode)) return "growth";
+  if (relationships.includes(eventCode)) return "relationships";
+  if (rivalries.includes(eventCode)) return "rivalries";
+  if (specialization.includes(eventCode)) return "specialization";
+
+  return "other";
+}
+
+function renderChronicleTimeline() {
+  const timeline = document.getElementById("chronicleTimeline");
+  const d = STATE.dragons.byId[currentChronicleDragonId];
+
+  if (!timeline || !d) return;
+
+  const filtered =
+    currentChronicleFilter === "all"
+      ? currentChronicleHistory
+      : currentChronicleHistory.filter(
+          (entry) =>
+            getChronicleCategory(entry.event_code) === currentChronicleFilter
+        );
+
+  if (!filtered.length) {
+    timeline.innerHTML = `
+      <div class="chronicle-empty">
+        No chronicle entries match this filter.
+      </div>
+    `;
+    return;
+  }
+
+  timeline.innerHTML = filtered
+    .map((entry) => {
+      const category = getChronicleCategory(entry.event_code);
+
+      return `
+        <div class="chronicle-entry chronicle-entry-${category}">
+          <div class="chronicle-icon">${getChronicleIcon(entry.event_code)}</div>
+
+          <div>
+            <div class="chronicle-title">${entry.title || "Chronicle Entry"}</div>
+            <div class="chronicle-date">${formatChronicleDate(entry.created_at)}</div>
+            <div class="chronicle-description">
+              ${getChronicleDescription(entry, d)}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function renderChronicleDragonSelect() {
@@ -2871,6 +2948,7 @@ function initHatcheryTabs() {
 
     if (tab === "chronicles") {
       renderChronicleDragonSelect();
+      initChronicleFilters();
     }
   }
 
