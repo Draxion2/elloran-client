@@ -911,6 +911,87 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   line-height: 1.45;
 }
 
+/* ==========================
+   Chronicle Dragon Picker
+========================== */
+
+.chronicle-dragon-picker{
+  margin:18px 0;
+}
+
+.chronicle-picker-label{
+  margin-bottom:10px;
+  font-size:13px;
+  font-weight:700;
+  color:#f7e0a2;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.chronicle-dragon-list{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:6px;
+}
+
+.chronicle-dragon-list::-webkit-scrollbar{
+  height:8px;
+}
+
+.chronicle-dragon-list::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.15);
+  border-radius:20px;
+}
+
+.chronicle-dragon-card{
+  min-width:170px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:10px;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.18s;
+  border:1px solid rgba(248,232,200,.10);
+  background:linear-gradient(180deg,#18120e,#100d0a);
+}
+
+.chronicle-dragon-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(184,149,88,.45);
+}
+
+.chronicle-dragon-card.active{
+  border-color:#b89558;
+  box-shadow:0 0 14px rgba(184,149,88,.25);
+}
+
+.chronicle-dragon-thumb{
+  width:54px;
+  height:54px;
+  border-radius:10px;
+  background:#0b0e13 center/contain no-repeat;
+  flex-shrink:0;
+}
+
+.chronicle-dragon-info{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.chronicle-dragon-name{
+  color:#f7e0a2;
+  font-weight:700;
+  font-size:14px;
+}
+
+.chronicle-dragon-meta{
+  color:var(--muted);
+  font-size:12px;
+}
+
 .chronicles-wrap {
   max-width: 1200px;
   margin: 0 auto;
