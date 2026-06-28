@@ -2680,6 +2680,41 @@ function formatGrowthStage(stage) {
     }
   }
 
+function getChronicleDescription(entry, dragon) {
+  const selfName = dragon?.name || "This dragon";
+
+  const relatedId = Number(entry.related_player_dragon_id || 0);
+  const related = relatedId ? STATE.dragons.byId[relatedId] : null;
+  const otherName = related?.name || "another dragon";
+
+  const eventCode = entry.event_code;
+
+  const descriptions = {
+    HATCHED: `${selfName} hatched beneath the warm lanterns of the Black Raven.`,
+    NAMED: `${selfName} was given a new name.`,
+
+    FRIENDSHIP_FORMED: `${selfName} became friends with ${otherName}.`,
+    RIVALRY_FORMED: `${selfName} began a rivalry with ${otherName}.`,
+    RIVALRY_RESOLVED: `${selfName} and ${otherName} put their rivalry behind them.`,
+
+    CRUSH_DEVELOPED: `${selfName} developed a crush on ${otherName}.`,
+    COURTSHIP_STARTED: `${selfName} and ${otherName} began courting.`,
+    DEVOTED: `${selfName} and ${otherName} became devoted companions.`,
+    BONDED_PAIR: `${selfName} formed a lifelong bond with ${otherName}.`,
+
+    CLOSE_FRIENDS: `${selfName} and ${otherName} became close friends.`,
+    LIFELONG_FRIENDS: `${selfName} and ${otherName} became lifelong companions.`,
+
+    GREW_JUVENILE: `${selfName} matured into a Juvenile.`,
+    GREW_ADULT: `${selfName} matured into an Adult.`,
+    GREW_ELDER: `${selfName} reached the Elder stage.`,
+
+    SPECIALIZATION_CHOSEN: `${selfName} chose a specialization.`
+  };
+
+  return descriptions[eventCode] || entry.description || "";
+}
+
 async function renderChronicleDragonHeader(dragonId) {
   const d = STATE.dragons.byId[dragonId];
 
@@ -2727,7 +2762,7 @@ async function renderChronicleDragonHeader(dragonId) {
               <div class="chronicle-title">${entry.title || "Chronicle Entry"}</div>
               <div class="chronicle-date">${formatChronicleDate(entry.created_at)}</div>
               <div class="chronicle-description">
-                ${entry.description || ""}
+                ${getChronicleDescription(entry, d)}
               </div>
             </div>
           </div>
