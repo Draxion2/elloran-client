@@ -891,6 +891,38 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
 /* Chronicle category accents */
 
+/* Chronicle vertical timeline */
+
+.chronicle-timeline {
+  position: relative;
+}
+
+.chronicle-entry {
+  position: relative;
+  grid-template-columns: 54px 1fr;
+  margin-left: 4px;
+}
+
+.chronicle-entry::after {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 56px;
+  bottom: -18px;
+  width: 2px;
+  background: rgba(184, 149, 88, 0.22);
+  border-radius: 999px;
+}
+
+.chronicle-entry:last-child::after {
+  display: none;
+}
+
+.chronicle-icon {
+  position: relative;
+  z-index: 2;
+}
+
 .chronicle-entry {
   overflow: hidden;
 }
