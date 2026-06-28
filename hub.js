@@ -2697,7 +2697,7 @@ function getChronicleDescription(entry, dragon) {
     RIVALRY_FORMED: `Tensions rise as ${selfName} began a rivalry with ${otherName}.`,
     RIVALRY_RESOLVED: `${selfName} and ${otherName} put their rivalry behind them and settle a truce... for now.`,
 
-    CRUSH_DEVELOPED: `After trial-and-error, ${selfName} developed a crush on ${otherName}.`,
+    CRUSH_DEVELOPED: `As the days passed, ${selfName} developed a crush on ${otherName}.`,
     COURTSHIP_STARTED: `${selfName} and ${otherName} began courting.`,
     DEVOTED: `${selfName} and ${otherName} became devoted companions.`,
     BONDED_PAIR: `${selfName} formed a lifelong bond with ${otherName}.`,
