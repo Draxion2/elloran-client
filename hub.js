@@ -2624,6 +2624,26 @@ function renderHatchery(payload = hatcheryState) {
   }
 }
 
+function renderChronicleDragonSelect() {
+  const select = document.getElementById("chronicleDragonSelect");
+  if (!select) return;
+
+  const dragons = Object.values(STATE.dragons.byId || {}).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  select.innerHTML =
+    `<option value="">Select Dragon</option>` +
+    dragons
+      .map((d) => `<option value="${d.id}">${d.name} — ${d.species}</option>`)
+      .join("");
+
+  select.onchange = () => {
+    const id = Number(select.value);
+    renderChronicleDragonHeader(id);
+  };
+}
+
 function initHatcheryTabs() {
   const tabRoost = document.getElementById("roostTabRoost");
   const tabHatchery = document.getElementById("roostTabHatchery");
@@ -2807,26 +2827,6 @@ function initRoost() {
         "Send your dragon to rest and recover. Resting removes them from active duty for a while."
     }
   };
-
-  function renderChronicleDragonSelect() {
-  const select = document.getElementById("chronicleDragonSelect");
-  if (!select) return;
-
-  const dragons = Object.values(STATE.dragons.byId || {}).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-
-  select.innerHTML =
-    `<option value="">Select Dragon</option>` +
-    dragons
-      .map((d) => `<option value="${d.id}">${d.name} — ${d.species}</option>`)
-      .join("");
-
-  select.onchange = () => {
-    const id = Number(select.value);
-    renderChronicleDragonHeader(id);
-  };
-}
 
   function renderChronicleDragonHeader(dragonId) {
   const d = STATE.dragons.byId[dragonId];
