@@ -2624,6 +2624,109 @@ function renderHatchery(payload = hatcheryState) {
   }
 }
 
+async function fetchDragonHistory(dragonId) {
+  return await apiFetch(`/players/me/dragons/${dragonId}/history`);
+}
+
+function getChronicleIcon(eventCode) {
+  const icons = {
+    HATCHED: "🥚",
+    NAMED: "✒️",
+    GREW_JUVENILE: "🌱",
+    GREW_ADULT: "🔥",
+    GREW_ELDER: "👑",
+    SPECIALIZATION_CHOSEN: " path",
+    FRIENDSHIP_FORMED: "🤝",
+    RIVALRY_FORMED: "⚔️",
+    RIVALRY_RESOLVED: "🕊️",
+    CRUSH_DEVELOPED: "💛",
+    COURTSHIP_STARTED: "🌙",
+    DEVOTED: "💞",
+    BONDED_PAIR: "💍",
+    CLOSE_FRIENDS: "🤝",
+    LIFELONG_FRIENDS: "⭐"
+  };
+
+  return icons[eventCode] || "📜";
+}
+
+function formatChronicleDate(ts) {
+  if (!ts) return "Unknown date";
+
+  const date = new Date(Number(ts));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+async function renderChronicleDragonHeader(dragonId) {
+  const d = STATE.dragons.byId[dragonId];
+
+  const header = document.getElementById("chronicleDragonHeader");
+  const portrait = document.getElementById("chronicleDragonPortrait");
+  const name = document.getElementById("chronicleDragonName");
+  const meta = document.getElementById("chronicleDragonMeta");
+  const timeline = document.getElementById("chronicleTimeline");
+
+  if (!header || !portrait || !name || !meta || !timeline) return;
+
+  if (!d) {
+    header.style.display = "none";
+    timeline.innerHTML = `<div class="chronicle-empty">No dragon selected.</div>`;
+    return;
+  }
+
+  header.style.display = "flex";
+  portrait.style.backgroundImage = `url('${d.img}')`;
+  name.textContent = d.name;
+  meta.textContent = `${d.species} • ${d.element} • ${formatGrowthStage(d.growthStage)}`;
+
+  timeline.innerHTML = `<div class="chronicle-empty">Loading chronicle...</div>`;
+
+  try {
+    const payload = await fetchDragonHistory(dragonId);
+    const history = payload.history || [];
+
+    if (!history.length) {
+      timeline.innerHTML = `
+        <div class="chronicle-empty">
+          No chronicle entries have been recorded for this dragon yet.
+        </div>
+      `;
+      return;
+    }
+
+    timeline.innerHTML = history
+      .map((entry) => {
+        return `
+          <div class="chronicle-entry">
+            <div class="chronicle-icon">${getChronicleIcon(entry.event_code)}</div>
+
+            <div>
+              <div class="chronicle-title">${entry.title || "Chronicle Entry"}</div>
+              <div class="chronicle-date">${formatChronicleDate(entry.created_at)}</div>
+              <div class="chronicle-description">
+                ${entry.description || ""}
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  } catch (err) {
+    console.error("fetchDragonHistory failed", err);
+    timeline.innerHTML = `
+      <div class="chronicle-empty">
+        Could not load this dragon's chronicle.
+      </div>
+    `;
+  }
+}
+
 function renderChronicleDragonSelect() {
   const select = document.getElementById("chronicleDragonSelect");
   if (!select) return;
@@ -2827,35 +2930,6 @@ function initRoost() {
         "Send your dragon to rest and recover. Resting removes them from active duty for a while."
     }
   };
-
-  function renderChronicleDragonHeader(dragonId) {
-  const d = STATE.dragons.byId[dragonId];
-
-  const header = document.getElementById("chronicleDragonHeader");
-  const portrait = document.getElementById("chronicleDragonPortrait");
-  const name = document.getElementById("chronicleDragonName");
-  const meta = document.getElementById("chronicleDragonMeta");
-  const timeline = document.getElementById("chronicleTimeline");
-
-  if (!header || !portrait || !name || !meta || !timeline) return;
-
-  if (!d) {
-    header.style.display = "none";
-    timeline.innerHTML = `<div class="chronicle-empty">No dragon selected.</div>`;
-    return;
-  }
-
-  header.style.display = "flex";
-  portrait.style.backgroundImage = `url('${d.img}')`;
-  name.textContent = d.name;
-  meta.textContent = `${d.species} • ${d.element} • ${formatGrowthStage(d.growthStage)}`;
-
-  timeline.innerHTML = `
-    <div class="chronicle-empty">
-      Chronicle entries will appear here once the history route is connected.
-    </div>
-  `;
-}
 
   function showDragonActionPreview(actionKey) {
     if (!actionPreview) return;
