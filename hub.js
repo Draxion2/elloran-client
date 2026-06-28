@@ -2635,7 +2635,7 @@ function getChronicleIcon(eventCode) {
     GREW_JUVENILE: "🌱",
     GREW_ADULT: "🔥",
     GREW_ELDER: "👑",
-    SPECIALIZATION_CHOSEN: " path",
+    SPECIALIZATION_CHOSEN: "🧭",
     FRIENDSHIP_FORMED: "🤝",
     RIVALRY_FORMED: "⚔️",
     RIVALRY_RESOLVED: "🕊️",
@@ -2662,6 +2662,23 @@ function formatChronicleDate(ts) {
     day: "numeric"
   });
 }
+
+function formatGrowthStage(stage) {
+    if (!stage) return "—";
+
+    switch (String(stage).toLowerCase()) {
+      case "wyrmling":
+        return "Wyrmling";
+      case "juvenile":
+        return "Juvenile";
+      case "adult":
+        return "Adult";
+      case "elder":
+        return "Elder";
+      default:
+        return stage;
+    }
+  }
 
 async function renderChronicleDragonHeader(dragonId) {
   const d = STATE.dragons.byId[dragonId];
@@ -3315,22 +3332,6 @@ function initRoost() {
 
   function recomputeHappiness(d) {
     d.happiness = deriveHappiness(d.mood, d.hunger);
-  }
-  function formatGrowthStage(stage) {
-    if (!stage) return "—";
-
-    switch (String(stage).toLowerCase()) {
-      case "wyrmling":
-        return "Wyrmling";
-      case "juvenile":
-        return "Juvenile";
-      case "adult":
-        return "Adult";
-      case "elder":
-        return "Elder";
-      default:
-        return stage;
-    }
   }
   HUB.renderActive = function () {
     const a = active();
