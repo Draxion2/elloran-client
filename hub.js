@@ -1,4 +1,4 @@
-console.log("hub.js V-06/27/26 dragon-breeding-5 tidy-v5");
+console.log("hub.js V-06/29/26 dragon-release-1 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2624,6 +2624,31 @@ function renderHatchery(payload = hatcheryState) {
   }
 }
 
+async function fetchArchivedDragons() {
+  const payload = await apiFetch("/players/me/dragons/archives");
+  return payload.dragons_archived || [];
+}
+
+function normalizeArchivedDragon(raw) {
+  return {
+    id: Number(raw.original_player_dragons_id),
+    archiveId: Number(raw.id),
+    name: raw.name || "Unnamed",
+    gender: raw.gender || null,
+    growthStage: raw.growth_stage || "wyrmling",
+    species: raw.species || "Dragon",
+    element: raw.element || "—",
+    img: raw.img_url || "",
+    archived_at: raw.archived_at || null,
+    archive_reason: raw.archive_reason || "released",
+    is_archived: true
+  };
+}
+
+function getChronicleDragons() {
+  return Object.values(STATE.dragons.byId || {});
+}
+
 async function fetchDragonHistory(dragonId) {
   return await apiFetch(`/players/me/dragons/${dragonId}/history`);
 }
@@ -3006,7 +3031,7 @@ function renderChronicleDragonSelect() {
   const listEl = document.getElementById("chronicleDragonList");
   if (!listEl) return;
 
-  const dragons = Object.values(STATE.dragons.byId || {}).sort((a, b) =>
+  const dragons = getChronicleDragons().sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
@@ -3048,6 +3073,7 @@ function renderChronicleDragonSelect() {
 
             <div class="chronicle-picker-meta">
               ${d.species} • ${formatGrowthStage(d.growthStage)}
+              ${d.is_archived ? " • Released" : ""}
             </div>
           </div>
         </button>
@@ -3072,6 +3098,22 @@ function renderChronicleDragonSelect() {
   });
 }
 
+async function loadChronicleDragons() {
+  try {
+    const archived = await fetchArchivedDragons();
+
+    archived.forEach((raw) => {
+      const d = normalizeArchivedDragon(raw);
+      STATE.dragons.byId[d.id] = d;
+    });
+
+    renderChronicleDragonSelect();
+  } catch (err) {
+    console.warn("Could not load archived dragons for Chronicles", err);
+    renderChronicleDragonSelect();
+  }
+}
+
 function initHatcheryTabs() {
   const tabRoost = document.getElementById("roostTabRoost");
   const tabHatchery = document.getElementById("roostTabHatchery");
@@ -3093,7 +3135,7 @@ function initHatcheryTabs() {
     chroniclesView.classList.toggle("active", tab === "chronicles");
 
     if (tab === "chronicles") {
-      renderChronicleDragonSelect();
+      loadChronicleDragons();
       initChronicleFilters();
     }
   }
