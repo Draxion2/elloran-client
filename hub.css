@@ -2221,6 +2221,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 15px;
 }
 
 .growth-cancel {
