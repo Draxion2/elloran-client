@@ -1,4 +1,4 @@
-console.log("hub.js V-06/29/26 dragon-release-2 tidy-v5");
+console.log("hub.js V-06/29/26 dragon-release-2 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -4286,10 +4286,16 @@ function initRoost() {
   if (!d) return;
 
   const confirmed = confirm(
-    `Release ${d.name}?\n\nThis dragon will leave your active roost, but their Chronicle will remain. This cannot be undone.`
+    `Release ${d.name}?\n\n` +
+    `Once released, this dragon will permanently leave your Roost and can never return.\n\n` +
+    `Its Chronicle and memories will be preserved, but the dragon will no longer be available for care, travel, battle, breeding, or any other activities.\n\n` +
+    `This action cannot be undone.`
   );
 
   if (!confirmed) return;
+
+  // Continue with API call...
+}
 
   try {
     await apiFetch(`/players/me/dragons/${id}/release`, {
