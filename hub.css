@@ -1,4 +1,4 @@
-/* hub.css V-06/27/26 dragon-breeding-3 tidy-2*/
+/* hub.css V-06/29/26 dragon-release-1 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -348,7 +348,6 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   transform: translateY(0px);
 }
 
-/* selected state (your JS can toggle .active later) */
 #panel-map .map-row.active {
   background: rgba(184, 149, 88, 0.18);
   border-color: rgba(184, 149, 88, 0.55);
@@ -2961,6 +2960,18 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
 .portrait-drop.dragover {
   border-color: var(--accent);
+}
+
+#btnReleaseDragon {
+  background: linear-gradient(#8b2a2a, #651c1c);
+  border: 1px solid #b94b4b;
+  color: #fff4f4;
+}
+
+#btnReleaseDragon:hover {
+  background: linear-gradient(#a23333, #7a2020);
+  border-color: #d76a6a;
+  box-shadow: 0 0 10px rgba(180, 60, 60, 0.35);
 }
 
 /* Action ring */
