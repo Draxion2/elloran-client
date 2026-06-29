@@ -163,6 +163,12 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
 }
 
+.btn-sm:hover {
+  background: linear-gradient(#a23333, #7a2020);
+  border-color: #d76a6a;
+  box-shadow: 0 0 10px rgba(180, 60, 60, 0.35);
+}
+
 .btn:disabled,
 .btn-sm:disabled {
   opacity: 0.55;
