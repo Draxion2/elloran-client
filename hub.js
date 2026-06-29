@@ -1,4 +1,4 @@
-console.log("hub.js V-06/29/26 dragon-release-3 tidy-v6");
+console.log("hub.js V-06/29/26 dragon-release-4 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -3467,6 +3467,59 @@ function initRoost() {
     return parts.join(", ");
   }
 
+  function showRenameDragonModal(dragon) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("renameDragonModal");
+    const title = document.getElementById("renameDragonTitle");
+    const input = document.getElementById("renameDragonInput");
+    const btnCancel = document.getElementById("btnRenameCancel");
+    const btnSave = document.getElementById("btnRenameSave");
+
+    if (!modal || !title || !input || !btnCancel || !btnSave) {
+      resolve(null);
+      return;
+    }
+
+    title.textContent = `Rename ${dragon.name}`;
+    input.value = dragon.name || "";
+    modal.classList.add("show");
+
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 50);
+
+    const cleanup = (value) => {
+      modal.classList.remove("show");
+      btnCancel.onclick = null;
+      btnSave.onclick = null;
+      input.onkeydown = null;
+      modal.onclick = null;
+      resolve(value);
+    };
+
+    btnCancel.onclick = () => cleanup(null);
+
+    btnSave.onclick = () => {
+      const name = input.value.trim().slice(0, 24);
+      if (!name) {
+        toast("A valid name is required.");
+        return;
+      }
+      cleanup(name);
+    };
+
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") btnSave.click();
+      if (e.key === "Escape") cleanup(null);
+    };
+
+    modal.onclick = (e) => {
+      if (e.target === modal) cleanup(null);
+    };
+  });
+}
+
   function showReleaseDragonModal(dragon) {
   return new Promise((resolve) => {
     const modal = document.getElementById("releaseDragonModal");
@@ -5154,9 +5207,7 @@ function initRoost() {
         toast("That dragon is resting. Rename it after it wakes up.");
         return;
       }
-      const nRaw = prompt("Rename dragon:", a.name);
-      if (nRaw == null) return; // user hit Cancel
-      const name = String(nRaw).trim().slice(0, 24);
+      const name = await showRenameDragonModal(a);
       if (!name) {
         toast("A valid name is required.");
         return;
