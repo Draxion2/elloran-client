@@ -4294,9 +4294,6 @@ function initRoost() {
 
   if (!confirmed) return;
 
-  // Continue with API call...
-}
-
   try {
     await apiFetch(`/players/me/dragons/${id}/release`, {
       method: "POST"
