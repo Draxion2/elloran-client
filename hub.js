@@ -2936,7 +2936,8 @@ async function renderChronicleDragonHeader(dragonId) {
     if (!history.length) {
       timeline.innerHTML = `
         <div class="chronicle-empty">
-          No chronicle entries have been recorded for this dragon yet.
+          This dragon's story has only just begun.<br>
+          Continue caring for your companion to create memories worth remembering.
         </div>
       `;
       return;
