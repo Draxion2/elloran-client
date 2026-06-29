@@ -2629,8 +2629,6 @@ async function fetchDragonHistory(dragonId) {
 }
 
 const ROOST_CHRONICLE_SEEN_KEY = "elloran.roostChroniclesSeen";
-let roostNotificationQueue = [];
-let roostNotificationActive = false;
 
 function getSeenChronicleIds() {
   try {
@@ -2640,26 +2638,44 @@ function getSeenChronicleIds() {
   }
 }
 
-function saveSeenChronicleId(id) {
+function saveSeenChronicleIds(ids) {
   const seen = getSeenChronicleIds();
-  seen.add(Number(id));
+
+  ids.forEach((id) => {
+    if (id) seen.add(Number(id));
+  });
+
   localStorage.setItem(ROOST_CHRONICLE_SEEN_KEY, JSON.stringify([...seen]));
 }
 
-function getRoostNotificationEntryText(entry, dragon) {
-  return getChronicleDescription(entry, dragon);
+function summarizeChronicleEntries(entries) {
+  const counts = {
+    life: 0,
+    growth: 0,
+    relationships: 0,
+    rivalries: 0,
+    specialization: 0,
+    other: 0
+  };
+
+  entries.forEach((entry) => {
+    const cat = getChronicleCategory(entry.event_code);
+    counts[cat] = (counts[cat] || 0) + 1;
+  });
+
+  const lines = [];
+
+  if (counts.life) lines.push(`📖 ${counts.life} Life ${counts.life === 1 ? "Memory" : "Memories"}`);
+  if (counts.growth) lines.push(`🌱 ${counts.growth} Growth ${counts.growth === 1 ? "Milestone" : "Milestones"}`);
+  if (counts.relationships) lines.push(`💛 ${counts.relationships} Relationship ${counts.relationships === 1 ? "Change" : "Changes"}`);
+  if (counts.rivalries) lines.push(`⚔️ ${counts.rivalries} Rivalry ${counts.rivalries === 1 ? "Event" : "Events"}`);
+  if (counts.specialization) lines.push(`🧭 ${counts.specialization} Specialization ${counts.specialization === 1 ? "Choice" : "Choices"}`);
+  if (counts.other) lines.push(`📜 ${counts.other} Other ${counts.other === 1 ? "Entry" : "Entries"}`);
+
+  return lines.join("<br>");
 }
 
-function queueRoostNotification(entry, dragon) {
-  roostNotificationQueue.push({ entry, dragon });
-  showNextRoostNotification();
-}
-
-function showNextRoostNotification() {
-  if (roostNotificationActive || !roostNotificationQueue.length) return;
-
-  const { entry, dragon } = roostNotificationQueue.shift();
-
+function showRoostNotification({ iconValue, titleValue, textValue, idsToMarkSeen, dragonIdToOpen }) {
   const modal = document.getElementById("roostNotificationModal");
   const icon = document.getElementById("roostNotificationIcon");
   const title = document.getElementById("roostNotificationTitle");
@@ -2669,62 +2685,93 @@ function showNextRoostNotification() {
 
   if (!modal || !icon || !title || !text || !btnView || !btnContinue) return;
 
-  roostNotificationActive = true;
-
-  icon.textContent = getChronicleIcon(entry.event_code);
-  title.textContent = entry.title || "New Chronicle Entry";
-  text.textContent = getRoostNotificationEntryText(entry, dragon);
+  icon.textContent = iconValue;
+  title.textContent = titleValue;
+  text.innerHTML = textValue;
 
   modal.classList.add("show");
 
   const close = () => {
-    saveSeenChronicleId(entry.id);
+    saveSeenChronicleIds(idsToMarkSeen);
     modal.classList.remove("show");
-    roostNotificationActive = false;
-
-    setTimeout(showNextRoostNotification, 250);
   };
 
   btnContinue.onclick = close;
 
   btnView.onclick = () => {
-    saveSeenChronicleId(entry.id);
+    saveSeenChronicleIds(idsToMarkSeen);
     modal.classList.remove("show");
-    roostNotificationActive = false;
 
     const roostTab = document.getElementById("roostTabChronicles");
     if (roostTab) roostTab.click();
 
-    setTimeout(() => {
-      const listEl = document.getElementById("chronicleDragonList");
-      if (listEl) {
-        listEl.dataset.selectedDragonId = String(dragon.id);
-      }
+    if (dragonIdToOpen) {
+      setTimeout(() => {
+        const listEl = document.getElementById("chronicleDragonList");
+        if (listEl) listEl.dataset.selectedDragonId = String(dragonIdToOpen);
 
-      renderChronicleDragonSelect();
-      renderChronicleDragonHeader(dragon.id);
-    }, 100);
+        renderChronicleDragonSelect();
+        renderChronicleDragonHeader(dragonIdToOpen);
+      }, 100);
+    }
   };
 }
 
 async function checkRoostChronicleNotifications() {
   const seen = getSeenChronicleIds();
   const dragons = Object.values(STATE.dragons.byId || {});
+  const unseenEntries = [];
 
   for (const dragon of dragons) {
     try {
       const payload = await fetchDragonHistory(dragon.id);
       const history = payload.history || [];
 
-      const unseen = history
-        .filter((entry) => entry.id && !seen.has(Number(entry.id)))
-        .sort((a, b) => Number(a.created_at || 0) - Number(b.created_at || 0));
-
-      unseen.forEach((entry) => queueRoostNotification(entry, dragon));
+      history.forEach((entry) => {
+        if (entry.id && !seen.has(Number(entry.id))) {
+          unseenEntries.push({
+            entry,
+            dragon
+          });
+        }
+      });
     } catch (err) {
       console.warn("Could not check chronicle notifications", dragon.id, err);
     }
   }
+
+  unseenEntries.sort(
+    (a, b) => Number(a.entry.created_at || 0) - Number(b.entry.created_at || 0)
+  );
+
+  if (!unseenEntries.length) return;
+
+  const ids = unseenEntries.map((x) => x.entry.id);
+
+  if (unseenEntries.length === 1) {
+    const { entry, dragon } = unseenEntries[0];
+
+    showRoostNotification({
+      iconValue: getChronicleIcon(entry.event_code),
+      titleValue: entry.title || "New Chronicle Entry",
+      textValue: getChronicleDescription(entry, dragon),
+      idsToMarkSeen: ids,
+      dragonIdToOpen: dragon.id
+    });
+
+    return;
+  }
+
+  showRoostNotification({
+    iconValue: "📜",
+    titleValue: "Roost Chronicles Updated",
+    textValue: `
+      While you were away, <strong>${unseenEntries.length} new memories</strong> were recorded.<br><br>
+      ${summarizeChronicleEntries(unseenEntries.map((x) => x.entry))}
+    `,
+    idsToMarkSeen: ids,
+    dragonIdToOpen: unseenEntries[0].dragon.id
+  });
 }
 
 function getChronicleIcon(eventCode) {
