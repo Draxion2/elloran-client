@@ -1,4 +1,4 @@
-console.log("hub.js V-06/29/26 dragon-release-1 tidy-v5");
+console.log("hub.js V-06/29/26 dragon-release-2 tidy-v5");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -3200,6 +3200,7 @@ function initRoost() {
     happyPct = $("#happyPct"),
     hungerPct = $("#hungerPct");
   const moodletsEl = $("#moodlets");
+  const btnReleaseDragon = $("#btnReleaseDragon");
   const btnSetActive = $("#btnSetActive"),
     btnFavorite = $("#btnFavorite");
   const btnFeed = $("#btnFeed"),
@@ -4280,6 +4281,39 @@ function initRoost() {
       toast("Could not update active dragon.");
     }
   }
+  async function releaseDragon(id) {
+  const d = STATE.dragons.byId[id];
+  if (!d) return;
+
+  const confirmed = confirm(
+    `Release ${d.name}?\n\nThis dragon will leave your active roost, but their Chronicle will remain. This cannot be undone.`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await apiFetch(`/players/me/dragons/${id}/release`, {
+      method: "POST"
+    });
+
+    d.is_archived = true;
+
+    if (STATE.dragons.activeId === id) STATE.dragons.activeId = null;
+    if (STATE.dragons.selectedId === id) STATE.dragons.selectedId = null;
+
+    STATE.favorites.delete(id);
+
+    toast(`${d.name} has been released.`);
+
+    await refreshDragonsFromApiSafe();
+
+    HUB.renderActive();
+    HUB.renderCollection();
+  } catch (err) {
+    console.error("releaseDragon failed", err);
+    toast(extractApiPayloadMessage(err) || "Could not release dragon.");
+  }
+}
   async function toggleFavorite(id) {
     const d = STATE.dragons.byId[id];
     if (!d) return;
@@ -5057,6 +5091,13 @@ function initRoost() {
       }
       setActive(a.id);
     };
+  if (btnReleaseDragon) {
+    btnReleaseDragon.onclick = () => {
+      const d = active();
+      if (!d) return toast("No dragon selected.");
+        releaseDragon(d.id);
+      };
+  }
   if (btnFavorite)
     btnFavorite.onclick = () => {
       const a = active();
