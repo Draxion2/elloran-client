@@ -1,4 +1,4 @@
-console.log("hub.js V-06/29/26 dragon-release-2 tidy-v6");
+console.log("hub.js V-06/29/26 dragon-release-3 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -3467,6 +3467,45 @@ function initRoost() {
     return parts.join(", ");
   }
 
+  function showReleaseDragonModal(dragon) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("releaseDragonModal");
+    const title = document.getElementById("releaseDragonTitle");
+    const text = document.getElementById("releaseDragonText");
+    const btnCancel = document.getElementById("btnReleaseCancel");
+    const btnConfirm = document.getElementById("btnReleaseConfirm");
+
+    if (!modal || !title || !text || !btnCancel || !btnConfirm) {
+      resolve(false);
+      return;
+    }
+
+    title.textContent = `Release ${dragon.name}?`;
+    text.innerHTML = `
+      Once released, this dragon will permanently leave your Roost and can never return.<br><br>
+      Its Chronicle and memories will remain, but it can no longer be cared for, travel with you, fight beside you, or breed.<br><br>
+      <strong>This action cannot be undone.</strong>
+    `;
+
+    modal.classList.add("show");
+
+    const cleanup = (result) => {
+      modal.classList.remove("show");
+      btnCancel.onclick = null;
+      btnConfirm.onclick = null;
+      modal.onclick = null;
+      resolve(result);
+    };
+
+    btnCancel.onclick = () => cleanup(false);
+    btnConfirm.onclick = () => cleanup(true);
+
+    modal.onclick = (e) => {
+      if (e.target === modal) cleanup(false);
+    };
+  });
+}
+
   async function openSpecializationModal() {
     const a = active();
     if (!a) return toast("No dragon selected.");
@@ -4285,12 +4324,7 @@ function initRoost() {
   const d = STATE.dragons.byId[id];
   if (!d) return;
 
-  const confirmed = confirm(
-    `Release ${d.name}?\n\n` +
-    `Once released, this dragon will permanently leave your Roost and can never return.\n\n` +
-    `Its Chronicle and memories will be preserved, but the dragon will no longer be available for care, travel, battle, breeding, or any other activities.\n\n` +
-    `This action cannot be undone.`
-  );
+  const confirmed = await showReleaseDragonModal(d);
 
   if (!confirmed) return;
 
