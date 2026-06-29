@@ -3385,7 +3385,8 @@ function initRoost() {
     let id = STATE.dragons.selectedId != null ? STATE.dragons.selectedId : null;
     if (id != null && !STATE.dragons.byId[id]) id = null;
     if (id == null) id = STATE.dragons.activeId;
-    return id != null ? STATE.dragons.byId[id] : null;
+    const d = id != null ? STATE.dragons.byId[id] : null;
+    return d && !d.is_archived ? d : null;
   }
   // place ring buttons
   (function placeRing() {
@@ -3692,7 +3693,7 @@ function initRoost() {
       const cap = $("#roostCap");
       if (cap)
         cap.textContent = `Roost: ${
-          Object.keys(STATE.dragons.byId).length
+          Object.values(STATE.dragons.byId).filter((d) => !d.is_archived).length
         } / 12`;
       // Clear portrait + labels
       if (portrait) portrait.style.backgroundImage = "";
@@ -3803,7 +3804,7 @@ function initRoost() {
         isActive || isResting ? "none" : "inline-block";
     const cap = $("#roostCap");
     if (cap)
-      cap.textContent = `Roost: ${Object.keys(STATE.dragons.byId).length} / 12`;
+      cap.textContent = `Roost: ${Object.values(STATE.dragons.byId).filter((d) => !d.is_archived).length} / 12`;
     if (portrait) portrait.style.backgroundImage = `url('${a.img}')`;
     if (dName) {
       const genderSymbol =
@@ -4030,7 +4031,9 @@ function initRoost() {
   }
   HUB.renderCollection = function () {
     if (!collection) return;
-    let list = Object.values(STATE.dragons.byId).filter(searchFilter);
+    let list = Object.values(STATE.dragons.byId)
+      .filter((d) => !d.is_archived)
+      .filter(searchFilter);
     const sKey = ((dSort && dSort.value) || "name")
       .replace("Sort: ", "")
       .toLowerCase();
