@@ -161,12 +161,21 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    transform .12s ease,
+    box-shadow .18s ease;
 }
 
 .btn-sm:hover {
-  background: linear-gradient(#a23333, #7a2020);
-  border-color: #d76a6a;
-  box-shadow: 0 0 10px rgba(180, 60, 60, 0.35);
+  background: linear-gradient(180deg, #2b241d, #18130f);
+  border-color: #d4b46b;
+  color: #fff5d8;
+  box-shadow:
+    0 0 12px rgba(212,180,107,.22),
+    0 2px 8px rgba(0,0,0,.35);
+  transform: translateY(-1px);
 }
 
 .btn:disabled,
