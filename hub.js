@@ -3079,7 +3079,6 @@ function initRoost() {
     HUB.renderActive?.();
     HUB.renderCollection?.();
     startDragonIdleRotation();
-    checkRoostChronicleNotifications();
   }
   roostMounted = true;
   const root = $("#roostRoot"),
