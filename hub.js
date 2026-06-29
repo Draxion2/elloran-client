@@ -2936,8 +2936,8 @@ async function renderChronicleDragonHeader(dragonId) {
     if (!history.length) {
       timeline.innerHTML = `
         <div class="chronicle-empty">
-          This dragon's story has only just begun.<br>
-          Continue caring for your companion to create memories worth remembering.
+          This dragon's story has only just begun<br><br>
+          Continue caring for your companion to create memories worth remembering
         </div>
       `;
       return;
