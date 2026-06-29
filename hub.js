@@ -2628,6 +2628,105 @@ async function fetchDragonHistory(dragonId) {
   return await apiFetch(`/players/me/dragons/${dragonId}/history`);
 }
 
+const ROOST_CHRONICLE_SEEN_KEY = "elloran.roostChroniclesSeen";
+let roostNotificationQueue = [];
+let roostNotificationActive = false;
+
+function getSeenChronicleIds() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(ROOST_CHRONICLE_SEEN_KEY) || "[]"));
+  } catch (_) {
+    return new Set();
+  }
+}
+
+function saveSeenChronicleId(id) {
+  const seen = getSeenChronicleIds();
+  seen.add(Number(id));
+  localStorage.setItem(ROOST_CHRONICLE_SEEN_KEY, JSON.stringify([...seen]));
+}
+
+function getRoostNotificationEntryText(entry, dragon) {
+  return getChronicleDescription(entry, dragon);
+}
+
+function queueRoostNotification(entry, dragon) {
+  roostNotificationQueue.push({ entry, dragon });
+  showNextRoostNotification();
+}
+
+function showNextRoostNotification() {
+  if (roostNotificationActive || !roostNotificationQueue.length) return;
+
+  const { entry, dragon } = roostNotificationQueue.shift();
+
+  const modal = document.getElementById("roostNotificationModal");
+  const icon = document.getElementById("roostNotificationIcon");
+  const title = document.getElementById("roostNotificationTitle");
+  const text = document.getElementById("roostNotificationText");
+  const btnView = document.getElementById("btnRoostNotificationView");
+  const btnContinue = document.getElementById("btnRoostNotificationContinue");
+
+  if (!modal || !icon || !title || !text || !btnView || !btnContinue) return;
+
+  roostNotificationActive = true;
+
+  icon.textContent = getChronicleIcon(entry.event_code);
+  title.textContent = entry.title || "New Chronicle Entry";
+  text.textContent = getRoostNotificationEntryText(entry, dragon);
+
+  modal.classList.add("show");
+
+  const close = () => {
+    saveSeenChronicleId(entry.id);
+    modal.classList.remove("show");
+    roostNotificationActive = false;
+
+    setTimeout(showNextRoostNotification, 250);
+  };
+
+  btnContinue.onclick = close;
+
+  btnView.onclick = () => {
+    saveSeenChronicleId(entry.id);
+    modal.classList.remove("show");
+    roostNotificationActive = false;
+
+    const roostTab = document.getElementById("roostTabChronicles");
+    if (roostTab) roostTab.click();
+
+    setTimeout(() => {
+      const listEl = document.getElementById("chronicleDragonList");
+      if (listEl) {
+        listEl.dataset.selectedDragonId = String(dragon.id);
+      }
+
+      renderChronicleDragonSelect();
+      renderChronicleDragonHeader(dragon.id);
+    }, 100);
+  };
+}
+
+async function checkRoostChronicleNotifications() {
+  const seen = getSeenChronicleIds();
+  const dragons = Object.values(STATE.dragons.byId || {});
+
+  for (const dragon of dragons) {
+    try {
+      const payload = await fetchDragonHistory(dragon.id);
+      const history = payload.history || [];
+
+      const unseen = history
+        .filter((entry) => entry.id && !seen.has(Number(entry.id)))
+        .sort((a, b) => Number(a.created_at || 0) - Number(b.created_at || 0));
+
+      unseen.forEach((entry) => queueRoostNotification(entry, dragon));
+    } catch (err) {
+      console.warn("Could not check chronicle notifications", dragon.id, err);
+    }
+  }
+}
+
 function getChronicleIcon(eventCode) {
   const icons = {
     HATCHED: "🥚",
@@ -2980,6 +3079,7 @@ function initRoost() {
     HUB.renderActive?.();
     HUB.renderCollection?.();
     startDragonIdleRotation();
+    checkRoostChronicleNotifications();
   }
   roostMounted = true;
   const root = $("#roostRoot"),
@@ -4944,6 +5044,7 @@ function initRoost() {
   HUB.renderActive();
   HUB.renderCollection();
   startDragonIdleRotation();
+  checkRoostChronicleNotifications();
 }
 /* ================= Buttons & Backdrop ================= */
 document.querySelectorAll(".btn[data-panel]").forEach((btn) => {
