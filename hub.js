@@ -1,4 +1,4 @@
-console.log("hub.js V-06/29/26 dragon-release-4 tidy-v6");
+console.log("hub.js V-07/06/26 dragon-egg-1 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2492,6 +2492,47 @@ function startHatcheryTimer() {
   }, 1000);
 }
 
+async function beginEggIncubation(eggId) {
+  if (!eggId) {
+    toast("No egg selected.");
+    return;
+  }
+
+  const btn = document.querySelector(
+    `.hatchery-incubate-btn[data-egg-id="${eggId}"]`
+  );
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Starting...";
+  }
+
+  try {
+    await apiFetch("/players/me/dragons/hatchery/incubate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        egg_id: Number(eggId)
+      })
+    });
+
+    toast("Egg moved to the incubator.");
+    await fetchHatcheryState();
+  } catch (err) {
+    console.error("beginEggIncubation failed", err);
+    toast(extractApiPayloadMessage(err) || "Could not begin incubation.");
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Incubate";
+    }
+
+    await fetchHatcheryState();
+  }
+}
+
 function renderHatchery(payload = hatcheryState) {
   const activeEgg = payload?.has_egg ? payload : null;
   const storage = payload?.storage || [];
@@ -2593,35 +2634,57 @@ function renderHatchery(payload = hatcheryState) {
   }
 
   if (eggList) {
-    if (!storage.length) {
-      eggList.innerHTML = `
-        <div class="hatchery-empty">
-          No eggs have been discovered yet.
-        </div>
-      `;
-    } else {
-      eggList.innerHTML = storage
-        .map(
-          (egg) => `
-            <div class="hatchery-egg-row" data-egg-id="${egg.id}">
-              <div class="hatchery-egg-thumb"></div>
+  if (!storage.length) {
+    eggList.innerHTML = `
+      <div class="hatchery-empty">
+        No eggs have been discovered yet.
+      </div>
+    `;
+  } else {
+    const incubatorOccupied = !!activeEgg;
 
-              <div class="hatchery-egg-meta">
-                <strong>${egg.egg_name || "Unknown Egg"}</strong>
-                <span>${egg.source || "Discovery"} • Waiting in storage</span>
-              </div>
+    eggList.innerHTML = storage
+      .map((egg) => {
+        const imgStyle = egg.img_url
+          ? `style="background-image:url('${egg.img_url}')"`
+          : "";
 
-              <button class="btn-sm hatchery-incubate-btn" data-egg-id="${
-                egg.id
-              }">
-                Incubate
-              </button>
+        const sourceLabel =
+          egg.source === "breeding"
+            ? "Breeding Grounds"
+            : egg.source || "Discovery";
+
+        return `
+          <div class="hatchery-egg-row" data-egg-id="${egg.id}">
+            <div class="hatchery-egg-thumb" ${imgStyle}></div>
+
+            <div class="hatchery-egg-meta">
+              <strong>${egg.egg_name || "Unknown Egg"}</strong>
+              <span>${sourceLabel} • Waiting in storage</span>
+              <small>${egg.description || "A dragon egg waiting to be incubated."}</small>
             </div>
-          `
-        )
-        .join("");
-    }
+
+            <button
+              class="btn-sm hatchery-incubate-btn"
+              data-egg-id="${egg.id}"
+              ${incubatorOccupied ? "disabled" : ""}
+              title="${incubatorOccupied ? "The incubator is already occupied." : ""}"
+            >
+              ${incubatorOccupied ? "Incubator Occupied" : "Begin Incubation"}
+            </button>
+          </div>
+        `;
+      })
+      .join("");
+
+    eggList.querySelectorAll(".hatchery-incubate-btn").forEach((btn) => {
+      btn.onclick = () => {
+        const eggId = Number(btn.dataset.eggId);
+        beginEggIncubation(eggId);
+      };
+    });
   }
+}
 }
 
 async function fetchArchivedDragons() {
