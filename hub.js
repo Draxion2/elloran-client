@@ -126,7 +126,7 @@ const RARITY_GLOWS = {
 };
 
 const DEFAULT_EGG_IMG =
-  "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/egg_default.png";
+  "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/egg_transparent.png";
 
 let hatchBuildupAudio = null;
 
