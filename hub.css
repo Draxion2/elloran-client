@@ -1,4 +1,4 @@
-/* hub.css V-07/07/26 dragon-egg-1 tidy-2*/
+/* hub.css V-07/07/26 dragon-egg-2 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -1872,14 +1872,12 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 .hatchery-egg-thumb {
   width: 54px;
   height: 64px;
-  border-radius: 50% 50% 46% 46%;
-  background: radial-gradient(
-      circle at 35% 24%,
-      rgba(255, 255, 255, 0.32),
-      transparent 18%
-    ),
-    linear-gradient(145deg, #5d4630, #24170f 62%, #100a07);
-  border: 1px solid rgba(255, 224, 160, 0.2);
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.45));
 }
 
 .hatchery-egg-meta strong {
