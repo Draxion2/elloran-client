@@ -2484,6 +2484,51 @@ function startHatchCeremony(payload, eggSnapshot) {
   };
 }
 
+function updateHatcheryIncubatorTimer(payload) {
+  const activeEgg = payload?.has_egg ? payload : null;
+  const incubation = activeEgg?.incubation || null;
+
+  if (!incubation) return;
+
+  const eggStageText = document.getElementById("hatcheryEggStageText");
+  const eggTimer = document.getElementById("hatcheryEggTimer");
+  const progressFill = document.getElementById("hatcheryProgressFill");
+  const hatchBtn = document.getElementById("hatchEggBtn");
+  const eggFlavor = document.getElementById("hatcheryEggFlavor");
+  const eggImg = document.querySelector(".hatchery-egg-img");
+
+  const secondsLeft = Math.max(0, Number(incubation.seconds_remaining || 0));
+  const msLeft = secondsLeft * 1000;
+
+  const progress = Math.max(
+    0,
+    Math.min(100, Number(incubation.percent_complete || 0))
+  );
+
+  const ready = !!activeEgg.can_hatch;
+  const stageKey = ready ? "ready" : incubation.stage || "warm";
+
+  if (eggStageText) eggStageText.textContent = capitalize(stageKey);
+  if (eggTimer) eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
+  if (progressFill) progressFill.style.width = `${progress}%`;
+  if (hatchBtn) hatchBtn.disabled = !ready;
+
+  if (eggFlavor) {
+    eggFlavor.textContent = getHatcheryFlavor(stageKey);
+  }
+
+  if (eggImg) {
+    eggImg.classList.remove(
+      "egg-stage-warm",
+      "egg-stage-restless",
+      "egg-stage-cracking",
+      "egg-stage-ready"
+    );
+
+    eggImg.classList.add(`egg-stage-${stageKey}`);
+  }
+}
+
 function startHatcheryTimer() {
   if (hatcheryTimer) clearInterval(hatcheryTimer);
 
@@ -2491,7 +2536,8 @@ function startHatcheryTimer() {
     if (!hatcheryState || !hatcheryState.has_egg) return;
 
     hatcheryState = normalizeHatcheryState(hatcheryState);
-    renderHatchery(hatcheryState);
+
+    updateHatcheryIncubatorTimer(hatcheryState);
   }, 1000);
 }
 
