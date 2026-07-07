@@ -369,14 +369,14 @@ function normalizeHatcheryState(payload) {
     Math.min(100, Math.floor((elapsedSeconds / durationSeconds) * 100))
   );
 
-  let stage = "warm";
+  let stage = "Warm";
 
   if (percentComplete >= 100) {
-    stage = "ready";
+    stage = "Ready";
   } else if (percentComplete >= 66) {
-    stage = "cracking";
+    stage = "Cracking";
   } else if (percentComplete >= 33) {
-    stage = "restless";
+    stage = "Restless";
   }
 
   return {
