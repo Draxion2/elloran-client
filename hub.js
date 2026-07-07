@@ -2654,13 +2654,12 @@ function renderHatchery(payload = hatcheryState) {
 
     if (eggName) eggName.textContent = egg.egg_name || "Unknown Egg";
     if (eggImg) {
-      eggImg.style.background =
-        `transparent url("${egg.img_url || DEFAULT_EGG_IMG}") center / contain no-repeat`;
-    }
-
       const imgUrl = egg.img_url?.trim() || DEFAULT_EGG_IMG;
 
-      eggImg.classList.toggle("has-real-egg", !!imgUrl);
+      eggImg.style.background =
+        `transparent url("${imgUrl}") center / contain no-repeat`;
+
+      eggImg.classList.add("has-real-egg");
 
       eggImg.classList.remove(
         "egg-stage-warm",
@@ -2697,7 +2696,8 @@ function renderHatchery(payload = hatcheryState) {
 
     eggList.innerHTML = storage
       .map((egg) => {
-        const imgStyle = `style="background-image:url('${egg.img_url || DEFAULT_EGG_IMG}')"`
+        const imgUrl = egg.img_url?.trim() || DEFAULT_EGG_IMG;
+        const imgStyle = `style="background-image:url('${imgUrl}')"`;
 
         const sourceLabel =
           egg.source === "breeding"
