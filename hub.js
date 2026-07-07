@@ -2668,7 +2668,7 @@ function renderHatchery(payload = hatcheryState) {
 
       eggImg.setAttribute("aria-label", egg.egg_name || "Dragon egg");
     }
-    if (eggStageText) eggStageText.textContent = capitalize(incubation.stage); || "warm";
+    if (eggStageText) eggStageText.textContent = capitalize(incubation.stage) || "warm";
     if (eggTimer)
       eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
     if (progressFill) progressFill.style.width = `${progress}%`;
