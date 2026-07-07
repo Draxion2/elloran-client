@@ -1,4 +1,4 @@
-console.log("hub.js V-07/06/26 dragon-egg-1 tidy-v6");
+console.log("hub.js V-07/06/26 dragon-egg-2 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2533,6 +2533,67 @@ async function beginEggIncubation(eggId) {
   }
 }
 
+let lastHatcheryFlavorStage = null;
+let lastHatcheryFlavorText = "";
+
+function getHatcheryFlavor(stage) {
+  const key = String(stage || "empty").toLowerCase();
+
+  if (key === lastHatcheryFlavorStage && lastHatcheryFlavorText) {
+    return lastHatcheryFlavorText;
+  }
+
+  const pool = HATCHERY_STAGE_FLAVOR[key] || HATCHERY_STAGE_FLAVOR.empty;
+  lastHatcheryFlavorStage = key;
+  lastHatcheryFlavorText = pool[Math.floor(Math.random() * pool.length)];
+
+  return lastHatcheryFlavorText;
+}
+
+const HATCHERY_STAGE_FLAVOR = {
+  warm: [
+    "The shell rests beneath the lantern glow, warm and still.",
+    "A gentle heat gathers around the egg as life quietly stirs within.",
+    "The egg is calm for now, cradled in the hatchery's steady warmth.",
+    "Only a faint warmth hints at the life sleeping inside."
+  ],
+
+  restless: [
+    "The egg rocks gently before becoming still again.",
+    "Something shifts beneath the shell, quiet but unmistakable.",
+    "A faint scratch taps from within, then fades into silence.",
+    "The egg gives a small tremble as the hatchling begins to stir."
+  ],
+
+  cracking: [
+    "Thin cracks spread across the shell as movement stirs within.",
+    "The hatchling presses eagerly against the weakening shell.",
+    "Tiny fractures creep across the egg with every restless shift.",
+    "Sharp little taps echo from inside. It won't be much longer now."
+  ],
+
+  ready: [
+    "The egg trembles beneath the lantern glow. Something inside is ready to meet the world.",
+    "The shell can barely contain the life waiting within.",
+    "Cracks race across the egg as the hatchling presses forward.",
+    "The hatchling is ready. All that remains is the first breath beyond the shell."
+  ],
+
+  empty: [
+    "The chamber is quiet. No egg rests beneath the warming lanterns.",
+    "Warm lanterns glow over an empty cradle, waiting for the next egg.",
+    "The hatchery is still for now, its nesting space empty.",
+    "No egg rests here yet, but the chamber remains warm and ready."
+  ]
+};
+
+function pickHatcheryFlavor(stage) {
+  const key = String(stage || "empty").toLowerCase();
+  const pool = HATCHERY_STAGE_FLAVOR[key] || HATCHERY_STAGE_FLAVOR.empty;
+
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function renderHatchery(payload = hatcheryState) {
   const activeEgg = payload?.has_egg ? payload : null;
   const storage = payload?.storage || [];
@@ -2564,8 +2625,7 @@ function renderHatchery(payload = hatcheryState) {
   if (!egg || !incubation) {
     if (eggName) eggName.textContent = "No Egg Incubating";
     if (eggFlavor) {
-      eggFlavor.textContent =
-        "The chamber is quiet. No egg rests beneath the warming lanterns.";
+      eggFlavor.textContent = pickHatcheryFlavor("empty");
     }
     if (eggStageText) eggStageText.textContent = "—";
     if (eggImg) {
@@ -2617,19 +2677,8 @@ function renderHatchery(payload = hatcheryState) {
     if (hatchBtn) hatchBtn.disabled = !ready;
 
     if (eggFlavor) {
-      if (ready) {
-        eggFlavor.textContent =
-          "The egg trembles beneath the lantern glow. Something inside is ready to meet the world.";
-      } else if (progress >= 66) {
-        eggFlavor.textContent =
-          "Thin cracks spread across the shell as faint movement stirs within.";
-      } else if (progress >= 33) {
-        eggFlavor.textContent =
-          "The egg shifts now and then, warmed by the chamber's steady light.";
-      } else {
-        eggFlavor.textContent =
-          "The shell remains warm and still beneath the hatchery lanterns.";
-      }
+      const stageKey = ready ? "ready" : incubation.stage || "warm";
+      eggFlavor.textContent = pickHatcheryFlavor(stageKey);
     }
   }
 
