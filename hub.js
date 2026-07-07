@@ -1,4 +1,4 @@
-console.log("hub.js V-07/06/26 dragon-egg-2 tidy-v6");
+console.log("hub.js V-07/06/26 dragon-egg-3 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2587,13 +2587,6 @@ const HATCHERY_STAGE_FLAVOR = {
   ]
 };
 
-function pickHatcheryFlavor(stage) {
-  const key = String(stage || "empty").toLowerCase();
-  const pool = HATCHERY_STAGE_FLAVOR[key] || HATCHERY_STAGE_FLAVOR.empty;
-
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
 function renderHatchery(payload = hatcheryState) {
   const activeEgg = payload?.has_egg ? payload : null;
   const storage = payload?.storage || [];
@@ -2625,7 +2618,7 @@ function renderHatchery(payload = hatcheryState) {
   if (!egg || !incubation) {
     if (eggName) eggName.textContent = "No Egg Incubating";
     if (eggFlavor) {
-      eggFlavor.textContent = pickHatcheryFlavor("empty");
+      eggFlavor.textContent = getHatcheryFlavor("empty");
     }
     if (eggStageText) eggStageText.textContent = "—";
     if (eggImg) {
@@ -2678,7 +2671,7 @@ function renderHatchery(payload = hatcheryState) {
 
     if (eggFlavor) {
       const stageKey = ready ? "ready" : incubation.stage || "warm";
-      eggFlavor.textContent = pickHatcheryFlavor(stageKey);
+      eggFlavor.textContent = getHatcheryFlavor(stageKey);
     }
   }
 
