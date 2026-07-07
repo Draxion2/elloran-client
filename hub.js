@@ -373,9 +373,9 @@ function normalizeHatcheryState(payload) {
 
   if (percentComplete >= 100) {
     stage = "Ready";
-  } else if (percentComplete >= 66) {
+  } else if (percentComplete >= 75) {
     stage = "Cracking";
-  } else if (percentComplete >= 33) {
+  } else if (percentComplete >= 40) {
     stage = "Restless";
   }
 
