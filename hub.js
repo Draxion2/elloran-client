@@ -369,14 +369,14 @@ function normalizeHatcheryState(payload) {
     Math.min(100, Math.floor((elapsedSeconds / durationSeconds) * 100))
   );
 
-  let stage = "Warm";
+  let stage = "warm";
 
   if (percentComplete >= 100) {
-    stage = "Ready";
+    stage = "ready";
   } else if (percentComplete >= 75) {
-    stage = "Cracking";
+    stage = "cracking";
   } else if (percentComplete >= 40) {
-    stage = "Restless";
+    stage = "restless";
   }
 
   return {
@@ -2587,6 +2587,11 @@ const HATCHERY_STAGE_FLAVOR = {
   ]
 };
 
+function capitalize(text) {
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function renderHatchery(payload = hatcheryState) {
   const activeEgg = payload?.has_egg ? payload : null;
   const storage = payload?.storage || [];
@@ -2663,7 +2668,7 @@ function renderHatchery(payload = hatcheryState) {
 
       eggImg.setAttribute("aria-label", egg.egg_name || "Dragon egg");
     }
-    if (eggStageText) eggStageText.textContent = incubation.stage || "warm";
+    if (eggStageText) eggStageText.textContent = capitalize(incubation.stage); || "warm";
     if (eggTimer)
       eggTimer.textContent = ready ? "Ready" : formatHatcheryTime(msLeft);
     if (progressFill) progressFill.style.width = `${progress}%`;
