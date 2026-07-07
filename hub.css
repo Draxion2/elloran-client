@@ -1860,78 +1860,69 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
 .hatchery-egg-row {
   display: grid;
-  grid-template-columns: 92px 1fr auto;
+  grid-template-columns: 72px 1fr auto;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
 
-  padding: 18px 20px;
-  margin-bottom: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
 
   border: 1px solid rgba(184, 149, 88, 0.22);
-  border-radius: 18px;
+  border-radius: 16px;
 
-  background:
-    radial-gradient(circle at 12% 50%, rgba(255, 220, 150, 0.10), transparent 26%),
-    linear-gradient(180deg, rgba(24, 16, 10, 0.82), rgba(9, 6, 4, 0.86));
+  background: linear-gradient(180deg, #18120e, #100d0a);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 240, 200, 0.04),
-    0 10px 24px rgba(0, 0, 0, 0.28);
-
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 6px 18px rgba(0, 0, 0, 0.22);
 }
 
 .hatchery-egg-row:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 220, 150, 0.42);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 240, 200, 0.06),
-    0 14px 30px rgba(0, 0, 0, 0.38),
-    0 0 22px rgba(184, 149, 88, 0.12);
+  border-color: rgba(184, 149, 88, 0.42);
+  background: linear-gradient(180deg, #1d1510, #120e0b);
 }
 
 .hatchery-egg-thumb {
-  width: 76px;
-  height: 86px;
-  flex: 0 0 76px;
+  width: 58px;
+  height: 72px;
 
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
 
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5));
 }
 
 .hatchery-egg-meta {
-  display: grid;
-  gap: 5px;
   min-width: 0;
 }
 
 .hatchery-egg-meta strong {
-  font-size: 1.25rem;
-  line-height: 1.1;
-  color: #f7e7c6;
-  letter-spacing: 0.03em;
+  display: block;
+  margin-bottom: 3px;
+  color: #f7e0a2;
+  font-size: 1rem;
+  line-height: 1.15;
 }
 
 .hatchery-egg-meta span {
-  color: rgba(255, 230, 185, 0.72);
-  font-size: 0.92rem;
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.25;
 }
 
 .hatchery-egg-meta small {
-  color: rgba(246, 234, 209, 0.82);
+  display: block;
+  margin-top: 6px;
+  color: #d9cfb8;
+  font-size: 0.82rem;
   line-height: 1.35;
-  max-width: 420px;
+  max-width: 360px;
 }
 
 .hatchery-incubate-btn {
-  min-width: 170px;
+  min-width: 150px;
   justify-self: end;
 }
 
