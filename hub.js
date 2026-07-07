@@ -1,4 +1,4 @@
-console.log("hub.js V-07/06/26 dragon-egg-3 tidy-v6");
+console.log("hub.js V-07/07/26 dragon-egg-4 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -124,6 +124,9 @@ const RARITY_GLOWS = {
   VERY_RARE: "#D169FA",
   LEGENDARY: "#ffd700"
 };
+
+const DEFAULT_EGG_IMG =
+  "https://cdn.jsdelivr.net/gh/Draxion2/elloran-client@main/egg_default.png";
 
 let hatchBuildupAudio = null;
 
@@ -2261,7 +2264,7 @@ function startHatchCeremony(payload, eggSnapshot) {
   const hatch = payload.hatch || {};
   console.log("HATCH PAYLOAD", payload);
   console.log("DRAGON IMG", dragon.img_url);
-  const eggImg = eggSnapshot?.img_url || "";
+  const eggImg = eggSnapshot?.img_url || DEFAULT_EGG_IMG;
   const rarity = (hatch.rarity || dragon.rarity || "COMMON").toUpperCase();
   const glowColor = RARITY_GLOWS[rarity] || RARITY_GLOWS.COMMON;
 
@@ -2651,11 +2654,13 @@ function renderHatchery(payload = hatcheryState) {
 
     if (eggName) eggName.textContent = egg.egg_name || "Unknown Egg";
     if (eggImg) {
-      eggImg.style.background = egg.img_url
-        ? `transparent url("${egg.img_url}") center / contain no-repeat`
-        : "";
+      eggImg.style.background =
+        `transparent url("${egg.img_url || DEFAULT_EGG_IMG}") center / contain no-repeat`;
+    }
 
-      eggImg.classList.toggle("has-real-egg", !!egg.img_url);
+      const imgUrl = egg.img_url?.trim() || DEFAULT_EGG_IMG;
+
+      eggImg.classList.toggle("has-real-egg", !!imgUrl);
 
       eggImg.classList.remove(
         "egg-stage-warm",
@@ -2692,9 +2697,7 @@ function renderHatchery(payload = hatcheryState) {
 
     eggList.innerHTML = storage
       .map((egg) => {
-        const imgStyle = egg.img_url
-          ? `style="background-image:url('${egg.img_url}')"`
-          : "";
+        const imgStyle = `style="background-image:url('${egg.img_url || DEFAULT_EGG_IMG}')"`
 
         const sourceLabel =
           egg.source === "breeding"
