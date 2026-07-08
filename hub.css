@@ -1,4 +1,4 @@
-/* hub.css V-07/07/26 dragon-egg-storage-2 tidy-2*/
+/* hub.css V-07/07/26 dragon-egg-storage-3 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -1849,10 +1849,11 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
 .hatchery-egg-grid {
   display: grid;
-  gap: 12px;
-  max-height: 620px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  max-height: 560px;
   overflow-y: auto;
-  padding-right: 6px;
+  padding: 4px 6px 4px 0;
 }
 
 .hatchery-selected-egg {
@@ -1917,64 +1918,50 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 .hatchery-egg-row {
-  display: grid;
-  grid-template-columns: 72px 1fr;
-  gap: 14px;
+  min-height: 118px;
+  padding: 10px;
 
+  display: flex;
   align-items: center;
-
-  min-height: 108px;
-  padding: 10px 14px;
+  justify-content: center;
 
   border: 1px solid rgba(184,149,88,.22);
   border-radius: 16px;
 
-  background: linear-gradient(
-    180deg,
-    #18120e,
-    #100d0a
-  );
+  background: radial-gradient(
+      circle at 50% 35%,
+      rgba(255,210,130,.10),
+      transparent 58%
+    ),
+    linear-gradient(180deg, #18120e, #100d0a);
 
   cursor: pointer;
-
-  transition:
-    border-color .18s ease,
-    transform .15s ease,
-    box-shadow .18s ease;
 }
 
 .hatchery-egg-row:hover {
-  transform: translateY(-1px);
-
-  border-color: rgba(184,149,88,.45);
-
-  box-shadow:
-    0 8px 22px rgba(0,0,0,.28);
+  transform: translateY(-2px);
+  border-color: rgba(184,149,88,.5);
+  box-shadow: 0 0 18px rgba(184,149,88,.14);
 }
 
 .hatchery-egg-row.selected {
   border-color: #d4b46b;
-
   box-shadow:
     0 0 0 1px rgba(212,180,107,.35),
-    0 0 18px rgba(212,180,107,.18);
+    0 0 22px rgba(212,180,107,.22);
 }
 
 .hatchery-egg-thumb {
   width: 72px;
-  height: 86px;
-  flex-shrink: 0;
+  height: 92px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  filter: drop-shadow(0 6px 8px rgba(0,0,0,.45));
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,.55));
 }
 
-.hatchery-egg-meta{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:2px;
+.hatchery-egg-meta {
+  display: none;
 }
 
 .hatchery-egg-meta strong{
