@@ -1,4 +1,4 @@
-/* hub.css V-07/07/26 dragon-egg-storage-1 tidy-2*/
+/* hub.css V-07/07/26 dragon-egg-storage-2 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -1850,7 +1850,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 .hatchery-egg-grid {
   display: grid;
   gap: 12px;
-  max-height: 520px;
+  max-height: 620px;
   overflow-y: auto;
   padding-right: 6px;
 }
@@ -1923,7 +1923,8 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 
   align-items: center;
 
-  padding: 14px 16px;
+  min-height: 108px;
+  padding: 10px 14px;
 
   border: 1px solid rgba(184,149,88,.22);
   border-radius: 16px;
@@ -1960,35 +1961,35 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 .hatchery-egg-thumb {
-  width: 58px;
-  height: 72px;
-
+  width: 72px;
+  height: 86px;
+  flex-shrink: 0;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-
-  filter: drop-shadow(0 6px 8px rgba(0,0,0,.5));
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.45));
 }
 
-.hatchery-egg-meta strong {
-  display: block;
-  margin-bottom: 4px;
-
-  color: #f7e0a2;
+.hatchery-egg-meta{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:2px;
 }
 
-.hatchery-egg-meta span {
-  display: block;
-  color: var(--muted);
-  font-size: 13px;
+.hatchery-egg-meta strong{
+    font-size:17px;
+    margin:0;
 }
 
-.hatchery-egg-meta small {
-  display: block;
-  margin-top: 6px;
+.hatchery-egg-meta span{
+    font-size:13px;
+    margin:0;
+}
 
-  color: #d9cfb8;
-  line-height: 1.4;
+.hatchery-egg-meta small{
+    font-size:12px;
+    margin:2px 0 0;
 }
 
 @media (max-width: 900px) {
