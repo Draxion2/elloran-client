@@ -1486,7 +1486,7 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   background: rgba(184, 149, 88, 0.22);
   border: 1px solid rgba(184, 149, 88, 0.35);
   color: #ffdf9e;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1;
 }
 
