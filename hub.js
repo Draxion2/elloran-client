@@ -1,4 +1,4 @@
-console.log("hub.js V-07/07/26 dragon-egg-storage-2 tidy-v6");
+console.log("hub.js V-07/07/26 dragon-egg-storage-3 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2540,6 +2540,57 @@ function startHatcheryTimer() {
   }, 1000);
 }
 
+function animateEggToIncubator(eggId) {
+  return new Promise((resolve) => {
+    const sourceCard = document.querySelector(
+      `.hatchery-egg-row[data-egg-id="${eggId}"] .hatchery-egg-thumb`
+    );
+
+    const target = document.getElementById("hatcheryEggStage");
+
+    if (!sourceCard || !target) {
+      resolve();
+      return;
+    }
+
+    const sourceRect = sourceCard.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
+    const clone = document.createElement("div");
+    clone.className = "hatchery-flying-egg";
+
+    clone.style.backgroundImage = sourceCard.style.backgroundImage;
+    clone.style.left = `${sourceRect.left}px`;
+    clone.style.top = `${sourceRect.top}px`;
+    clone.style.width = `${sourceRect.width}px`;
+    clone.style.height = `${sourceRect.height}px`;
+
+    document.body.appendChild(clone);
+
+    sourceCard.style.opacity = "0.25";
+
+    requestAnimationFrame(() => {
+      clone.style.left = `${targetRect.left + targetRect.width / 2 - 70}px`;
+      clone.style.top = `${targetRect.top + targetRect.height / 2 - 90}px`;
+      clone.style.width = "140px";
+      clone.style.height = "180px";
+      clone.style.transform = "rotate(8deg) scale(1.05)";
+      clone.style.opacity = "0.95";
+    });
+
+    setTimeout(() => {
+      clone.style.transform = "rotate(0deg) scale(0.94)";
+      clone.style.opacity = "0";
+    }, 700);
+
+    setTimeout(() => {
+      clone.remove();
+      sourceCard.style.opacity = "";
+      resolve();
+    }, 950);
+  });
+}
+
 async function beginEggIncubation(eggId) {
   if (!eggId) {
     toast("No egg selected.");
@@ -2554,6 +2605,7 @@ async function beginEggIncubation(eggId) {
   }
 
   try {
+    await animateEggToIncubator(eggId);
     await apiFetch("/players/me/dragons/hatchery/incubate", {
       method: "POST",
       headers: {
