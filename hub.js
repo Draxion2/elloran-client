@@ -1,4 +1,4 @@
-console.log("hub.js V-07/07/26 dragon-egg-5 tidy-v6");
+console.log("hub.js V-07/07/26 dragon-egg-storage-1 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -2151,6 +2151,7 @@ function setTemporaryDragonReaction(text, duration = 12000) {
 /* ================= Hatchery Placeholder Wiring ================= */
 
 let hatcheryMounted = false;
+let selectedStorageEggId = null;
 
 const HATCHERY_PLACEHOLDER = {
   activeEgg: null,
@@ -2547,9 +2548,7 @@ async function beginEggIncubation(eggId) {
     return;
   }
 
-  const btn = document.querySelector(
-    `.hatchery-incubate-btn[data-egg-id="${eggId}"]`
-  );
+  const btn = document.getElementById("btnBeginSelectedIncubation");
 
   if (btn) {
     btn.disabled = true;
@@ -2567,6 +2566,8 @@ async function beginEggIncubation(eggId) {
       })
     });
 
+    selectedStorageEggId = null;
+
     toast("Egg moved to the incubator.");
     await fetchHatcheryState();
   } catch (err) {
@@ -2575,7 +2576,7 @@ async function beginEggIncubation(eggId) {
 
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Incubate";
+      btn.textContent = "Begin Incubation";
     }
 
     await fetchHatcheryState();
@@ -2655,6 +2656,10 @@ function renderHatchery(payload = hatcheryState) {
   const hatchBtn = document.getElementById("hatchEggBtn");
   const eggStorageCount = document.getElementById("eggStorageCount");
   const eggList = document.getElementById("hatcheryEggList");
+  const selectedEggName = document.getElementById("selectedEggName");
+  const selectedEggSource = document.getElementById("selectedEggSource");
+  const selectedEggDesc = document.getElementById("selectedEggDesc");
+  const selectedIncubateBtn = document.getElementById("btnBeginSelectedIncubation");
 
   const egg = activeEgg?.egg || null;
   const incubation = activeEgg?.incubation || null;
@@ -2731,6 +2736,16 @@ function renderHatchery(payload = hatcheryState) {
   }
 
   if (eggList) {
+  const incubatorOccupied = !!activeEgg;
+
+  const selectedEgg =
+    storage.find((egg) => Number(egg.id) === Number(selectedStorageEggId)) ||
+    null;
+
+  if (!selectedEgg && selectedStorageEggId != null) {
+    selectedStorageEggId = null;
+  }
+
   if (!storage.length) {
     eggList.innerHTML = `
       <div class="hatchery-empty">
@@ -2738,8 +2753,6 @@ function renderHatchery(payload = hatcheryState) {
       </div>
     `;
   } else {
-    const incubatorOccupied = !!activeEgg;
-
     eggList.innerHTML = storage
       .map((egg) => {
         const imgUrl = egg.img_url?.trim() || DEFAULT_EGG_IMG;
@@ -2750,35 +2763,80 @@ function renderHatchery(payload = hatcheryState) {
             ? "Breeding Grounds"
             : egg.source || "Discovery";
 
+        const isSelected = Number(egg.id) === Number(selectedStorageEggId);
+
         return `
-          <div class="hatchery-egg-row" data-egg-id="${egg.id}">
+          <div
+            class="hatchery-egg-row ${isSelected ? "selected" : ""}"
+            data-egg-id="${egg.id}"
+          >
             <div class="hatchery-egg-thumb" ${imgStyle}></div>
 
             <div class="hatchery-egg-meta">
               <strong>${egg.egg_name || "Unknown Egg"}</strong>
-              <span>${sourceLabel} • Waiting in storage</span>
-              <small>${egg.description || "A dragon egg waiting to be incubated."}</small>
+              <span>${sourceLabel}</span>
+              <small>Waiting in storage</small>
             </div>
-
-            <button
-              class="btn-sm hatchery-incubate-btn"
-              data-egg-id="${egg.id}"
-              ${incubatorOccupied ? "disabled" : ""}
-              title="${incubatorOccupied ? "The incubator is already occupied." : ""}"
-            >
-              ${incubatorOccupied ? "Incubator Occupied" : "Begin Incubation"}
-            </button>
           </div>
         `;
       })
       .join("");
 
-    eggList.querySelectorAll(".hatchery-incubate-btn").forEach((btn) => {
-      btn.onclick = () => {
-        const eggId = Number(btn.dataset.eggId);
-        beginEggIncubation(eggId);
+    eggList.querySelectorAll(".hatchery-egg-row").forEach((row) => {
+      row.onclick = () => {
+        selectedStorageEggId = Number(row.dataset.eggId);
+        renderHatchery(hatcheryState);
       };
     });
+  }
+
+  const currentSelectedEgg =
+    storage.find((egg) => Number(egg.id) === Number(selectedStorageEggId)) ||
+    null;
+
+  if (currentSelectedEgg) {
+    const sourceLabel =
+      currentSelectedEgg.source === "breeding"
+        ? "Breeding Grounds"
+        : currentSelectedEgg.source || "Discovery";
+
+    if (selectedEggName) {
+      selectedEggName.textContent = currentSelectedEgg.egg_name || "Unknown Egg";
+    }
+
+    if (selectedEggSource) {
+      selectedEggSource.textContent = `${sourceLabel} • Waiting in storage`;
+    }
+
+    if (selectedEggDesc) {
+      selectedEggDesc.textContent =
+        currentSelectedEgg.description ||
+        "A dragon egg waiting to be incubated.";
+    }
+
+    if (selectedIncubateBtn) {
+      selectedIncubateBtn.disabled = incubatorOccupied;
+      selectedIncubateBtn.textContent = incubatorOccupied
+        ? "Incubator Occupied"
+        : "Begin Incubation";
+      selectedIncubateBtn.title = incubatorOccupied
+        ? "The incubator is already occupied."
+        : "";
+      selectedIncubateBtn.onclick = () => {
+        beginEggIncubation(currentSelectedEgg.id);
+      };
+    }
+  } else {
+    if (selectedEggName) selectedEggName.textContent = "No egg selected";
+    if (selectedEggSource) selectedEggSource.textContent = "Select an egg from storage.";
+    if (selectedEggDesc) selectedEggDesc.textContent = "Its details will appear here.";
+
+    if (selectedIncubateBtn) {
+      selectedIncubateBtn.disabled = true;
+      selectedIncubateBtn.textContent = "Begin Incubation";
+      selectedIncubateBtn.title = "";
+      selectedIncubateBtn.onclick = null;
+    }
   }
 }
 }
