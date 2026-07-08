@@ -1005,6 +1005,28 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   }
 }
 
+.hatchery-flying-egg {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  filter:
+    drop-shadow(0 10px 14px rgba(0,0,0,.65))
+    drop-shadow(0 0 18px rgba(255,210,120,.28));
+
+  transition:
+    left .75s ease,
+    top .75s ease,
+    width .75s ease,
+    height .75s ease,
+    transform .75s ease,
+    opacity .75s ease;
+}
+
 /* =========================
    Roost Chronicles
 ========================= */
