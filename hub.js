@@ -1,4 +1,4 @@
-console.log("hub.js V-07/07/26 dragon-egg-storage-3 tidy-v6");
+console.log("hub.js V-07/07/26 dragon-egg-storage-4 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
