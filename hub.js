@@ -1,4 +1,4 @@
-console.log("hub.js V-09/03/26 hub-hybrid-v6 tidy-v6");
+console.log("hub.js V-09/03/26 hub-hybrid-v7 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
