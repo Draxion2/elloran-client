@@ -630,7 +630,12 @@ const STATE = {
     level: 1,
     hp_current: 0,
     hp_max: 0,
-    gold: 0
+    gold: 0,
+    regions_id: null,
+    parent_regions_id: null,
+    location_mode: "sea",
+    landmark_location_id: null,
+    current_landmark: null
   },
   items: [],
   invSize: 12,
@@ -714,7 +719,12 @@ function applyPlayerDataFromApi(player) {
     level: player.level ?? STATE.player.level ?? 1,
     hp_current: player.hp_current ?? player.hp_max ?? STATE.player.hp_current,
     hp_max: player.hp_max ?? player.hp_current ?? STATE.player.hp_max,
-    gold: player.celestial_silver ?? player.gold ?? STATE.player.gold
+    gold: player.celestial_silver ?? player.gold ?? STATE.player.gold,
+    regions_id: player.regions_id ?? null,
+    parent_regions_id: player.parent_regions_id ?? null,
+    location_mode: player.location_mode || "sea",
+    landmark_location_id: player.landmark_location_id ?? null,
+    current_landmark: player.current_landmark ?? null
   });
   // Topbar pill (name + level)
   const pill = document.querySelector(".topbar .pill");
