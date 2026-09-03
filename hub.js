@@ -1,4 +1,4 @@
-console.log("hub.js V-09/03/26 hub-hybrid-v5 tidy-v6");
+console.log("hub.js V-09/03/26 hub-hybrid-v6 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -331,6 +331,47 @@ function renderHubMapMode() {
       </div>
     </div>
   `;
+  localArea
+  .querySelectorAll(".local-landmark-enter")
+  .forEach((button) => {
+    button.addEventListener("click", async () => {
+      const landmarkId = button.dataset.landmarkId;
+
+      button.disabled = true;
+      button.textContent = "Entering...";
+
+      await enterLandmark(landmarkId);
+    });
+  });
+}
+
+async function enterLandmark(landmarkId) {
+  if (!landmarkId) return;
+
+  try {
+    const response = await apiFetch("/players/me/landmarks/enter", {
+      method: "POST",
+      body: JSON.stringify({
+        landmark_id: Number(landmarkId)
+      })
+    });
+
+    if (!response?.entered) {
+      throw new Error("Landmark entry failed.");
+    }
+
+    await loadPlayerHubData();
+    renderHubMapMode();
+  } catch (err) {
+    console.error("Failed to enter landmark:", err);
+
+    const message =
+      err?.payload ||
+      err?.message ||
+      "You could not enter this landmark.";
+
+    alert(message);
+  }
 }
 
 let hubAmbienceStarted = false;
