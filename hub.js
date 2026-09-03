@@ -636,7 +636,9 @@ const STATE = {
     location_mode: "sea",
     landmark_location_id: null,
     current_landmark: null,
-    available_landmarks: []
+    available_landmarks: [],
+    current_region: null,
+    parent_region: null
   },
   items: [],
   invSize: 12,
@@ -728,7 +730,9 @@ function applyPlayerDataFromApi(player) {
     current_landmark: player.current_landmark ?? null,
     available_landmarks: Array.isArray(player.available_landmarks)
       ? player.available_landmarks
-      : []
+      : [],
+    current_region: player.current_region ?? null,
+    parent_region: player.parent_region ?? null
   });
   // Topbar pill (name + level)
   const pill = document.querySelector(".topbar .pill");
