@@ -1,4 +1,4 @@
-console.log("hub.js V-07/07/26 dragon-egg-storage-4 tidy-v6");
+console.log("hub.js V-09/03/26 hub-hybrid-2 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -757,6 +757,20 @@ function applyPlayerDataFromApi(player) {
   if (goldEl) goldEl.textContent = STATE.player.gold;
 }
 
+function applyHubMode() {
+  const mode = STATE.player.location_mode === "land" ? "land" : "sea";
+
+  document.body.classList.remove("hub-sea", "hub-land");
+  document.body.classList.add(`hub-${mode}`);
+
+  console.log("Player Hub mode:", mode, {
+    regions_id: STATE.player.regions_id,
+    parent_regions_id: STATE.player.parent_regions_id,
+    landmark_location_id: STATE.player.landmark_location_id,
+    current_landmark: STATE.player.current_landmark
+  });
+}
+
 function applyActiveDragonFromApi(activeDragon) {
   if (!activeDragon) return;
   const existing = STATE.dragons.byId[activeDragon.id] || {};
@@ -862,6 +876,7 @@ async function loadPlayerHubData() {
       }
     });
     applyPlayerDataFromApi(playerObj);
+    applyHubMode();
     // ----- Roost: build dragon roster from backend -----
     // Reset dragons state so we don't keep stale entries between loads
     if (
