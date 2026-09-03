@@ -1,4 +1,4 @@
-console.log("hub.js V-09/03/26 hub-hybrid-v2 tidy-v6");
+console.log("hub.js V-09/03/26 hub-hybrid-v3 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -762,6 +762,34 @@ function applyHubMode() {
 
   document.body.classList.remove("hub-sea", "hub-land");
   document.body.classList.add(`hub-${mode}`);
+
+  const brand = document.querySelector(".brand");
+  const mentor = document.querySelector(".mentor");
+
+  const mapBtn = document.querySelector('.btn[data-panel="map"]');
+  const cargoBtn = document.querySelector('.btn[data-panel="cargo"]');
+  const roostBtn = document.querySelector('.btn[data-panel="roost"]');
+  const quartersBtn = document.querySelector('.btn[data-panel="quarters"]');
+
+  if (mode === "land") {
+    if (brand) brand.textContent = "Expedition Camp • Tier I";
+
+    if (mapBtn) mapBtn.textContent = "Local Area";
+    if (cargoBtn) cargoBtn.textContent = "Inventory";
+    if (roostBtn) roostBtn.textContent = "Companion";
+    if (quartersBtn) quartersBtn.textContent = "Camp";
+
+    if (mentor) mentor.style.display = "none";
+  } else {
+    if (brand) brand.textContent = "Black Raven • Tier I";
+
+    if (mapBtn) mapBtn.textContent = "Sea Map";
+    if (cargoBtn) cargoBtn.textContent = "Cargo Hold";
+    if (roostBtn) roostBtn.textContent = "Dragon Roost";
+    if (quartersBtn) quartersBtn.textContent = "Captain's Quarters";
+
+    if (mentor) mentor.style.display = "";
+  }
 
   console.log("Player Hub mode:", mode, {
     regions_id: STATE.player.regions_id,
