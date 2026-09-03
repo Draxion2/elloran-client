@@ -1,4 +1,4 @@
-console.log("hub.js V-09/03/26 hub-hybrid-v4 tidy-v6");
+console.log("hub.js V-09/03/26 hub-hybrid-v5 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -240,6 +240,98 @@ mapRows.forEach((row) => {
     btnSetSail.disabled = false;
   });
 });
+
+function renderHubMapMode() {
+  const panel = panels.map;
+  if (!panel) return;
+
+  const title = panel.querySelector("h3");
+  const seaMap = panel.querySelector(".map-wrap");
+  const isLand = STATE.player.location_mode === "land";
+
+  let localArea = panel.querySelector("#localAreaContent");
+
+  if (!isLand) {
+    if (title) title.textContent = "Sea Map";
+    if (seaMap) seaMap.style.display = "";
+
+    if (localArea) {
+      localArea.remove();
+    }
+
+    return;
+  }
+
+  if (title) title.textContent = "Local Area";
+  if (seaMap) seaMap.style.display = "none";
+
+  if (!localArea) {
+    localArea = document.createElement("div");
+    localArea.id = "localAreaContent";
+    localArea.className = "local-area";
+    panel.appendChild(localArea);
+  }
+
+  const currentRegion = STATE.player.current_region;
+  const parentRegion = STATE.player.parent_region;
+  const landmarks = Array.isArray(STATE.player.available_landmarks)
+    ? STATE.player.available_landmarks
+    : [];
+
+  const landmarkHtml = landmarks.length
+    ? landmarks
+        .map(
+          (landmark) => `
+            <div class="local-landmark">
+              <div class="local-landmark-info">
+                <strong>${landmark.name || "Unknown Landmark"}</strong>
+                <span>${landmark.type || "Landmark"}</span>
+                <p>
+                  ${
+                    landmark.description ||
+                    "A discovered location within the surrounding region."
+                  }
+                </p>
+              </div>
+
+              <button
+                class="btn-sm local-landmark-enter"
+                type="button"
+                data-landmark-id="${landmark.id}"
+              >
+                Enter
+              </button>
+            </div>
+          `
+        )
+        .join("")
+    : `
+        <div class="local-area-empty">
+          No landmarks have been discovered in this region.
+        </div>
+      `;
+
+  localArea.innerHTML = `
+    <div class="local-area-overview">
+      <div>
+        <span class="local-area-label">Current Area</span>
+        <strong>${currentRegion?.name || "Unknown Area"}</strong>
+      </div>
+
+      <div>
+        <span class="local-area-label">Region</span>
+        <strong>${parentRegion?.name || "Unknown Region"}</strong>
+      </div>
+    </div>
+
+    <div class="local-area-section">
+      <div class="local-area-heading">Discovered Landmarks</div>
+      <div class="local-landmark-list">
+        ${landmarkHtml}
+      </div>
+    </div>
+  `;
+}
 
 let hubAmbienceStarted = false;
 let hubAmbienceAudio = null;
@@ -799,6 +891,7 @@ function applyHubMode() {
     if (mentor) mentor.style.display = "";
   }
 
+  renderHubMapMode();
   console.log("Player Hub mode:", mode, {
     regions_id: STATE.player.regions_id,
     parent_regions_id: STATE.player.parent_regions_id,
