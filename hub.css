@@ -1,4 +1,4 @@
-/* hub.css V-07/07/26 dragon-egg-storage-5 tidy-2*/
+/* hub.css V-09/03/26 hub-hybrid-1 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -376,6 +376,99 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   padding-top: 10px;
   border-top: 1px dashed rgba(255, 255, 255, 0.08);
   font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== Local Area ===== */
+
+#panel-map .local-area {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+#panel-map .local-area-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+#panel-map .local-area-overview > div {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+#panel-map .local-area-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+#panel-map .local-area-overview strong {
+  font-size: 20px;
+  color: #f0ddb2;
+}
+
+#panel-map .local-area-section {
+  display: grid;
+  gap: 10px;
+}
+
+#panel-map .local-area-heading {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #f0ddb2;
+}
+
+#panel-map .local-landmark-list {
+  display: grid;
+  gap: 10px;
+}
+
+#panel-map .local-landmark {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+#panel-map .local-landmark-info {
+  flex: 1;
+  display: grid;
+  gap: 5px;
+}
+
+#panel-map .local-landmark-info strong {
+  color: #f0ddb2;
+  font-size: 17px;
+}
+
+#panel-map .local-landmark-info span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+#panel-map .local-landmark-info p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+#panel-map .local-area-empty {
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
   color: var(--muted);
 }
 
