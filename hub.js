@@ -1,4 +1,4 @@
-console.log("hub.js V-09/03/26 hub-hybrid-v3 tidy-v6");
+console.log("hub.js V-09/03/26 hub-hybrid-v4 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -635,7 +635,8 @@ const STATE = {
     parent_regions_id: null,
     location_mode: "sea",
     landmark_location_id: null,
-    current_landmark: null
+    current_landmark: null,
+    available_landmarks: []
   },
   items: [],
   invSize: 12,
@@ -724,7 +725,10 @@ function applyPlayerDataFromApi(player) {
     parent_regions_id: player.parent_regions_id ?? null,
     location_mode: player.location_mode || "sea",
     landmark_location_id: player.landmark_location_id ?? null,
-    current_landmark: player.current_landmark ?? null
+    current_landmark: player.current_landmark ?? null,
+    available_landmarks: Array.isArray(player.available_landmarks)
+      ? player.available_landmarks
+      : []
   });
   // Topbar pill (name + level)
   const pill = document.querySelector(".topbar .pill");
