@@ -351,6 +351,9 @@ async function enterLandmark(landmarkId) {
   try {
     const response = await apiFetch("/players/me/landmarks/enter", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         landmark_id: Number(landmarkId)
       })
@@ -365,12 +368,10 @@ async function enterLandmark(landmarkId) {
   } catch (err) {
     console.error("Failed to enter landmark:", err);
 
-    const message =
-      err?.payload ||
+    alert(
       err?.message ||
-      "You could not enter this landmark.";
-
-    alert(message);
+      "You could not enter this landmark."
+    );
   }
 }
 
