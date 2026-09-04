@@ -1,4 +1,4 @@
-/* hub.css V-09/03/26 hub-hybrid-2 tidy-2*/
+/* hub.css V-09/04/26 hub-hybrid-3 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -470,6 +470,72 @@ body.ceremony-lock #hatchCeremonyContinue.show {
   border: 1px dashed var(--line);
   border-radius: 12px;
   color: var(--muted);
+}
+
+/* ===== Current Landmark ===== */
+
+#panel-map .landmark-current {
+  display: grid;
+  gap: 18px;
+}
+
+#panel-map .landmark-current-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+
+  padding: 18px;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  background: rgba(0, 0, 0, 0.28);
+}
+
+#panel-map .landmark-current-header > div {
+  display: grid;
+  gap: 6px;
+}
+
+#panel-map .landmark-current-header strong {
+  font-size: 22px;
+  color: #f0ddb2;
+}
+
+#panel-map .landmark-current-type {
+  padding: 6px 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+#panel-map .landmark-current-section {
+  display: grid;
+  gap: 8px;
+
+  padding: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+
+  background: rgba(0, 0, 0, 0.22);
+}
+
+#panel-map .landmark-current-section p {
+  margin: 0;
+
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+#panel-map .landmark-current-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* ================= Cargo Hold ================= */
