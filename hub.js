@@ -1,4 +1,4 @@
-console.log("hub.js V-09/04/26 hub-hybrid-v11 tidy-v6");
+console.log("hub.js V-09/04/26 hub-hybrid-v12 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -345,7 +345,57 @@ function renderHubMapMode() {
   const landmarks = Array.isArray(STATE.player.available_landmarks)
     ? STATE.player.available_landmarks
     : [];
+  const travelRoutes = Array.isArray(STATE.travelRoutes)
+    ? STATE.travelRoutes
+    : [];
 
+  const travelRouteHtml = travelRoutes.length
+  ? travelRoutes
+      .map((route) => {
+        const steps = Number(route.steps || 0);
+
+        const distanceLabel =
+          steps === 1
+            ? "1 day"
+            : `${steps} days`;
+
+        return `
+          <div class="local-landmark local-travel-route">
+            <div class="local-landmark-info">
+              <strong>
+                ${route.destination_name || "Unknown Destination"}
+              </strong>
+
+              <span>
+                ${distanceLabel} • Tier ${route.tier || 1}
+              </span>
+
+              <p>
+                ${
+                  route.destination_description ||
+                  route.notes ||
+                  "A reachable destination within the surrounding region."
+                }
+              </p>
+            </div>
+
+            <button
+              class="btn-sm local-travel-start"
+              type="button"
+              data-route-id="${route.route_id}"
+              data-region-id="${route.to_regions_id}"
+            >
+              Travel
+            </button>
+          </div>
+        `;
+      })
+      .join("")
+  : `
+      <div class="local-area-empty">
+        No travel routes are available from this area.
+      </div>
+    `;
   const landmarkHtml = landmarks.length
     ? landmarks
         .map(
@@ -400,8 +450,34 @@ function renderHubMapMode() {
         ${landmarkHtml}
       </div>
     </div>
-  `;
+    
+    <div class="local-area-section">
+      <div class="local-area-heading">Discovered Landmarks</div>
 
+      <div class="local-landmark-list">
+        ${landmarkHtml}
+      </div>
+    </div>
+  `;
+    localArea
+      .querySelectorAll(".local-travel-start")
+      .forEach((button) => {
+        button.addEventListener("click", async () => {
+          const toRegionsId = Number(button.dataset.regionId);
+
+          if (!toRegionsId) return;
+
+          button.disabled = true;
+          button.textContent = "Departing...";
+
+          const started = await startHubTravel(toRegionsId);
+
+          if (!started) {
+            button.disabled = false;
+            button.textContent = "Travel";
+          }
+        });
+      });
   localArea
     .querySelectorAll(".local-landmark-enter")
     .forEach((button) => {
@@ -414,6 +490,39 @@ function renderHubMapMode() {
         await enterLandmark(landmarkId);
       });
     });
+}
+
+async function startHubTravel(toRegionsId) {
+  if (!toRegionsId) return false;
+
+  try {
+    const response = await apiFetch("/players/me/travel/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        to_regions_id: Number(toRegionsId)
+      })
+    });
+
+    if (!response?.started) {
+      throw new Error("Travel could not be started.");
+    }
+
+    console.log("Travel started:", response);
+
+    return true;
+  } catch (err) {
+    console.error("Failed to start travel:", err);
+
+    alert(
+      err?.message ||
+      "You could not begin this journey."
+    );
+
+    return false;
+  }
 }
 
 async function enterLandmark(landmarkId) {
@@ -870,6 +979,7 @@ const STATE = {
     current_region: null,
     parent_region: null
   },
+  travelRoutes: [],
   items: [],
   invSize: 12,
   cargoSize: 30,
@@ -1119,7 +1229,8 @@ async function loadPlayerHubData() {
       playerPayload,
       invPayload,
       eqPayload,
-      roostPayload
+      roostPayload,
+      travelRoutesPayload
     ] = await Promise.all([
       apiFetch("/players/me"),
       apiFetch("/players/me/inventory"),
@@ -1132,6 +1243,12 @@ async function loadPlayerHubData() {
       apiFetch("/players/me/dragons").catch((err) => {
         console.warn("players/me/dragons failed:", err);
         return null;
+      }),
+      apiFetch("/players/me/travel/routes").catch((err) => {
+        console.warn("players/me/travel/routes failed:", err);
+        return {
+          routes: []
+        };
       })
     ]);
     const playerObj = playerPayload.player || playerPayload;
@@ -1150,6 +1267,9 @@ async function loadPlayerHubData() {
       }
     });
     applyPlayerDataFromApi(playerObj);
+    STATE.travelRoutes = Array.isArray(travelRoutesPayload?.routes)
+      ? travelRoutesPayload.routes
+      : [];
     applyHubMode();
     // ----- Roost: build dragon roster from backend -----
     // Reset dragons state so we don't keep stale entries between loads
