@@ -1,4 +1,4 @@
-console.log("hub.js V-09/04/26 hub-hybrid-v12 tidy-v6");
+console.log("hub.js V-09/04/26 hub-hybrid-v13 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -444,20 +444,20 @@ function renderHubMapMode() {
     </div>
 
     <div class="local-area-section">
-      <div class="local-area-heading">Discovered Landmarks</div>
+  <div class="local-area-heading">Travel Destinations</div>
 
-      <div class="local-landmark-list">
-        ${landmarkHtml}
-      </div>
-    </div>
-    
-    <div class="local-area-section">
-      <div class="local-area-heading">Discovered Landmarks</div>
+  <div class="local-landmark-list">
+    ${travelRouteHtml}
+  </div>
+</div>
 
-      <div class="local-landmark-list">
-        ${landmarkHtml}
-      </div>
-    </div>
+<div class="local-area-section">
+  <div class="local-area-heading">Discovered Landmarks</div>
+
+  <div class="local-landmark-list">
+    ${landmarkHtml}
+  </div>
+</div>
   `;
     localArea
       .querySelectorAll(".local-travel-start")
