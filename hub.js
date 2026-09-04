@@ -1238,6 +1238,8 @@ async function loadPlayerHubData() {
         "Roost payload missing/empty; keeping existing dragon state."
       );
     }
+    // Re-render land Camp after dragon state is available
+    renderQuartersMode();
     applyInventoryFromApi(invList);
   } catch (err) {
     console.error(err);
