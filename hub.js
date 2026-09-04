@@ -1,4 +1,4 @@
-console.log("hub.js V-09/04/26 hub-hybrid-v10 tidy-v6");
+console.log("hub.js V-09/04/26 hub-hybrid-v11 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -1036,6 +1036,7 @@ function applyHubMode() {
   if (roostMounted) {
     applyRoostMode();
   }
+  renderQuartersMode();
   console.log("Player Hub mode:", mode, {
     regions_id: STATE.player.regions_id,
     parent_regions_id: STATE.player.parent_regions_id,
@@ -1834,6 +1835,102 @@ function applyRoostMode() {
 
   if (!isLand) {
     HUB.renderCollection?.();
+  }
+}
+function renderQuartersMode() {
+  const scope = panels.quarters;
+  if (!scope) return;
+
+  const isLand = STATE.player.location_mode === "land";
+  const quartersRoom = scope.querySelector(".quarters-room");
+
+  let campView = scope.querySelector("#campView");
+
+  if (!isLand) {
+    if (quartersRoom) quartersRoom.style.display = "";
+
+    if (campView) {
+      campView.remove();
+    }
+
+    return;
+  }
+
+  if (quartersRoom) quartersRoom.style.display = "none";
+
+  if (!campView) {
+    campView = document.createElement("div");
+    campView.id = "campView";
+    campView.className = "camp-view";
+
+    campView.innerHTML = `
+      <div class="camp-header">
+        <div class="camp-kicker">Expedition Camp</div>
+        <h3 class="camp-title" id="campLocationName">Camp</h3>
+        <div class="camp-region" id="campRegionName"></div>
+      </div>
+
+      <div class="camp-card camp-flavor">
+        <div class="camp-section-title">Camp</div>
+        <div class="camp-description" id="campDescription"></div>
+      </div>
+
+      <div class="camp-status-grid">
+        <div class="camp-card">
+          <div class="camp-section-title">Current Location</div>
+          <div class="camp-status-value" id="campCurrentLocation">—</div>
+        </div>
+
+        <div class="camp-card">
+          <div class="camp-section-title">Companion</div>
+          <div class="camp-status-value" id="campCompanion">—</div>
+        </div>
+
+        <div class="camp-card">
+          <div class="camp-section-title">Expedition</div>
+          <div class="camp-status-value">Active</div>
+        </div>
+      </div>
+
+      <div class="camp-note">
+        Additional camp activities will become available as exploration systems expand.
+      </div>
+    `;
+
+    scope.appendChild(campView);
+  }
+
+  const locationName =
+    STATE.player.current_region?.name || "Unknown Area";
+
+  const regionName =
+    STATE.player.parent_region?.name || "Unknown Region";
+
+  const activeDragon =
+    STATE.dragons.byId[STATE.dragons.activeId];
+
+  const companionName =
+    activeDragon?.name || "No active companion";
+
+  const locationEl = campView.querySelector("#campLocationName");
+  const regionEl = campView.querySelector("#campRegionName");
+  const currentLocationEl = campView.querySelector("#campCurrentLocation");
+  const companionEl = campView.querySelector("#campCompanion");
+  const descriptionEl = campView.querySelector("#campDescription");
+
+  if (locationEl) locationEl.textContent = locationName;
+  if (regionEl) regionEl.textContent = regionName;
+  if (currentLocationEl) currentLocationEl.textContent = locationName;
+  if (companionEl) companionEl.textContent = companionName;
+
+  if (descriptionEl) {
+    if (activeDragon) {
+      descriptionEl.textContent =
+        `You make camp near ${locationName}. Supplies are gathered close while ${companionName} settles nearby and the sounds of ${regionName} carry through the surrounding wilderness.`;
+    } else {
+      descriptionEl.textContent =
+        `You make camp near ${locationName}. Supplies are gathered close while the sounds of ${regionName} carry through the surrounding wilderness.`;
+    }
   }
 }
 /* ================= Roost (Enhanced) ================= */
