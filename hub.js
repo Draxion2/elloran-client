@@ -1,4 +1,4 @@
-console.log("hub.js V-09/03/26 hub-hybrid-v7 tidy-v6");
+console.log("hub.js V-09/04/26 hub-hybrid-v8 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -262,7 +262,6 @@ function renderHubMapMode() {
     return;
   }
 
-  if (title) title.textContent = "Local Area";
   if (seaMap) seaMap.style.display = "none";
 
   if (!localArea) {
@@ -272,8 +271,77 @@ function renderHubMapMode() {
     panel.appendChild(localArea);
   }
 
+  const currentLandmark = STATE.player.current_landmark;
+
+  if (currentLandmark) {
+    if (title) title.textContent = currentLandmark.name || "Landmark";
+
+    localArea.innerHTML = `
+      <div class="landmark-current">
+        <div class="landmark-current-header">
+          <div>
+            <span class="local-area-label">Current Landmark</span>
+            <strong>${currentLandmark.name || "Unknown Landmark"}</strong>
+          </div>
+
+          <span class="landmark-current-type">
+            ${currentLandmark.type || "Landmark"}
+          </span>
+        </div>
+
+        ${
+          currentLandmark.description
+            ? `
+              <div class="landmark-current-section">
+                <div class="local-area-heading">Description</div>
+                <p>${currentLandmark.description}</p>
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          currentLandmark.history
+            ? `
+              <div class="landmark-current-section">
+                <div class="local-area-heading">History</div>
+                <p>${currentLandmark.history}</p>
+              </div>
+            `
+            : ""
+        }
+
+        <div class="landmark-current-actions">
+          <button
+            class="btn-sm"
+            id="btnLeaveLandmark"
+            type="button"
+          >
+            Leave Landmark
+          </button>
+        </div>
+      </div>
+    `;
+
+    const leaveBtn = localArea.querySelector("#btnLeaveLandmark");
+
+    if (leaveBtn) {
+      leaveBtn.addEventListener("click", async () => {
+        leaveBtn.disabled = true;
+        leaveBtn.textContent = "Leaving...";
+
+        await leaveLandmark();
+      });
+    }
+
+    return;
+  }
+
+  if (title) title.textContent = "Local Area";
+
   const currentRegion = STATE.player.current_region;
   const parentRegion = STATE.player.parent_region;
+
   const landmarks = Array.isArray(STATE.player.available_landmarks)
     ? STATE.player.available_landmarks
     : [];
@@ -286,6 +354,7 @@ function renderHubMapMode() {
               <div class="local-landmark-info">
                 <strong>${landmark.name || "Unknown Landmark"}</strong>
                 <span>${landmark.type || "Landmark"}</span>
+
                 <p>
                   ${
                     landmark.description ||
@@ -326,23 +395,25 @@ function renderHubMapMode() {
 
     <div class="local-area-section">
       <div class="local-area-heading">Discovered Landmarks</div>
+
       <div class="local-landmark-list">
         ${landmarkHtml}
       </div>
     </div>
   `;
+
   localArea
-  .querySelectorAll(".local-landmark-enter")
-  .forEach((button) => {
-    button.addEventListener("click", async () => {
-      const landmarkId = button.dataset.landmarkId;
+    .querySelectorAll(".local-landmark-enter")
+    .forEach((button) => {
+      button.addEventListener("click", async () => {
+        const landmarkId = button.dataset.landmarkId;
 
-      button.disabled = true;
-      button.textContent = "Entering...";
+        button.disabled = true;
+        button.textContent = "Entering...";
 
-      await enterLandmark(landmarkId);
+        await enterLandmark(landmarkId);
+      });
     });
-  });
 }
 
 async function enterLandmark(landmarkId) {
@@ -371,6 +442,31 @@ async function enterLandmark(landmarkId) {
     alert(
       err?.message ||
       "You could not enter this landmark."
+    );
+  }
+}
+
+async function leaveLandmark() {
+  try {
+    const response = await apiFetch("/players/me/landmarks/leave", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response?.left) {
+      throw new Error("Landmark exit failed.");
+    }
+
+    await loadPlayerHubData();
+    renderHubMapMode();
+  } catch (err) {
+    console.error("Failed to leave landmark:", err);
+
+    alert(
+      err?.message ||
+      "You could not leave this landmark."
     );
   }
 }
