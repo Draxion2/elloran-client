@@ -1,4 +1,4 @@
-console.log("hub.js V-09/04/26 hub-hybrid-v8 tidy-v6");
+console.log("hub.js V-09/04/26 hub-hybrid-v9 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -1030,6 +1030,9 @@ function applyHubMode() {
   }
 
   renderHubMapMode();
+  if (cargoMounted) {
+    applyCargoMode();
+  }
   console.log("Player Hub mode:", mode, {
     regions_id: STATE.player.regions_id,
     parent_regions_id: STATE.player.parent_regions_id,
@@ -1723,6 +1726,47 @@ function initCargoHold() {
   render();
   // Let API updates re-render live
   STATE._onInventoryChange = render;
+}
+
+function applyCargoMode() {
+  const scope = panels.cargo;
+  if (!scope) return;
+
+  const isLand = STATE.player.location_mode === "land";
+
+  const title = scope.querySelector("h3");
+  const cargoStat = scope.querySelector("#cargoStat");
+  const cargoGrid = scope.querySelector("#cargoGrid");
+  const cargoSection = cargoGrid?.closest(".panelX");
+
+  const actMove = scope.querySelector("#actMove");
+  const actQuick = scope.querySelector("#actQuick");
+
+  if (title) {
+    title.textContent = isLand ? "Inventory" : "Cargo Hold";
+  }
+
+  if (cargoStat) {
+    cargoStat.style.display = isLand ? "none" : "";
+  }
+
+  if (cargoSection) {
+    cargoSection.style.display = isLand ? "none" : "";
+  }
+
+  if (isLand) {
+    if (actMove) actMove.style.display = "none";
+    if (actQuick) actQuick.style.display = "none";
+  } else {
+    if (actMove) actMove.style.display = "";
+    if (actQuick) actQuick.style.display = "";
+  }
+
+  const grids = scope.querySelector(".grids");
+
+  if (grids) {
+    grids.classList.toggle("inventory-only", isLand);
+  }
 }
 /* ================= Roost (Enhanced) ================= */
 let roostMounted = false;
@@ -5847,7 +5891,10 @@ document.querySelectorAll(".btn[data-panel]").forEach((btn) => {
       }
       p.classList.add("open");
       backdrop && backdrop.classList.add("show");
-      if (key === "cargo") initCargoHold();
+      if (key === "cargo") {
+        initCargoHold();
+        applyCargoMode();
+      }
       if (key === "roost") initRoost();
       speak(
         {
