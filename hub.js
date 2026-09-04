@@ -512,6 +512,8 @@ async function startHubTravel(toRegionsId) {
 
     console.log("Travel started:", response);
 
+    window.location.href = "https://draxtesting.forumotion.com/h9-traveling-page";
+
     return true;
   } catch (err) {
     console.error("Failed to start travel:", err);
