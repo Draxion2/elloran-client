@@ -1,4 +1,4 @@
-/* hub.css V-09/04/26 hub-hybrid-3 tidy-2*/
+/* hub.css V-09/04/26 hub-hybrid-4 tidy-2*/
 
 :root {
   --ink: #f6ead1;
@@ -539,6 +539,13 @@ body.ceremony-lock #hatchCeremonyContinue.show {
 }
 
 /* ================= Cargo Hold ================= */
+#panel-cargo .grids.inventory-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#panel-cargo .grids.inventory-only .panelX {
+  max-width: 100%;
+}
 #panel-cargo {
   --panel: #171310;
   --panel2: #120e0b;
