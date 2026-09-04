@@ -1,4 +1,4 @@
-console.log("hub.js V-09/04/26 hub-hybrid-v9 tidy-v6");
+console.log("hub.js V-09/04/26 hub-hybrid-v10 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -1033,6 +1033,9 @@ function applyHubMode() {
   if (cargoMounted) {
     applyCargoMode();
   }
+  if (roostMounted) {
+    applyRoostMode();
+  }
   console.log("Player Hub mode:", mode, {
     regions_id: STATE.player.regions_id,
     parent_regions_id: STATE.player.parent_regions_id,
@@ -1766,6 +1769,71 @@ function applyCargoMode() {
 
   if (grids) {
     grids.classList.toggle("inventory-only", isLand);
+  }
+}
+function applyRoostMode() {
+  const scope = panels.roost;
+  if (!scope) return;
+
+  const isLand = STATE.player.location_mode === "land";
+
+  const title = scope.querySelector(":scope > h3");
+  const tabs = scope.querySelector("#roostTabs");
+
+  const roostView = scope.querySelector("#roostView");
+  const hatcheryView = scope.querySelector("#hatcheryView");
+  const chroniclesView = scope.querySelector("#chroniclesView");
+
+  const collection = scope.querySelector("#collection");
+  const collectionCard = collection?.closest(".card");
+
+  const btnSetActive = scope.querySelector("#btnSetActive");
+  const btnReleaseDragon = scope.querySelector("#btnReleaseDragon");
+  const btnBreed = scope.querySelector("#btnBreed");
+  const btnRest = scope.querySelector("#btnRest");
+  const actRest = scope.querySelector("#actRest");
+
+  if (title) {
+    title.textContent = isLand ? "Companion" : "Dragon Roost";
+  }
+
+  if (isLand) {
+    // The only dragon accessible away from the ship
+    STATE.dragons.selectedId = STATE.dragons.activeId;
+
+    // Force the normal Roost view.
+    // Hatchery and Chronicles belong to the ship.
+    if (roostView) roostView.classList.add("active");
+    if (hatcheryView) hatcheryView.classList.remove("active");
+    if (chroniclesView) chroniclesView.classList.remove("active");
+
+    if (tabs) tabs.style.display = "none";
+    if (collectionCard) collectionCard.style.display = "none";
+
+    if (btnSetActive) btnSetActive.style.display = "none";
+    if (btnReleaseDragon) btnReleaseDragon.style.display = "none";
+    if (btnBreed) btnBreed.style.display = "none";
+
+    // Roost Rest removes the dragon from active duty,
+    // so it isn't available while traveling on land.
+    if (btnRest) btnRest.style.display = "none";
+    if (actRest) actRest.style.display = "none";
+  } else {
+    if (tabs) tabs.style.display = "";
+    if (collectionCard) collectionCard.style.display = "";
+
+    if (btnSetActive) btnSetActive.style.display = "";
+    if (btnReleaseDragon) btnReleaseDragon.style.display = "";
+    if (btnBreed) btnBreed.style.display = "";
+
+    if (btnRest) btnRest.style.display = "";
+    if (actRest) actRest.style.display = "";
+  }
+
+  HUB.renderActive?.();
+
+  if (!isLand) {
+    HUB.renderCollection?.();
   }
 }
 /* ================= Roost (Enhanced) ================= */
@@ -4496,9 +4564,13 @@ function initRoost() {
     const isActive = a.id === STATE.dragons.activeId;
     const isResting = Number(a.rest_until_at || 0) > Date.now();
     if (isResting) scheduleRestEndRefresh(a.rest_until_at);
-    if (btnSetActive)
+    if (btnSetActive) {
+      const isLand = STATE.player.location_mode === "land";
       btnSetActive.style.display =
-        isActive || isResting ? "none" : "inline-block";
+      isLand || isActive || isResting
+        ? "none"
+        : "inline-block";
+    }
     const cap = $("#roostCap");
     if (cap)
       cap.textContent = `Roost: ${Object.values(STATE.dragons.byId).filter((d) => !d.is_archived).length} / 12`;
@@ -5867,8 +5939,12 @@ function initRoost() {
   );
   HUB.renderActive();
   HUB.renderCollection();
+  applyRoostMode();
   startDragonIdleRotation();
-  checkRoostChronicleNotifications();
+  if (STATE.player.location_mode !== "land") {
+    checkRoostChronicleNotifications();
+  }
+  }
 }
 /* ================= Buttons & Backdrop ================= */
 document.querySelectorAll(".btn[data-panel]").forEach((btn) => {
