@@ -5944,7 +5944,6 @@ function initRoost() {
   if (STATE.player.location_mode !== "land") {
     checkRoostChronicleNotifications();
   }
-  }
 }
 /* ================= Buttons & Backdrop ================= */
 document.querySelectorAll(".btn[data-panel]").forEach((btn) => {
