@@ -1,4 +1,4 @@
-console.log("hub.js V-09/04/26 hub-hybrid-v13 tidy-v6");
+console.log("hub.js V-09/06/26 hub-hybrid-v14 tidy-v6");
 
 /* ===== Tiny utils ===== */
 window.HATCHERY_TEST_MODE = false;
@@ -982,6 +982,7 @@ const STATE = {
     parent_region: null
   },
   travelRoutes: [],
+  travel: null,
   items: [],
   invSize: 12,
   cargoSize: 30,
@@ -1105,6 +1106,39 @@ function applyPlayerDataFromApi(player) {
   // Gold / Celestial Silver
   const goldEl = $("#gold");
   if (goldEl) goldEl.textContent = STATE.player.gold;
+}
+
+function renderResumeTravelButton() {
+  let btn = document.getElementById("btnResumeTravel");
+
+  const hasActiveVoyage =
+    STATE.travel?.has_active_voyage === true;
+
+  if (!hasActiveVoyage) {
+    if (btn) btn.remove();
+    return;
+  }
+
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id = "btnResumeTravel";
+    btn.type = "button";
+    btn.className = "btn";
+    btn.textContent = "Resume Travel";
+
+    const brand = document.querySelector(".brand");
+
+    if (brand) {
+      brand.insertAdjacentElement("afterend", btn);
+    } else {
+      document.body.appendChild(btn);
+    }
+
+    btn.addEventListener("click", () => {
+      window.location.href =
+        "https://draxtesting.forumotion.com/h9-traveling-page";
+    });
+  }
 }
 
 function applyHubMode() {
@@ -1232,7 +1266,8 @@ async function loadPlayerHubData() {
       invPayload,
       eqPayload,
       roostPayload,
-      travelRoutesPayload
+      travelRoutesPayload,
+      travelPayload
     ] = await Promise.all([
       apiFetch("/players/me"),
       apiFetch("/players/me/inventory"),
@@ -1250,6 +1285,12 @@ async function loadPlayerHubData() {
         console.warn("players/me/travel/routes failed:", err);
         return {
           routes: []
+        };
+      }),
+      apiFetch("/players/me/travel").catch((err) => {
+        console.warn("players/me/travel failed:", err);
+        return {
+          has_active_voyage: false
         };
       })
     ]);
@@ -1272,7 +1313,12 @@ async function loadPlayerHubData() {
     STATE.travelRoutes = Array.isArray(travelRoutesPayload?.routes)
       ? travelRoutesPayload.routes
       : [];
+    STATE.travel = travelPayload || {
+      has_active_voyage: false
+    };
+
     applyHubMode();
+    renderResumeTravelButton();
     // ----- Roost: build dragon roster from backend -----
     // Reset dragons state so we don't keep stale entries between loads
     if (
