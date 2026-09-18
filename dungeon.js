@@ -1785,8 +1785,6 @@ function playRandomDungeonAmbientSfx() {
    return;
   }
 
-  playDungeonCampSfx();
-
   const safe = STATE.room?.is_safe_room === true;
 
   const message = safe
