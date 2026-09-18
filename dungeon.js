@@ -76,15 +76,10 @@ function configureDungeonAudio(profile) {
  const ambientFiles = Array.isArray(profile.ambient_sfx_json)
   ? profile.ambient_sfx_json
   : [];
- console.log("Dungeon ambient SFX files:", ambientFiles);
 
  dungeonAmbientSfx = ambientFiles
   .map((file) => {
    const url = getDungeonAudioUrl(file);
-   console.log("Dungeon ambient SFX URL:", {
-    file,
-    url
-   });
 
    if (!url) {
     return null;
