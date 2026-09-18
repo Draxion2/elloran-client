@@ -316,49 +316,64 @@ function playRandomDungeonAmbientSfx() {
  }
 
  /*
-  Reveal the full-screen camp
-  overlay.
+  Begin from a clean state.
  */
+ els.campTransition.classList.remove(
+  "is-leaving"
+ );
+
  els.campTransition.setAttribute(
   "aria-hidden",
   "false"
  );
 
+ /*
+  Fade into the camping scene.
+ */
  els.campTransition.classList.add(
   "is-active"
  );
 
- /*
-  Begin the campfire once the
-  camping experience starts.
- */
  playDungeonCampSfx();
 
  /*
-  Give the overlay time to fade
-  fully into view, then allow the
-  player to rest at the fire.
+  Allow the camp scene to remain
+  visible while the player rests.
  */
  await wait(4000);
 
  /*
-  Fade back into the dungeon.
+  Fade the fire and text away
+  while keeping the screen black.
+ */
+ els.campTransition.classList.add(
+  "is-leaving"
+ );
+
+ await wait(600);
+
+ /*
+  Now reveal the dungeon through
+  the black overlay.
  */
  els.campTransition.classList.remove(
   "is-active"
+ );
+
+ await wait(800);
+
+ /*
+  Clean up only after the dungeon
+  has fully returned.
+ */
+ els.campTransition.classList.remove(
+  "is-leaving"
  );
 
  els.campTransition.setAttribute(
   "aria-hidden",
   "true"
  );
-
- /*
-  Match the CSS 0.8 second
-  fade-out before returning
-  control to the player.
- */
- await wait(800);
 }
  /* =========================================================
      STATE
