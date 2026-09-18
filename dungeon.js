@@ -145,6 +145,8 @@ function startDungeonAmbience() {
   targetVolume
  );
 
+ unlockDungeonAmbientSfx();
+
  startDungeonAmbientSfx();
 }
 
@@ -162,6 +164,28 @@ function stopDungeonAudio() {
  dungeonAmbience.pause();
  dungeonAmbience.currentTime = 0;
  dungeonAmbience.volume = 0;
+}
+
+ function unlockDungeonAmbientSfx() {
+ dungeonAmbientSfx.forEach((audio) => {
+  const originalVolume = audio.volume;
+
+  audio.volume = 0;
+
+  const playPromise = audio.play();
+
+  if (playPromise) {
+   playPromise
+    .then(() => {
+     audio.pause();
+     audio.currentTime = 0;
+     audio.volume = originalVolume;
+    })
+    .catch(() => {
+     audio.volume = originalVolume;
+    });
+  }
+ });
 }
 
 function startDungeonAmbientSfx() {
@@ -220,14 +244,15 @@ function playRandomDungeonAmbientSfx() {
   return;
  }
 
- const source =
+ const sound =
   dungeonAmbientSfx[
    Math.floor(
     Math.random() * dungeonAmbientSfx.length
    )
   ];
 
- const sound = source.cloneNode();
+ sound.pause();
+ sound.currentTime = 0;
 
  sound.volume = clamp(
   dungeonAudioProfile?.ambient_volume ?? 0.18,
@@ -235,9 +260,10 @@ function playRandomDungeonAmbientSfx() {
   1
  );
 
- sound.play().catch(() => {
+ sound.play().catch((error) => {
   console.warn(
-   "Dungeon ambient SFX was blocked."
+   "Dungeon ambient SFX could not play:",
+   error
   );
  });
 }
