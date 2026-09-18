@@ -308,6 +308,58 @@ function playRandomDungeonAmbientSfx() {
   );
  });
 }
+ async function playDungeonCampTransition() {
+ if (!els.campTransition) {
+  playDungeonCampSfx();
+  await wait(4000);
+  return;
+ }
+
+ /*
+  Reveal the full-screen camp
+  overlay.
+ */
+ els.campTransition.setAttribute(
+  "aria-hidden",
+  "false"
+ );
+
+ els.campTransition.classList.add(
+  "is-active"
+ );
+
+ /*
+  Begin the campfire once the
+  camping experience starts.
+ */
+ playDungeonCampSfx();
+
+ /*
+  Give the overlay time to fade
+  fully into view, then allow the
+  player to rest at the fire.
+ */
+ await wait(4000);
+
+ /*
+  Fade back into the dungeon.
+ */
+ els.campTransition.classList.remove(
+  "is-active"
+ );
+
+ els.campTransition.setAttribute(
+  "aria-hidden",
+  "true"
+ );
+
+ /*
+  Match the CSS 0.8 second
+  fade-out before returning
+  control to the player.
+ */
+ await wait(800);
+}
  /* =========================================================
      STATE
   ========================================================= */
@@ -406,6 +458,8 @@ function playRandomDungeonAmbientSfx() {
   loadingText: document.querySelector(
    "#dungeon-loading .dungeon-loading-content p"
   ),
+  /* Camp Transition */
+  campTransition: document.getElementById("dungeonCampTransition"),
   /* Modal */
   modal: document.getElementById("dungeon-modal"),
   modalClose: document.getElementById("dungeon-modal-close"),
@@ -1890,24 +1944,37 @@ function playRandomDungeonAmbientSfx() {
    }
 
    /*
-    Present Camp outcome.
-  */
-   setRoomResult(
-    safe
-     ? "You rest safely and recover your strength."
-     : "You rest and recover despite the danger around you.",
-    "Camp Established",
-    effects
-   );
+ Update the dungeon underneath
+ the camp transition.
+*/
+renderParty();
+renderStatus();
+renderActions();
 
-   els.roomResult?.classList.add("is-camp-result");
+/*
+ Present the camping experience
+ only after the backend has
+ successfully committed the rest.
+*/
+setBusy(false);
 
-   /*
-    Refresh visible HUD state.
-  */
-   renderParty();
-   renderStatus();
-   renderActions();
+await playDungeonCampTransition();
+
+/*
+ Reveal the Camp outcome after
+ returning to the dungeon.
+*/
+setRoomResult(
+ safe
+  ? "You rest safely and recover your strength."
+  : "You rest and recover despite the danger around you.",
+ "Camp Established",
+ effects
+);
+
+els.roomResult?.classList.add(
+ "is-camp-result"
+);
 
    /*
     Floating stat feedback.
