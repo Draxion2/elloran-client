@@ -1549,12 +1549,7 @@ function playRandomDungeonAmbientSfx() {
   if (STATE.busy) {
    return;
   }
-  const startingExpedition =
-  STATE.entranceActive === true;
-
-  if (startingExpedition) {
-   startDungeonAmbience();
-  }
+  startDungeonAmbience();
   const before = {
    supplies: Number(STATE.current?.expedition_supplies || 0),
    exhaustion: Number(STATE.current?.exhaustion || 0),
