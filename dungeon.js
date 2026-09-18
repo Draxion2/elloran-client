@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/18/26 dungeon-page-2");
+console.log("dungeon.js V-09/18/26 dungeon-page-3");
 
 (() => {
  /* =========================================================
@@ -16,6 +16,7 @@ console.log("dungeon.js V-09/18/26 dungeon-page-2");
 ========================================================= */
 
 let dungeonAmbience = null;
+let dungeonDescentSfx = null;
 let dungeonAmbientSfx = [];
 let dungeonAmbientSfxTimer = null;
 let dungeonAudioProfile = null;
@@ -43,6 +44,7 @@ function configureDungeonAudio(profile) {
  }
 
  dungeonAmbience = null;
+ dungeonDescentSfx = null;
  dungeonAmbientSfx = [];
  dungeonAudioProfile = profile || null;
  dungeonAudioActive = false;
@@ -60,6 +62,15 @@ function configureDungeonAudio(profile) {
   dungeonAmbience.loop = true;
   dungeonAmbience.volume = 0;
   dungeonAmbience.preload = "auto";
+ }
+
+ const descentUrl = getDungeonAudioUrl(
+  profile.descent_sfx_url
+ );
+
+ if (descentUrl) {
+  dungeonDescentSfx = new Audio(descentUrl);
+  dungeonDescentSfx.preload = "auto";
  }
 
  const ambientFiles = Array.isArray(profile.ambient_sfx_json)
@@ -227,6 +238,21 @@ function playRandomDungeonAmbientSfx() {
  sound.play().catch(() => {
   console.warn(
    "Dungeon ambient SFX was blocked."
+  );
+ });
+}
+
+ function playDungeonDescentSfx() {
+ if (!dungeonAudioActive || !dungeonDescentSfx) {
+  return;
+ }
+
+ dungeonDescentSfx.pause();
+ dungeonDescentSfx.currentTime = 0;
+
+ dungeonDescentSfx.play().catch(() => {
+  console.warn(
+   "Dungeon descent SFX could not play."
   );
  });
 }
@@ -1857,6 +1883,8 @@ function playRandomDungeonAmbientSfx() {
 
  function renderDescentTransition() {
   const nextFloor = Number(STATE.descendingToFloor || 1);
+
+  playDungeonDescentSfx();
 
   clearRoomResult();
   hideAllActionGroups();
