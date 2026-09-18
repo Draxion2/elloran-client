@@ -68,6 +68,11 @@ function configureDungeonAudio(profile) {
   profile.descent_sfx_url
  );
 
+ console.log("Dungeon descent audio:", {
+  raw: profile.descent_sfx_url,
+  resolved: descentUrl
+ });
+
  if (descentUrl) {
   dungeonDescentSfx = new Audio(descentUrl);
   dungeonDescentSfx.preload = "auto";
@@ -243,6 +248,12 @@ function playRandomDungeonAmbientSfx() {
 }
 
  function playDungeonDescentSfx() {
+ console.log("Descent SFX attempt:", {
+  dungeonAudioActive,
+  hasDescentSfx: !!dungeonDescentSfx,
+  source: dungeonDescentSfx?.src
+ });
+  
  if (!dungeonAudioActive || !dungeonDescentSfx) {
   return;
  }
