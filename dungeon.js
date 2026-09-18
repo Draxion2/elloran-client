@@ -15,86 +15,221 @@ console.log("dungeon.js V-09/18/26 dungeon-page-2");
    DUNGEON AUDIO
 ========================================================= */
 
- let dungeonBackgroundAudio = null;
- let dungeonAudioProfileId = null;
+let dungeonAmbience = null;
+let dungeonAmbientSfx = [];
+let dungeonAmbientSfxTimer = null;
+let dungeonAudioProfile = null;
+let dungeonAudioActive = false;
 
- function buildDungeonAudioUrl(path) {
-  if (!path) {
-   return null;
-  }
-
-  /*
-  Allows a full URL too, just in case we ever need one.
- */
-  if (/^https?:\/\//i.test(path)) {
-   return path;
-  }
-
-  return AUDIO_BASE_URL + String(path).replace(/^\/+/, "");
+function getDungeonAudioUrl(path) {
+ if (!path) {
+  return null;
  }
 
- function configureDungeonAudio(audioProfile) {
-  if (!audioProfile?.background_audio_url) {
-   stopDungeonAudio();
-   dungeonAudioProfileId = null;
-   return;
-  }
+ if (/^https?:\/\//i.test(path)) {
+  return path;
+ }
 
-  /*
-  If this exact profile is already configured,
-  don't rebuild the Audio object.
- */
-  if (dungeonBackgroundAudio && dungeonAudioProfileId === audioProfile.id) {
-   dungeonBackgroundAudio.volume = Math.max(
+ return AUDIO_BASE_URL + String(path).replace(/^\/+/, "");
+}
+
+function configureDungeonAudio(profile) {
+ stopDungeonAmbientSfx();
+
+ if (dungeonAmbience) {
+  clearInterval(dungeonAmbience._fadeTimer);
+  dungeonAmbience.pause();
+  dungeonAmbience.currentTime = 0;
+ }
+
+ dungeonAmbience = null;
+ dungeonAmbientSfx = [];
+ dungeonAudioProfile = profile || null;
+ dungeonAudioActive = false;
+
+ if (!profile) {
+  return;
+ }
+
+ const backgroundUrl = getDungeonAudioUrl(
+  profile.background_audio_url
+ );
+
+ if (backgroundUrl) {
+  dungeonAmbience = new Audio(backgroundUrl);
+  dungeonAmbience.loop = true;
+  dungeonAmbience.volume = 0;
+  dungeonAmbience.preload = "auto";
+ }
+
+ const ambientFiles = Array.isArray(profile.ambient_sfx_json)
+  ? profile.ambient_sfx_json
+  : [];
+
+ dungeonAmbientSfx = ambientFiles
+  .map((file) => {
+   const url = getDungeonAudioUrl(file);
+
+   if (!url) {
+    return null;
+   }
+
+   const audio = new Audio(url);
+
+   audio.volume = clamp(
+    profile.ambient_volume ?? 0.18,
     0,
-    Math.min(1, Number(audioProfile.background_volume ?? 0.35))
+    1
    );
 
-   return;
-  }
+   audio.preload = "auto";
 
-  stopDungeonAudio();
+   return audio;
+  })
+  .filter(Boolean);
+}
 
-  const audioUrl = buildDungeonAudioUrl(audioProfile.background_audio_url);
+function fadeDungeonAudioIn(audio, targetVolume = 0.35) {
+ if (!audio) {
+  return;
+ }
 
-  if (!audioUrl) {
-   return;
-  }
+ audio.volume = 0;
 
-  dungeonBackgroundAudio = new Audio(audioUrl);
-  dungeonBackgroundAudio.loop = true;
-  dungeonBackgroundAudio.preload = "auto";
-  dungeonBackgroundAudio.volume = Math.max(
-   0,
-   Math.min(1, Number(audioProfile.background_volume ?? 0.35))
+ audio.play().catch(() => {
+  console.warn(
+   "Dungeon ambience was blocked until user interaction."
+  );
+ });
+
+ clearInterval(audio._fadeTimer);
+
+ audio._fadeTimer = setInterval(() => {
+  audio.volume = Math.min(
+   targetVolume,
+   audio.volume + 0.03
   );
 
-  dungeonAudioProfileId = audioProfile.id;
+  if (audio.volume >= targetVolume) {
+   clearInterval(audio._fadeTimer);
+  }
+ }, 80);
+}
+
+function startDungeonAmbience() {
+ if (dungeonAudioActive || !dungeonAmbience) {
+  return;
  }
 
- function startDungeonAudio() {
-  if (!dungeonBackgroundAudio) {
+ dungeonAudioActive = true;
+
+ const targetVolume = clamp(
+  dungeonAudioProfile?.background_volume ?? 0.35,
+  0,
+  1
+ );
+
+ fadeDungeonAudioIn(
+  dungeonAmbience,
+  targetVolume
+ );
+
+ startDungeonAmbientSfx();
+}
+
+function stopDungeonAudio() {
+ dungeonAudioActive = false;
+
+ stopDungeonAmbientSfx();
+
+ if (!dungeonAmbience) {
+  return;
+ }
+
+ clearInterval(dungeonAmbience._fadeTimer);
+
+ dungeonAmbience.pause();
+ dungeonAmbience.currentTime = 0;
+ dungeonAmbience.volume = 0;
+}
+
+function startDungeonAmbientSfx() {
+ stopDungeonAmbientSfx();
+
+ if (!dungeonAudioActive) {
+  return;
+ }
+
+ scheduleNextDungeonAmbientSfx();
+}
+
+function stopDungeonAmbientSfx() {
+ if (dungeonAmbientSfxTimer) {
+  clearTimeout(dungeonAmbientSfxTimer);
+  dungeonAmbientSfxTimer = null;
+ }
+}
+
+function scheduleNextDungeonAmbientSfx() {
+ if (
+  !dungeonAudioActive ||
+  !dungeonAmbientSfx.length
+ ) {
+  return;
+ }
+
+ const minDelay = Number(
+  dungeonAudioProfile?.ambient_delay_min ?? 6500
+ );
+
+ const maxDelay = Number(
+  dungeonAudioProfile?.ambient_delay_max ?? 16000
+ );
+
+ const delay = randomBetween(
+  Math.min(minDelay, maxDelay),
+  Math.max(minDelay, maxDelay)
+ );
+
+ dungeonAmbientSfxTimer = setTimeout(() => {
+  if (!dungeonAudioActive) {
    return;
   }
 
-  const playPromise = dungeonBackgroundAudio.play();
+  playRandomDungeonAmbientSfx();
+  scheduleNextDungeonAmbientSfx();
+ }, delay);
+}
 
-  if (playPromise !== undefined) {
-   playPromise.catch((error) => {
-    console.warn("Dungeon ambience could not start:", error);
-   });
-  }
+function playRandomDungeonAmbientSfx() {
+ if (
+  !dungeonAudioActive ||
+  !dungeonAmbientSfx.length
+ ) {
+  return;
  }
 
- function stopDungeonAudio() {
-  if (!dungeonBackgroundAudio) {
-   return;
-  }
+ const source =
+  dungeonAmbientSfx[
+   Math.floor(
+    Math.random() * dungeonAmbientSfx.length
+   )
+  ];
 
-  dungeonBackgroundAudio.pause();
-  dungeonBackgroundAudio.currentTime = 0;
-  dungeonBackgroundAudio = null;
- }
+ const sound = source.cloneNode();
+
+ sound.volume = clamp(
+  dungeonAudioProfile?.ambient_volume ?? 0.18,
+  0,
+  1
+ );
+
+ sound.play().catch(() => {
+  console.warn(
+   "Dungeon ambient SFX was blocked."
+  );
+ });
+}
  /* =========================================================
      STATE
   ========================================================= */
@@ -311,144 +446,6 @@ console.log("dungeon.js V-09/18/26 dungeon-page-2");
  function setText(el, value) {
   if (!el) return;
   el.textContent = value == null ? "" : String(value);
- }
- function getDungeonAudioUrl(path) {
-  if (!path) {
-   return null;
-  }
-
-  if (/^https?:\/\//i.test(path)) {
-   return path;
-  }
-
-  return DUNGEON_AUDIO_BASE + String(path).replace(/^\/+/, "");
- }
-
- function configureDungeonAudio(profile) {
-  stopDungeonAmbientSfx();
-
-  if (dungeonAmbience) {
-   clearInterval(dungeonAmbience._fadeTimer);
-   dungeonAmbience.pause();
-   dungeonAmbience.currentTime = 0;
-  }
-
-  dungeonAmbience = null;
-  dungeonAmbientSfx = [];
-  dungeonAudioProfile = profile || null;
-
-  if (!profile) {
-   return;
-  }
-
-  const backgroundUrl = getDungeonAudioUrl(profile.background_audio_url);
-
-  if (backgroundUrl) {
-   dungeonAmbience = new Audio(backgroundUrl);
-   dungeonAmbience.loop = true;
-   dungeonAmbience.volume = 0;
-   dungeonAmbience.preload = "auto";
-  }
-
-  const ambientFiles = Array.isArray(profile.ambient_sfx_json)
-   ? profile.ambient_sfx_json
-   : [];
-
-  dungeonAmbientSfx = ambientFiles
-   .map((file) => {
-    const url = getDungeonAudioUrl(file);
-
-    if (!url) {
-     return null;
-    }
-
-    const audio = new Audio(url);
-
-    audio.volume = clamp(profile.ambient_volume ?? 0.18, 0, 1);
-
-    audio.preload = "auto";
-
-    return audio;
-   })
-   .filter(Boolean);
- }
- function fadeDungeonAudioIn(audio, targetVolume = 0.35) {
-  audio.play().catch(() => {
-   console.warn("Dungeon ambience was blocked until user interaction.");
-  });
-
-  clearInterval(audio._fadeTimer);
-
-  audio._fadeTimer = setInterval(() => {
-   audio.volume = Math.min(targetVolume, audio.volume + 0.03);
-
-   if (audio.volume >= targetVolume) {
-    clearInterval(audio._fadeTimer);
-   }
-  }, 80);
- }
-
- function startDungeonAmbience() {
-  if (!dungeonAmbience) {
-   return;
-  }
-
-  const targetVolume = clamp(
-   dungeonAudioProfile?.background_volume ?? 0.35,
-   0,
-   1
-  );
-
-  fadeDungeonAudioIn(dungeonAmbience, targetVolume);
-
-  startDungeonAmbientSfx();
- }
-
- function startDungeonAmbientSfx() {
-  stopDungeonAmbientSfx();
-  scheduleNextDungeonAmbientSfx();
- }
-
- function stopDungeonAmbientSfx() {
-  if (dungeonAmbientSfxTimer) {
-   clearTimeout(dungeonAmbientSfxTimer);
-
-   dungeonAmbientSfxTimer = null;
-  }
- }
-
- function scheduleNextDungeonAmbientSfx() {
-  if (!dungeonAmbientSfx.length) {
-   return;
-  }
-
-  const minDelay = Number(dungeonAudioProfile?.ambient_delay_min ?? 6500);
-
-  const maxDelay = Number(dungeonAudioProfile?.ambient_delay_max ?? 16000);
-
-  const delay = randomBetween(minDelay, maxDelay);
-
-  dungeonAmbientSfxTimer = setTimeout(() => {
-   playRandomDungeonAmbientSfx();
-   scheduleNextDungeonAmbientSfx();
-  }, delay);
- }
-
- function playRandomDungeonAmbientSfx() {
-  if (!dungeonAmbientSfx.length) {
-   return;
-  }
-
-  const source =
-   dungeonAmbientSfx[Math.floor(Math.random() * dungeonAmbientSfx.length)];
-
-  const sound = source.cloneNode();
-
-  sound.volume = clamp(dungeonAudioProfile?.ambient_volume ?? 0.18, 0, 1);
-
-  sound.play().catch(() => {
-   console.warn("Dungeon ambient SFX was blocked.");
-  });
  }
 
  function randomBetween(min, max) {
@@ -1525,6 +1522,12 @@ console.log("dungeon.js V-09/18/26 dungeon-page-2");
  async function exploreDungeon() {
   if (STATE.busy) {
    return;
+  }
+  const startingExpedition =
+  STATE.entranceActive === true;
+
+  if (startingExpedition) {
+   startDungeonAmbience();
   }
   const before = {
    supplies: Number(STATE.current?.expedition_supplies || 0),
