@@ -18,6 +18,7 @@ console.log("dungeon.js V-09/19/26 dungeon-page-6");
 let dungeonAmbience = null;
 let dungeonDescentSfx = null;
 let dungeonCampSfx = null;
+let dungeonExpeditionEndSfx = null;
 let dungeonAmbientSfx = [];
 let dungeonAmbientSfxTimer = null;
 let dungeonAudioProfile = null;
@@ -47,6 +48,7 @@ function configureDungeonAudio(profile) {
  dungeonAmbience = null;
  dungeonDescentSfx = null;
  dungeonCampSfx = null;
+ dungeonExpeditionEndSfx = null;
  dungeonAmbientSfx = [];
  dungeonAudioProfile = profile || null;
  dungeonAudioActive = false;
@@ -82,6 +84,18 @@ function configureDungeonAudio(profile) {
  if (campUrl) {
   dungeonCampSfx = new Audio(campUrl);
   dungeonCampSfx.preload = "auto";
+ }
+
+ const expeditionEndUrl = getDungeonAudioUrl(
+  profile.expedition_end_sfx_url
+ );
+
+ if (expeditionEndUrl) {
+   dungeonExpeditionEndSfx = new Audio(
+    expeditionEndUrl
+  );
+
+  dungeonExpeditionEndSfx.preload = "auto";
  }
 
  const ambientFiles = Array.isArray(profile.ambient_sfx_json)
@@ -305,6 +319,21 @@ function playRandomDungeonAmbientSfx() {
  dungeonCampSfx.play().catch(() => {
   console.warn(
    "Dungeon camp SFX could not play."
+  );
+ });
+}
+
+ function playDungeonExpeditionEndSfx() {
+ if (!dungeonExpeditionEndSfx) {
+  return;
+ }
+
+ dungeonExpeditionEndSfx.pause();
+ dungeonExpeditionEndSfx.currentTime = 0;
+
+ dungeonExpeditionEndSfx.play().catch(() => {
+  console.warn(
+   "Dungeon expedition ending SFX could not play."
   );
  });
 }
@@ -2168,6 +2197,8 @@ els.roomResult?.classList.add(
 
   STATE.summaryActive = true;
   STATE.summaryData = result;
+
+  playDungeonExpeditionEndSfx();
 
   const dungeon = result.dungeon || {};
 
