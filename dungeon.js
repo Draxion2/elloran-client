@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/18/26 dungeon-page-5");
+console.log("dungeon.js V-09/19/26 dungeon-page-6");
 
 (() => {
  /* =========================================================
@@ -2429,10 +2429,15 @@ els.roomResult?.classList.add(
   }
   try {
    setBusy(true, "Returning to the surface...");
-   await apiFetch("/players/me/dungeons/leave", {
+   const result = await apiFetch("/players/me/dungeons/leave", {
     method: "POST"
    });
-   window.location.href = HUB_URL;
+
+   STATE.unsecuredLoot = [];
+
+   setBusy(false);
+
+   renderExpeditionSummary(result);
   } catch (error) {
    showError(error);
    setBusy(false);
