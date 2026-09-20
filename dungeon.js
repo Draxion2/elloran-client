@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/19/26 dungeon-page-6");
+console.log("dungeon.js V-09/20/26 dungeon-page-7");
 
 (() => {
  /* =========================================================
@@ -422,7 +422,9 @@ function playRandomDungeonAmbientSfx() {
   descendingActive: false,
   descendingToFloor: null,
   summaryActive: false,
-  summaryData: null
+  summaryData: null,
+  roomTravelActive: false,
+  roomTravelDuration: null
  };
  /* =========================================================
      ELEMENTS
@@ -1219,6 +1221,9 @@ function playRandomDungeonAmbientSfx() {
   if (els.descentProgress) {
    els.descentProgress.hidden = true;
    els.descentProgress.classList.remove("is-active");
+   if (els.descentProgressFill) {
+    els.descentProgressFill.style.animationDuration = "";
+   }
   }
   const room = STATE.room;
   setText(
@@ -1692,6 +1697,75 @@ function playRandomDungeonAmbientSfx() {
    setBusy(false);
   }
  }
+
+ /* =========================================================
+   ROOM TRAVEL TRANSITION
+========================================================= */
+
+function renderRoomTravelTransition() {
+ const duration = Number(
+  STATE.roomTravelDuration || 2000
+ );
+
+ clearRoomResult();
+ hideAllActionGroups();
+
+ setText(
+  els.roomType,
+  "Exploring"
+ );
+
+ setText(
+  els.roomNumber,
+  ""
+ );
+
+ setText(
+  els.roomContext,
+  `Floor ${Number(
+   STATE.current?.current_depth || 1
+  )}`
+ );
+
+ setText(
+  els.roomName,
+  "Pressing Onward"
+ );
+
+ setText(
+  els.roomDescription,
+  "You leave the chamber behind and follow the passage deeper into the dungeon..."
+ );
+
+ renderRoomImage(null);
+
+ applyRoomClass(null);
+
+ /*
+  Reuse the existing descent
+  progress element, but give it
+  the randomized room-travel
+  duration instead.
+ */
+ if (els.descentProgress) {
+  els.descentProgress.hidden = false;
+
+  els.descentProgress.classList.remove(
+   "is-active"
+  );
+
+  if (els.descentProgressFill) {
+   els.descentProgressFill.style.animationDuration =
+    `${duration}ms`;
+  }
+
+  void els.descentProgress.offsetWidth;
+
+  els.descentProgress.classList.add(
+   "is-active"
+  );
+ }
+}
  /* =========================================================
      EXPLORE
   ========================================================= */
@@ -1708,9 +1782,58 @@ function playRandomDungeonAmbientSfx() {
   };
   try {
    setBusy(true, "Exploring the darkness...");
-   const result = await apiFetch("/players/me/dungeons/explore", {
-    method: "POST"
-   });
+   /*
+ Pick a different traversal time
+ for every room.
+
+ 2000–4000 milliseconds.
+*/
+const travelDuration = randomBetween(
+ 2000,
+ 4000
+);
+
+STATE.roomTravelActive = true;
+STATE.roomTravelDuration = travelDuration;
+
+/*
+ Begin the visual journey before
+ waiting for the backend.
+*/
+renderRoomTravelTransition();
+
+const travelStartedAt = Date.now();
+
+const result = await apiFetch(
+ "/players/me/dungeons/explore",
+ {
+  method: "POST"
+ }
+);
+
+/*
+ The API request happened during
+ the traversal.
+
+ Only wait for whatever portion
+ of the randomized travel time
+ remains.
+*/
+const elapsed =
+ Date.now() - travelStartedAt;
+
+const remaining =
+ Math.max(
+  0,
+  travelDuration - elapsed
+ );
+
+if (remaining > 0) {
+ await wait(remaining);
+}
+
+STATE.roomTravelActive = false;
+STATE.roomTravelDuration = null;
    STATE.entranceActive = false;
    STATE.lastResult = result;
    STATE.room = result.selected_room || null;
