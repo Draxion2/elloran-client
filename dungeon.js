@@ -1704,7 +1704,7 @@ function playRandomDungeonAmbientSfx() {
 
 function renderRoomTravelTransition() {
  const duration = Number(
-  STATE.roomTravelDuration || 2000
+  STATE.roomTravelDuration || 1500
  );
 
  clearRoomResult();
@@ -1789,8 +1789,8 @@ function renderRoomTravelTransition() {
  2000–4000 milliseconds.
 */
 const travelDuration = randomBetween(
- 2000,
- 4000
+ 800,
+ 1500
 );
 
 STATE.roomTravelActive = true;
