@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/20/26 dungeon-page-7");
+console.log("dungeon.js V-09/20/26 dungeon-page-8");
 
 (() => {
  /* =========================================================
@@ -1857,11 +1857,13 @@ STATE.roomTravelDuration = null;
     STATE.current.floor.rooms_explored = result.floor_rooms_explored;
    }
    /*
-      Hazard can modify Risk beyond
-      the normal run update.
-    */
-   if (result.hazard_result?.triggered) {
-    setRunRisk(result.hazard_result.risk_after);
+   Explore now returns the
+   authoritative dungeon Risk
+   after resolving the room's
+   authored risk_delta.
+ */
+   if (result.risk != null) {
+    setRunRisk(result.risk);
    }
    /*
       Treasure remains unsecured.
@@ -2448,6 +2450,7 @@ els.roomResult?.classList.add(
   await descendDungeon();
  }
  async function descendDungeon() {
+  const riskBefore = getRunRisk();
   try {
    setBusy(true, "Descending deeper...");
 
@@ -2495,6 +2498,10 @@ els.roomResult?.classList.add(
    renderHeader();
    renderStatus();
    renderDescentTransition();
+
+   popRiskChange(
+    getRunRisk() - riskBefore
+   );
 
    await wait(4000);
 
