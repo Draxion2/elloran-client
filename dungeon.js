@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/20/26 dungeon-page-9 Tidy-1");
+console.log("dungeon.js V-09/20/26 dungeon-page-9 tidy-1");
 
 (() => {
  /* =========================================================
@@ -1211,7 +1211,6 @@ console.log("dungeon.js V-09/20/26 dungeon-page-9 Tidy-1");
    els.roomDescription,
    STATE.roomDescription ||
     STATE.roomHistory?.outcome_json?.description ||
-    room.description ||
     ""
   );
   renderRoomImage(room);
@@ -1749,9 +1748,7 @@ console.log("dungeon.js V-09/20/26 dungeon-page-9 Tidy-1");
    STATE.lastResult = result;
    STATE.room = result.selected_room || null;
 
-   STATE.roomDescription =
-    result.selected_description || result.selected_room?.description || null;
-
+   STATE.roomDescription = result.selected_description || null;
    STATE.roomHistory = {
     dungeon_rooms_id: result.selected_room?.id,
     room_number: result.room_number,
@@ -2632,7 +2629,6 @@ console.log("dungeon.js V-09/20/26 dungeon-page-9 Tidy-1");
    STATE.roomDescription =
     current.current_room_description ||
     STATE.roomHistory?.outcome_json?.description ||
-    STATE.room?.description ||
     null;
 
    STATE.entranceActive = shouldShowDungeonEntrance(current);
