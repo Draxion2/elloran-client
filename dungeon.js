@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/20/26 dungeon-page-8");
+console.log("dungeon.js V-09/20/26 dungeon-page-9 Tidy-1");
 
 (() => {
  /* =========================================================
@@ -15,395 +15,330 @@ console.log("dungeon.js V-09/20/26 dungeon-page-8");
    DUNGEON AUDIO
 ========================================================= */
 
-let dungeonAmbience = null;
-let dungeonDescentSfx = null;
-let dungeonCampSfx = null;
-let dungeonExpeditionEndSfx = null;
-let dungeonAmbientSfx = [];
-let dungeonAmbientSfxTimer = null;
-let dungeonAudioProfile = null;
-let dungeonAudioActive = false;
+ let dungeonAmbience = null;
+ let dungeonDescentSfx = null;
+ let dungeonCampSfx = null;
+ let dungeonExpeditionEndSfx = null;
+ let dungeonAmbientSfx = [];
+ let dungeonAmbientSfxTimer = null;
+ let dungeonAudioProfile = null;
+ let dungeonAudioActive = false;
 
-function getDungeonAudioUrl(path) {
- if (!path) {
-  return null;
- }
-
- if (/^https?:\/\//i.test(path)) {
-  return path;
- }
-
- return AUDIO_BASE_URL + String(path).replace(/^\/+/, "");
-}
-
-function configureDungeonAudio(profile) {
- stopDungeonAmbientSfx();
-
- if (dungeonAmbience) {
-  clearInterval(dungeonAmbience._fadeTimer);
-  dungeonAmbience.pause();
-  dungeonAmbience.currentTime = 0;
- }
-
- dungeonAmbience = null;
- dungeonDescentSfx = null;
- dungeonCampSfx = null;
- dungeonExpeditionEndSfx = null;
- dungeonAmbientSfx = [];
- dungeonAudioProfile = profile || null;
- dungeonAudioActive = false;
-
- if (!profile) {
-  return;
- }
-
- const backgroundUrl = getDungeonAudioUrl(
-  profile.background_audio_url
- );
-
- if (backgroundUrl) {
-  dungeonAmbience = new Audio(backgroundUrl);
-  dungeonAmbience.loop = true;
-  dungeonAmbience.volume = 0;
-  dungeonAmbience.preload = "auto";
- }
-
- const descentUrl = getDungeonAudioUrl(
-  profile.descent_sfx_url
- );
-
- if (descentUrl) {
-  dungeonDescentSfx = new Audio(descentUrl);
-  dungeonDescentSfx.preload = "auto";
- }
-
- const campUrl = getDungeonAudioUrl(
-  profile.camp_sfx_url
- );
-
- if (campUrl) {
-  dungeonCampSfx = new Audio(campUrl);
-  dungeonCampSfx.preload = "auto";
- }
-
- const expeditionEndUrl = getDungeonAudioUrl(
-  profile.expedition_end_sfx_url
- );
-
- if (expeditionEndUrl) {
-   dungeonExpeditionEndSfx = new Audio(
-    expeditionEndUrl
-  );
-
-  dungeonExpeditionEndSfx.preload = "auto";
- }
-
- const ambientFiles = Array.isArray(profile.ambient_sfx_json)
-  ? profile.ambient_sfx_json
-  : [];
-
- dungeonAmbientSfx = ambientFiles
-  .map((file) => {
-   const url = getDungeonAudioUrl(file);
-
-   if (!url) {
-    return null;
-   }
-
-   const audio = new Audio(url);
-
-   audio.volume = clamp(
-    profile.ambient_volume ?? 0.18,
-    0,
-    1
-   );
-
-   audio.preload = "auto";
-
-   return audio;
-  })
-  .filter(Boolean);
-}
-
-function fadeDungeonAudioIn(audio, targetVolume = 0.35) {
- if (!audio) {
-  return;
- }
-
- audio.volume = 0;
-
- audio.play().catch(() => {
-  console.warn(
-   "Dungeon ambience was blocked until user interaction."
-  );
- });
-
- clearInterval(audio._fadeTimer);
-
- audio._fadeTimer = setInterval(() => {
-  audio.volume = Math.min(
-   targetVolume,
-   audio.volume + 0.03
-  );
-
-  if (audio.volume >= targetVolume) {
-   clearInterval(audio._fadeTimer);
+ function getDungeonAudioUrl(path) {
+  if (!path) {
+   return null;
   }
- }, 80);
-}
 
-function startDungeonAmbience() {
- if (dungeonAudioActive || !dungeonAmbience) {
-  return;
+  if (/^https?:\/\//i.test(path)) {
+   return path;
+  }
+
+  return AUDIO_BASE_URL + String(path).replace(/^\/+/, "");
  }
 
- dungeonAudioActive = true;
+ function configureDungeonAudio(profile) {
+  stopDungeonAmbientSfx();
 
- const targetVolume = clamp(
-  dungeonAudioProfile?.background_volume ?? 0.35,
-  0,
-  1
- );
+  if (dungeonAmbience) {
+   clearInterval(dungeonAmbience._fadeTimer);
+   dungeonAmbience.pause();
+   dungeonAmbience.currentTime = 0;
+  }
 
- fadeDungeonAudioIn(
-  dungeonAmbience,
-  targetVolume
- );
+  dungeonAmbience = null;
+  dungeonDescentSfx = null;
+  dungeonCampSfx = null;
+  dungeonExpeditionEndSfx = null;
+  dungeonAmbientSfx = [];
+  dungeonAudioProfile = profile || null;
+  dungeonAudioActive = false;
 
- unlockDungeonAmbientSfx();
+  if (!profile) {
+   return;
+  }
 
- startDungeonAmbientSfx();
-}
+  const backgroundUrl = getDungeonAudioUrl(profile.background_audio_url);
 
-function stopDungeonAudio() {
- dungeonAudioActive = false;
+  if (backgroundUrl) {
+   dungeonAmbience = new Audio(backgroundUrl);
+   dungeonAmbience.loop = true;
+   dungeonAmbience.volume = 0;
+   dungeonAmbience.preload = "auto";
+  }
 
- stopDungeonAmbientSfx();
+  const descentUrl = getDungeonAudioUrl(profile.descent_sfx_url);
 
- if (!dungeonAmbience) {
-  return;
+  if (descentUrl) {
+   dungeonDescentSfx = new Audio(descentUrl);
+   dungeonDescentSfx.preload = "auto";
+  }
+
+  const campUrl = getDungeonAudioUrl(profile.camp_sfx_url);
+
+  if (campUrl) {
+   dungeonCampSfx = new Audio(campUrl);
+   dungeonCampSfx.preload = "auto";
+  }
+
+  const expeditionEndUrl = getDungeonAudioUrl(profile.expedition_end_sfx_url);
+
+  if (expeditionEndUrl) {
+   dungeonExpeditionEndSfx = new Audio(expeditionEndUrl);
+
+   dungeonExpeditionEndSfx.preload = "auto";
+  }
+
+  const ambientFiles = Array.isArray(profile.ambient_sfx_json)
+   ? profile.ambient_sfx_json
+   : [];
+
+  dungeonAmbientSfx = ambientFiles
+   .map((file) => {
+    const url = getDungeonAudioUrl(file);
+
+    if (!url) {
+     return null;
+    }
+
+    const audio = new Audio(url);
+
+    audio.volume = clamp(profile.ambient_volume ?? 0.18, 0, 1);
+
+    audio.preload = "auto";
+
+    return audio;
+   })
+   .filter(Boolean);
  }
 
- clearInterval(dungeonAmbience._fadeTimer);
-
- dungeonAmbience.pause();
- dungeonAmbience.currentTime = 0;
- dungeonAmbience.volume = 0;
-}
-
- function unlockDungeonAmbientSfx() {
- dungeonAmbientSfx.forEach((audio) => {
-  const originalVolume = audio.volume;
+ function fadeDungeonAudioIn(audio, targetVolume = 0.35) {
+  if (!audio) {
+   return;
+  }
 
   audio.volume = 0;
 
-  const playPromise = audio.play();
+  audio.play().catch(() => {
+   console.warn("Dungeon ambience was blocked until user interaction.");
+  });
 
-  if (playPromise) {
-   playPromise
-    .then(() => {
-     audio.pause();
-     audio.currentTime = 0;
-     audio.volume = originalVolume;
-    })
-    .catch(() => {
-     audio.volume = originalVolume;
-    });
+  clearInterval(audio._fadeTimer);
+
+  audio._fadeTimer = setInterval(() => {
+   audio.volume = Math.min(targetVolume, audio.volume + 0.03);
+
+   if (audio.volume >= targetVolume) {
+    clearInterval(audio._fadeTimer);
+   }
+  }, 80);
+ }
+
+ function startDungeonAmbience() {
+  if (dungeonAudioActive || !dungeonAmbience) {
+   return;
   }
- });
-}
 
-function startDungeonAmbientSfx() {
- stopDungeonAmbientSfx();
+  dungeonAudioActive = true;
 
- if (!dungeonAudioActive) {
-  return;
+  const targetVolume = clamp(
+   dungeonAudioProfile?.background_volume ?? 0.35,
+   0,
+   1
+  );
+
+  fadeDungeonAudioIn(dungeonAmbience, targetVolume);
+
+  unlockDungeonAmbientSfx();
+
+  startDungeonAmbientSfx();
  }
 
- scheduleNextDungeonAmbientSfx();
-}
+ function stopDungeonAudio() {
+  dungeonAudioActive = false;
 
-function stopDungeonAmbientSfx() {
- if (dungeonAmbientSfxTimer) {
-  clearTimeout(dungeonAmbientSfxTimer);
-  dungeonAmbientSfxTimer = null;
- }
-}
+  stopDungeonAmbientSfx();
 
-function scheduleNextDungeonAmbientSfx() {
- if (
-  !dungeonAudioActive ||
-  !dungeonAmbientSfx.length
- ) {
-  return;
+  if (!dungeonAmbience) {
+   return;
+  }
+
+  clearInterval(dungeonAmbience._fadeTimer);
+
+  dungeonAmbience.pause();
+  dungeonAmbience.currentTime = 0;
+  dungeonAmbience.volume = 0;
  }
 
- const minDelay = Number(
-  dungeonAudioProfile?.ambient_delay_min ?? 6500
- );
+ function unlockDungeonAmbientSfx() {
+  dungeonAmbientSfx.forEach((audio) => {
+   const originalVolume = audio.volume;
 
- const maxDelay = Number(
-  dungeonAudioProfile?.ambient_delay_max ?? 16000
- );
+   audio.volume = 0;
 
- const delay = randomBetween(
-  Math.min(minDelay, maxDelay),
-  Math.max(minDelay, maxDelay)
- );
+   const playPromise = audio.play();
 
- dungeonAmbientSfxTimer = setTimeout(() => {
+   if (playPromise) {
+    playPromise
+     .then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = originalVolume;
+     })
+     .catch(() => {
+      audio.volume = originalVolume;
+     });
+   }
+  });
+ }
+
+ function startDungeonAmbientSfx() {
+  stopDungeonAmbientSfx();
+
   if (!dungeonAudioActive) {
    return;
   }
 
-  playRandomDungeonAmbientSfx();
   scheduleNextDungeonAmbientSfx();
- }, delay);
-}
-
-function playRandomDungeonAmbientSfx() {
- if (
-  !dungeonAudioActive ||
-  !dungeonAmbientSfx.length
- ) {
-  return;
  }
 
- const sound =
-  dungeonAmbientSfx[
-   Math.floor(
-    Math.random() * dungeonAmbientSfx.length
-   )
-  ];
+ function stopDungeonAmbientSfx() {
+  if (dungeonAmbientSfxTimer) {
+   clearTimeout(dungeonAmbientSfxTimer);
+   dungeonAmbientSfxTimer = null;
+  }
+ }
 
- sound.pause();
- sound.currentTime = 0;
+ function scheduleNextDungeonAmbientSfx() {
+  if (!dungeonAudioActive || !dungeonAmbientSfx.length) {
+   return;
+  }
 
- sound.volume = clamp(
-  dungeonAudioProfile?.ambient_volume ?? 0.18,
-  0,
-  1
- );
+  const minDelay = Number(dungeonAudioProfile?.ambient_delay_min ?? 6500);
 
- sound.play().catch((error) => {
-  console.warn(
-   "Dungeon ambient SFX could not play:",
-   error
+  const maxDelay = Number(dungeonAudioProfile?.ambient_delay_max ?? 16000);
+
+  const delay = randomBetween(
+   Math.min(minDelay, maxDelay),
+   Math.max(minDelay, maxDelay)
   );
- });
-}
+
+  dungeonAmbientSfxTimer = setTimeout(() => {
+   if (!dungeonAudioActive) {
+    return;
+   }
+
+   playRandomDungeonAmbientSfx();
+   scheduleNextDungeonAmbientSfx();
+  }, delay);
+ }
+
+ function playRandomDungeonAmbientSfx() {
+  if (!dungeonAudioActive || !dungeonAmbientSfx.length) {
+   return;
+  }
+
+  const sound =
+   dungeonAmbientSfx[Math.floor(Math.random() * dungeonAmbientSfx.length)];
+
+  sound.pause();
+  sound.currentTime = 0;
+
+  sound.volume = clamp(dungeonAudioProfile?.ambient_volume ?? 0.18, 0, 1);
+
+  sound.play().catch((error) => {
+   console.warn("Dungeon ambient SFX could not play:", error);
+  });
+ }
 
  function playDungeonDescentSfx() {
- if (!dungeonDescentSfx) {
-  return;
+  if (!dungeonDescentSfx) {
+   return;
+  }
+
+  dungeonDescentSfx.pause();
+  dungeonDescentSfx.currentTime = 0;
+
+  dungeonDescentSfx.play().catch(() => {
+   console.warn("Dungeon descent SFX could not play.");
+  });
  }
-
- dungeonDescentSfx.pause();
- dungeonDescentSfx.currentTime = 0;
-
- dungeonDescentSfx.play().catch(() => {
-  console.warn(
-   "Dungeon descent SFX could not play."
-  );
- });
-}
 
  function playDungeonCampSfx() {
- if (!dungeonCampSfx) {
-  return;
+  if (!dungeonCampSfx) {
+   return;
+  }
+
+  dungeonCampSfx.pause();
+  dungeonCampSfx.currentTime = 0;
+
+  dungeonCampSfx.play().catch(() => {
+   console.warn("Dungeon camp SFX could not play.");
+  });
  }
-
- dungeonCampSfx.pause();
- dungeonCampSfx.currentTime = 0;
-
- dungeonCampSfx.play().catch(() => {
-  console.warn(
-   "Dungeon camp SFX could not play."
-  );
- });
-}
 
  function playDungeonExpeditionEndSfx() {
- if (!dungeonExpeditionEndSfx) {
-  return;
+  if (!dungeonExpeditionEndSfx) {
+   return;
+  }
+
+  dungeonExpeditionEndSfx.pause();
+  dungeonExpeditionEndSfx.currentTime = 0;
+
+  dungeonExpeditionEndSfx.play().catch(() => {
+   console.warn("Dungeon expedition ending SFX could not play.");
+  });
  }
-
- dungeonExpeditionEndSfx.pause();
- dungeonExpeditionEndSfx.currentTime = 0;
-
- dungeonExpeditionEndSfx.play().catch(() => {
-  console.warn(
-   "Dungeon expedition ending SFX could not play."
-  );
- });
-}
  async function playDungeonCampTransition() {
- if (!els.campTransition) {
-  playDungeonCampSfx();
-  await wait(4000);
-  return;
- }
+  if (!els.campTransition) {
+   playDungeonCampSfx();
+   await wait(4000);
+   return;
+  }
 
- /*
+  /*
   Begin from a clean state.
  */
- els.campTransition.classList.remove(
-  "is-leaving"
- );
+  els.campTransition.classList.remove("is-leaving");
 
- els.campTransition.setAttribute(
-  "aria-hidden",
-  "false"
- );
+  els.campTransition.setAttribute("aria-hidden", "false");
 
- /*
+  /*
   Fade into the camping scene.
  */
- els.campTransition.classList.add(
-  "is-active"
- );
+  els.campTransition.classList.add("is-active");
 
- playDungeonCampSfx();
+  playDungeonCampSfx();
 
- /*
+  /*
   Allow the camp scene to remain
   visible while the player rests.
  */
- await wait(4000);
+  await wait(4000);
 
- /*
+  /*
   Fade the fire and text away
   while keeping the screen black.
  */
- els.campTransition.classList.add(
-  "is-leaving"
- );
+  els.campTransition.classList.add("is-leaving");
 
- await wait(600);
+  await wait(600);
 
- /*
+  /*
   Now reveal the dungeon through
   the black overlay.
  */
- els.campTransition.classList.remove(
-  "is-active"
- );
+  els.campTransition.classList.remove("is-active");
 
- await wait(800);
+  await wait(800);
 
- /*
+  /*
   Clean up only after the dungeon
   has fully returned.
  */
- els.campTransition.classList.remove(
-  "is-leaving"
- );
+  els.campTransition.classList.remove("is-leaving");
 
- els.campTransition.setAttribute(
-  "aria-hidden",
-  "true"
- );
-}
+  els.campTransition.setAttribute("aria-hidden", "true");
+ }
  /* =========================================================
      STATE
   ========================================================= */
@@ -415,6 +350,7 @@ function playRandomDungeonAmbientSfx() {
   inventory: [],
   room: null,
   roomHistory: null,
+  roomDescription: null,
   unsecuredLoot: [],
   targetRooms: null,
   lastResult: null,
@@ -1271,7 +1207,13 @@ function playRandomDungeonAmbientSfx() {
    STATE.roomHistory?.room_number ?? STATE.current?.rooms_explored ?? "";
   setText(els.roomNumber, roomNumber ? `Room ${roomNumber}` : "");
   setText(els.roomName, room.name || "Unknown Chamber");
-  setText(els.roomDescription, room.description || "");
+  setText(
+   els.roomDescription,
+   STATE.roomDescription ||
+    STATE.roomHistory?.outcome_json?.description ||
+    room.description ||
+    ""
+  );
   renderRoomImage(room);
   applyRoomClass(room.room_type);
   renderActions();
@@ -1702,70 +1644,52 @@ function playRandomDungeonAmbientSfx() {
    ROOM TRAVEL TRANSITION
 ========================================================= */
 
-function renderRoomTravelTransition() {
- const duration = Number(
-  STATE.roomTravelDuration || 1500
- );
+ function renderRoomTravelTransition() {
+  const duration = Number(STATE.roomTravelDuration || 1500);
 
- clearRoomResult();
- hideAllActionGroups();
+  clearRoomResult();
+  hideAllActionGroups();
 
- setText(
-  els.roomType,
-  "Exploring"
- );
+  setText(els.roomType, "Exploring");
 
- setText(
-  els.roomNumber,
-  ""
- );
+  setText(els.roomNumber, "");
 
- setText(
-  els.roomContext,
-  `Floor ${Number(
-   STATE.current?.current_depth || 1
-  )}`
- );
+  setText(
+   els.roomContext,
+   `Floor ${Number(STATE.current?.current_depth || 1)}`
+  );
 
- setText(
-  els.roomName,
-  "Pressing Onward"
- );
+  setText(els.roomName, "Pressing Onward");
 
- setText(
-  els.roomDescription,
-  "You leave the chamber behind and follow the passage deeper into the dungeon..."
- );
+  setText(
+   els.roomDescription,
+   "You leave the chamber behind and follow the passage deeper into the dungeon..."
+  );
 
- renderRoomImage(null);
+  renderRoomImage(null);
 
- applyRoomClass(null);
+  applyRoomClass(null);
 
- /*
+  /*
   Reuse the existing descent
   progress element, but give it
   the randomized room-travel
   duration instead.
  */
- if (els.descentProgress) {
-  els.descentProgress.hidden = false;
+  if (els.descentProgress) {
+   els.descentProgress.hidden = false;
 
-  els.descentProgress.classList.remove(
-   "is-active"
-  );
+   els.descentProgress.classList.remove("is-active");
 
-  if (els.descentProgressFill) {
-   els.descentProgressFill.style.animationDuration =
-    `${duration}ms`;
+   if (els.descentProgressFill) {
+    els.descentProgressFill.style.animationDuration = `${duration}ms`;
+   }
+
+   void els.descentProgress.offsetWidth;
+
+   els.descentProgress.classList.add("is-active");
   }
-
-  void els.descentProgress.offsetWidth;
-
-  els.descentProgress.classList.add(
-   "is-active"
-  );
  }
-}
  /* =========================================================
      EXPLORE
   ========================================================= */
@@ -1788,30 +1712,24 @@ function renderRoomTravelTransition() {
 
  2000–4000 milliseconds.
 */
-const travelDuration = randomBetween(
- 800,
- 1500
-);
+   const travelDuration = randomBetween(800, 1500);
 
-STATE.roomTravelActive = true;
-STATE.roomTravelDuration = travelDuration;
+   STATE.roomTravelActive = true;
+   STATE.roomTravelDuration = travelDuration;
 
-/*
+   /*
  Begin the visual journey before
  waiting for the backend.
 */
-renderRoomTravelTransition();
+   renderRoomTravelTransition();
 
-const travelStartedAt = Date.now();
+   const travelStartedAt = Date.now();
 
-const result = await apiFetch(
- "/players/me/dungeons/explore",
- {
-  method: "POST"
- }
-);
+   const result = await apiFetch("/players/me/dungeons/explore", {
+    method: "POST"
+   });
 
-/*
+   /*
  The API request happened during
  the traversal.
 
@@ -1819,30 +1737,30 @@ const result = await apiFetch(
  of the randomized travel time
  remains.
 */
-const elapsed =
- Date.now() - travelStartedAt;
+   const elapsed = Date.now() - travelStartedAt;
 
-const remaining =
- Math.max(
-  0,
-  travelDuration - elapsed
- );
+   const remaining = Math.max(0, travelDuration - elapsed);
 
-if (remaining > 0) {
- await wait(remaining);
-}
+   if (remaining > 0) {
+    await wait(remaining);
+   }
 
-STATE.roomTravelActive = false;
-STATE.roomTravelDuration = null;
    STATE.entranceActive = false;
    STATE.lastResult = result;
    STATE.room = result.selected_room || null;
+
+   STATE.roomDescription =
+    result.selected_description || result.selected_room?.description || null;
+
    STATE.roomHistory = {
     dungeon_rooms_id: result.selected_room?.id,
     room_number: result.room_number,
     depth: result.current_depth,
     choice_code: "",
-    outcome_json: {}
+    outcome_json: {
+     description: result.selected_description || null,
+     description_variant_index: result.description_variant_index ?? null
+    }
    };
    /*
       Update canonical run values
@@ -2116,34 +2034,32 @@ STATE.roomTravelDuration = null;
  Update the dungeon underneath
  the camp transition.
 */
-renderParty();
-renderStatus();
-renderActions();
+   renderParty();
+   renderStatus();
+   renderActions();
 
-/*
+   /*
  Present the camping experience
  only after the backend has
  successfully committed the rest.
 */
-setBusy(false);
+   setBusy(false);
 
-await playDungeonCampTransition();
+   await playDungeonCampTransition();
 
-/*
+   /*
  Reveal the Camp outcome after
  returning to the dungeon.
 */
-setRoomResult(
- safe
-  ? "You rest safely and recover your strength."
-  : "You rest and recover despite the danger around you.",
- "Camp Established",
- effects
-);
+   setRoomResult(
+    safe
+     ? "You rest safely and recover your strength."
+     : "You rest and recover despite the danger around you.",
+    "Camp Established",
+    effects
+   );
 
-els.roomResult?.classList.add(
- "is-camp-result"
-);
+   els.roomResult?.classList.add("is-camp-result");
 
    /*
     Floating stat feedback.
@@ -2479,6 +2395,7 @@ els.roomResult?.classList.add(
 
    STATE.room = null;
    STATE.roomHistory = null;
+   STATE.roomDescription = null;
    STATE.entranceActive = false;
 
    /*
@@ -2499,9 +2416,7 @@ els.roomResult?.classList.add(
    renderStatus();
    renderDescentTransition();
 
-   popRiskChange(
-    getRunRisk() - riskBefore
-   );
+   popRiskChange(getRunRisk() - riskBefore);
 
    await wait(4000);
 
@@ -2710,8 +2625,16 @@ els.roomResult?.classList.add(
     current.floor?.metadata_json?.target_rooms ??
     null;
    STATE.room = current.current_room || current.latest_room || null;
+
    STATE.roomHistory =
     current.current_room_history || current.latest_room_history || null;
+
+   STATE.roomDescription =
+    current.current_room_description ||
+    STATE.roomHistory?.outcome_json?.description ||
+    STATE.room?.description ||
+    null;
+
    STATE.entranceActive = shouldShowDungeonEntrance(current);
    STATE.unsecuredLoot = Array.isArray(current.unsecured_loot)
     ? current.unsecured_loot
