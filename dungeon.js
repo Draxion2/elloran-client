@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/21/26 dungeon-page-10 tidy-1");
+console.log("dungeon.js V-09/21/26 dungeon-page-11 tidy-1");
 
 (() => {
  /* =========================================================
@@ -2278,6 +2278,228 @@ function playDungeonRoomSfx(filename, roomType) {
    }, 250 + index * 175);
   });
  }
+ function formatChronicleDelta(value, label) {
+ const amount = Number(value || 0);
+
+ if (amount === 0) {
+  return null;
+ }
+
+ return `${amount > 0 ? "+" : ""}${amount} ${label}`;
+}
+
+function buildChronicleDetails(entry) {
+ const outcome = entry?.outcome_json || {};
+
+ const details = [];
+
+ /*
+  Treasure
+ */
+ if (Array.isArray(outcome.treasure) && outcome.treasure.length) {
+  const lootText = outcome.treasure
+   .map((loot) => {
+    const name = loot.name || loot.item_code || "Unknown Item";
+    const qty = Number(loot.qty || 0);
+
+    return `${name} ×${qty}`;
+   })
+   .join(", ");
+
+  details.push({
+   type: "treasure",
+   text: `Recovered ${lootText}`
+  });
+ }
+
+ /*
+  Hazard
+ */
+ if (outcome.hazard?.triggered) {
+  const effects = [];
+
+  const hp = formatChronicleDelta(outcome.hazard.hp_delta, "HP");
+  const risk = formatChronicleDelta(outcome.hazard.risk_delta, "Risk");
+
+  if (hp) effects.push(hp);
+  if (risk) effects.push(risk);
+
+  details.push({
+   type: "hazard",
+   text: effects.length
+    ? `Hazard encountered · ${effects.join(" · ")}`
+    : "Hazard encountered"
+  });
+ }
+
+ /*
+  Choice
+ */
+ if (outcome.choice) {
+  const choice = outcome.choice;
+
+  const effects = [];
+
+  const hpDelta =
+   Number(choice.player_hp_after ?? 0) -
+   Number(choice.player_hp_before ?? 0);
+
+  const riskDelta =
+   Number(choice.risk_after ?? 0) -
+   Number(choice.risk_before ?? 0);
+
+  const exhaustionDelta =
+   Number(choice.exhaustion_after ?? 0) -
+   Number(choice.exhaustion_before ?? 0);
+
+  const hp = formatChronicleDelta(hpDelta, "HP");
+  const risk = formatChronicleDelta(riskDelta, "Risk");
+  const exhaustion = formatChronicleDelta(
+   exhaustionDelta,
+   "Exhaustion"
+  );
+
+  if (hp) effects.push(hp);
+  if (risk) effects.push(risk);
+  if (exhaustion) effects.push(exhaustion);
+
+  const label = choice.label || choice.code || "Decision made";
+
+  details.push({
+   type: "choice",
+   text: effects.length
+    ? `${label} · ${effects.join(" · ")}`
+    : label
+  });
+ }
+
+ /*
+  Puzzle
+ */
+ if (outcome.puzzle_status === "solved") {
+  const attempts = Array.isArray(outcome.puzzle_attempt_history)
+   ? outcome.puzzle_attempt_history
+   : [];
+
+  const totalRiskDelta = attempts.reduce(
+   (sum, attempt) => sum + Number(attempt.risk_delta || 0),
+   0
+  );
+
+  const effects = [];
+
+  const risk = formatChronicleDelta(totalRiskDelta, "Risk");
+
+  if (risk) effects.push(risk);
+
+  const attemptCount = Number(outcome.puzzle_attempts || attempts.length || 0);
+
+  let text = "Puzzle solved";
+
+  if (attemptCount > 1) {
+   text += ` after ${attemptCount} attempts`;
+  }
+
+  if (effects.length) {
+   text += ` · ${effects.join(" · ")}`;
+  }
+
+  details.push({
+   type: "puzzle",
+   text
+  });
+ } else if (outcome.puzzle_status === "gave_up") {
+  const giveup = outcome.puzzle_giveup || {};
+
+  const effects = [];
+
+  const risk = formatChronicleDelta(giveup.risk_delta, "Risk");
+
+  const exhaustion = formatChronicleDelta(
+   giveup.exhaustion_delta,
+   "Exhaustion"
+  );
+
+  if (risk) effects.push(risk);
+  if (exhaustion) effects.push(exhaustion);
+
+  let text = "Puzzle abandoned";
+
+  if (effects.length) {
+   text += ` · ${effects.join(" · ")}`;
+  }
+
+  details.push({
+   type: "puzzle",
+   text
+  });
+ }
+
+ /*
+  Combat
+ */
+ if (outcome.combat) {
+  const enemy = outcome.combat.enemy_name || "the enemy";
+
+  if (outcome.combat.result === "victory") {
+   details.push({
+    type: "combat",
+    text: `Defeated ${enemy}`
+   });
+  } else if (outcome.combat.result === "fled") {
+   details.push({
+    type: "combat",
+    text: `Fled from ${enemy}`
+   });
+  }
+ }
+
+ /*
+  Camp
+ */
+ if (outcome.camp?.used) {
+  const camp = outcome.camp;
+
+  const effects = [];
+
+  const supplies = formatChronicleDelta(
+   camp.supplies_delta,
+   "Supplies"
+  );
+
+  const playerHp = formatChronicleDelta(
+   camp.player_hp_delta,
+   "HP"
+  );
+
+  const dragonHp = formatChronicleDelta(
+   camp.dragon_hp_delta,
+   "Dragon HP"
+  );
+
+  const exhaustion = formatChronicleDelta(
+   camp.exhaustion_delta,
+   "Exhaustion"
+  );
+
+  const risk = formatChronicleDelta(camp.risk_delta, "Risk");
+
+  if (supplies) effects.push(supplies);
+  if (playerHp) effects.push(playerHp);
+  if (dragonHp) effects.push(dragonHp);
+  if (exhaustion) effects.push(exhaustion);
+  if (risk) effects.push(risk);
+
+  details.push({
+   type: "camp",
+   text: effects.length
+    ? `Made camp · ${effects.join(" · ")}`
+    : "Made camp"
+  });
+ }
+
+ return details;
+}
  /* =========================================================
    EXPEDITION SUMMARY
 ========================================================= */
@@ -2350,47 +2572,83 @@ function playDungeonRoomSfx(filename, roomType) {
   }
 
   /*
-   Chronicle
+ Chronicle
 
-   For this first pass we only
-   prove that the backend history
-   reaches the page correctly.
- */
-  if (els.summaryChronicle) {
-   els.summaryChronicle.innerHTML = "";
+ Each room remains one Chronicle
+ entry, with the meaningful events
+ from that room listed beneath it.
+*/
+if (els.summaryChronicle) {
+ els.summaryChronicle.innerHTML = "";
 
-   const chronicle = Array.isArray(result.chronicle) ? result.chronicle : [];
+ const chronicle = Array.isArray(result.chronicle) ? result.chronicle : [];
 
-   chronicle.forEach((entry) => {
-    const row = document.createElement("div");
+ chronicle.forEach((entry) => {
+  const row = document.createElement("div");
 
-    row.className = "dungeon-summary-chronicle-entry";
+  row.className = "dungeon-summary-chronicle-entry";
 
-    const location = document.createElement("span");
+  /*
+   Room location.
+  */
+  const location = document.createElement("span");
 
-    location.textContent = `Floor ${Number(entry.depth || 1)} · Room ${Number(
-     entry.room_number || 0
-    )}`;
+  location.className = "dungeon-summary-chronicle-location";
 
-    const name = document.createElement("strong");
+  location.textContent = `Floor ${Number(entry.depth || 1)} · Room ${Number(
+   entry.room_number || 0
+  )}`;
 
-    name.textContent = entry.room_name || "Unknown Chamber";
+  /*
+   Room name.
+  */
+  const name = document.createElement("strong");
 
-    row.append(location, name);
+  name.className = "dungeon-summary-chronicle-name";
 
-    els.summaryChronicle.appendChild(row);
+  name.textContent = entry.room_name || "Unknown Chamber";
+
+  row.append(location, name);
+
+  /*
+   Meaningful events that occurred
+   during this room.
+  */
+  const details = buildChronicleDetails(entry);
+
+  if (details.length) {
+   const detailWrap = document.createElement("div");
+
+   detailWrap.className = "dungeon-summary-chronicle-details";
+
+   details.forEach((detail) => {
+    const line = document.createElement("span");
+
+    line.className =
+     "dungeon-summary-chronicle-detail " +
+     `is-${detail.type}`;
+
+    line.textContent = detail.text;
+
+    detailWrap.appendChild(line);
    });
 
-   if (!chronicle.length) {
-    const empty = document.createElement("p");
-
-    empty.className = "dungeon-summary-empty";
-
-    empty.textContent = "No expedition history was recorded.";
-
-    els.summaryChronicle.appendChild(empty);
-   }
+   row.appendChild(detailWrap);
   }
+
+  els.summaryChronicle.appendChild(row);
+ });
+
+ if (!chronicle.length) {
+  const empty = document.createElement("p");
+
+  empty.className = "dungeon-summary-empty";
+
+  empty.textContent = "No expedition history was recorded.";
+
+  els.summaryChronicle.appendChild(empty);
+ }
+}
 
   els.summary.hidden = false;
 
