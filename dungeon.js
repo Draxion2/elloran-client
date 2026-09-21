@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/20/26 dungeon-page-9 tidy-1");
+console.log("dungeon.js V-09/21/26 dungeon-page-10 tidy-1");
 
 (() => {
  /* =========================================================
@@ -19,6 +19,7 @@ console.log("dungeon.js V-09/20/26 dungeon-page-9 tidy-1");
  let dungeonDescentSfx = null;
  let dungeonCampSfx = null;
  let dungeonExpeditionEndSfx = null;
+ let dungeonRoomSfx = null;
  let dungeonAmbientSfx = [];
  let dungeonAmbientSfxTimer = null;
  let dungeonAudioProfile = null;
@@ -249,6 +250,54 @@ console.log("dungeon.js V-09/20/26 dungeon-page-9 tidy-1");
    console.warn("Dungeon ambient SFX could not play:", error);
   });
  }
+
+ function getDungeonRoomSfxVolume(roomType) {
+ switch (String(roomType || "").toLowerCase()) {
+  case "combat":
+  case "hazard":
+   return 0.65;
+
+  case "treasure":
+  case "puzzle":
+   return 0.4;
+
+  case "choice":
+   return 0.35;
+
+  case "quiet":
+  case "safe":
+  case "merchant":
+  default:
+   return 0.3;
+ }
+}
+
+function playDungeonRoomSfx(filename, roomType) {
+ if (!filename) {
+  return;
+ }
+
+ if (dungeonRoomSfx) {
+  dungeonRoomSfx.pause();
+  dungeonRoomSfx.currentTime = 0;
+ }
+
+ const url = getDungeonAudioUrl(filename);
+
+ if (!url) {
+  return;
+ }
+
+ dungeonRoomSfx = new Audio(url);
+
+ dungeonRoomSfx.volume = getDungeonRoomSfxVolume(roomType);
+
+ dungeonRoomSfx.preload = "auto";
+
+ dungeonRoomSfx.play().catch((error) => {
+  console.warn("Dungeon room SFX could not play:", error);
+ });
+}
 
  function playDungeonDescentSfx() {
   if (!dungeonDescentSfx) {
@@ -1787,6 +1836,10 @@ console.log("dungeon.js V-09/20/26 dungeon-page-9 tidy-1");
    renderHeader();
    renderStatus();
    renderRoom();
+   playDungeonRoomSfx(
+    result.selected_room_sfx,
+    result.selected_room?.room_type
+   );
    renderExploreOutcome(result);
    popStatChange(
     els.suppliesFloat,
