@@ -1684,7 +1684,6 @@ dungeonExtractionText: document.getElementById(
    setBusy(false);
   }
  }
-}
  /* =========================================================
      PUZZLES
   ========================================================= */
@@ -2089,6 +2088,7 @@ STATE.room = result.selected_room || null;
     setBusy(false);
   }
 }
+ }
 
  function renderExploreOutcome(result) {
   /*
