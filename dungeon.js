@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/22/26 dungeon-page-15 tidy-1");
+console.log("dungeon.js V-09/22/26 dungeon-page-16 tidy-2");
 
 (() => {
  /* =========================================================
@@ -12,14 +12,12 @@ console.log("dungeon.js V-09/22/26 dungeon-page-15 tidy-1");
  const AUDIO_BASE_URL =
   "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/";
  const DUNGEON_EXTRACTION_THEME_URL =
- "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/dungeon_defeat_background.mp3";
+  "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/dungeon_defeat_background.mp3";
 
-const dungeonExtractionTheme = new Audio(
- DUNGEON_EXTRACTION_THEME_URL
-);
+ const dungeonExtractionTheme = new Audio(DUNGEON_EXTRACTION_THEME_URL);
 
-dungeonExtractionTheme.preload = "auto";
-dungeonExtractionTheme.volume = 0.8;
+ dungeonExtractionTheme.preload = "auto";
+ dungeonExtractionTheme.volume = 0.8;
  /* =========================================================
    DUNGEON AUDIO
 ========================================================= */
@@ -261,52 +259,52 @@ dungeonExtractionTheme.volume = 0.8;
  }
 
  function getDungeonRoomSfxVolume(roomType) {
- switch (String(roomType || "").toLowerCase()) {
-  case "combat":
-  case "hazard":
-   return 0.65;
+  switch (String(roomType || "").toLowerCase()) {
+   case "combat":
+   case "hazard":
+    return 0.65;
 
-  case "treasure":
-  case "puzzle":
-   return 0.4;
+   case "treasure":
+   case "puzzle":
+    return 0.4;
 
-  case "choice":
-   return 0.35;
+   case "choice":
+    return 0.35;
 
-  case "quiet":
-  case "safe":
-  case "merchant":
-  default:
-   return 0.3;
- }
-}
-
-function playDungeonRoomSfx(filename, roomType) {
- if (!filename) {
-  return;
+   case "quiet":
+   case "safe":
+   case "merchant":
+   default:
+    return 0.3;
+  }
  }
 
- if (dungeonRoomSfx) {
-  dungeonRoomSfx.pause();
-  dungeonRoomSfx.currentTime = 0;
+ function playDungeonRoomSfx(filename, roomType) {
+  if (!filename) {
+   return;
+  }
+
+  if (dungeonRoomSfx) {
+   dungeonRoomSfx.pause();
+   dungeonRoomSfx.currentTime = 0;
+  }
+
+  const url = getDungeonAudioUrl(filename);
+
+  if (!url) {
+   return;
+  }
+
+  dungeonRoomSfx = new Audio(url);
+
+  dungeonRoomSfx.volume = getDungeonRoomSfxVolume(roomType);
+
+  dungeonRoomSfx.preload = "auto";
+
+  dungeonRoomSfx.play().catch((error) => {
+   console.warn("Dungeon room SFX could not play:", error);
+  });
  }
-
- const url = getDungeonAudioUrl(filename);
-
- if (!url) {
-  return;
- }
-
- dungeonRoomSfx = new Audio(url);
-
- dungeonRoomSfx.volume = getDungeonRoomSfxVolume(roomType);
-
- dungeonRoomSfx.preload = "auto";
-
- dungeonRoomSfx.play().catch((error) => {
-  console.warn("Dungeon room SFX could not play:", error);
- });
-}
 
  function playDungeonDescentSfx() {
   if (!dungeonDescentSfx) {
@@ -352,186 +350,105 @@ function playDungeonRoomSfx(filename, roomType) {
    await wait(4000);
    return;
   }
-
-  /*
-  Begin from a clean state.
- */
   els.campTransition.classList.remove("is-leaving");
 
   els.campTransition.setAttribute("aria-hidden", "false");
-
-  /*
-  Fade into the camping scene.
- */
   els.campTransition.classList.add("is-active");
 
   playDungeonCampSfx();
 
-  /*
-  Allow the camp scene to remain
-  visible while the player rests.
- */
   await wait(4000);
 
-  /*
-  Fade the fire and text away
-  while keeping the screen black.
- */
   els.campTransition.classList.add("is-leaving");
 
   await wait(600);
 
-  /*
-  Now reveal the dungeon through
-  the black overlay.
- */
   els.campTransition.classList.remove("is-active");
 
   await wait(800);
 
-  /*
-  Clean up only after the dungeon
-  has fully returned.
- */
   els.campTransition.classList.remove("is-leaving");
 
   els.campTransition.setAttribute("aria-hidden", "true");
  }
  function showDungeonExtraction(data) {
- const extraction = data?.dungeon?.extraction;
+  const extraction = data?.dungeon?.extraction;
 
- if (!extraction || !els.dungeonExtraction) {
-  return false;
- }
-
- const dragonName =
-  extraction.dragon_name || "Your companion";
-
- /*
-  Populate the extraction scene.
- */
- if (els.dungeonExtractionDragon) {
-  els.dungeonExtractionDragon.src =
-   extraction.dragon_img || "";
-
-  els.dungeonExtractionDragon.alt = dragonName;
- }
-
- if (els.dungeonExtractionDragonName) {
-  els.dungeonExtractionDragonName.textContent =
-   dragonName;
- }
-
- if (els.dungeonExtractionText) {
-  if (extraction.dragon_incapacitated === true) {
-   els.dungeonExtractionText.textContent =
-    "Battered and barely able to continue, " +
-    dragonName +
-    " answers the bond one final time. " +
-    "Refusing to leave you behind, your companion " +
-    "drags you from the depths as the darkness closes in.";
-  } else {
-   els.dungeonExtractionText.textContent =
-    "Your strength gives out as the darkness closes in. " +
-    "Through the fading noise of the dungeon, " +
-    dragonName +
-    " reaches you. Refusing to leave you behind, " +
-    "your companion drags you from the depths and " +
-    "back toward the surface.";
+  if (!extraction || !els.dungeonExtraction) {
+   return false;
   }
- }
 
- /*
-  The failed expedition now owns
-  the page. Nothing else should
-  remain interactive.
- */
- STATE.busy = true;
+  const dragonName = extraction.dragon_name || "Your companion";
 
- closeModal();
+  if (els.dungeonExtractionDragon) {
+   els.dungeonExtractionDragon.src = extraction.dragon_img || "";
 
- if (els.loading) {
-  els.loading.hidden = true;
- }
+   els.dungeonExtractionDragon.alt = dragonName;
+  }
 
- /*
-  Silence the normal dungeon
-  ambience before the bond theme.
- */
- stopDungeonAudio();
+  if (els.dungeonExtractionDragonName) {
+   els.dungeonExtractionDragonName.textContent = dragonName;
+  }
 
- /*
-  Reset the extraction presentation
-  in case this function is ever
-  called more than once.
- */
- els.dungeonExtraction.classList.remove(
-  "is-active",
-  "is-leaving"
- );
+  if (els.dungeonExtractionText) {
+   if (extraction.dragon_incapacitated === true) {
+    els.dungeonExtractionText.textContent =
+     "Battered and barely able to continue, " +
+     dragonName +
+     " answers the bond one final time. " +
+     "Refusing to leave you behind, your companion " +
+     "drags you from the depths as the darkness closes in.";
+   } else {
+    els.dungeonExtractionText.textContent =
+     "Your strength gives out as the darkness closes in. " +
+     "Through the fading noise of the dungeon, " +
+     dragonName +
+     " reaches you. Refusing to leave you behind, " +
+     "your companion drags you from the depths and " +
+     "back toward the surface.";
+   }
+  }
+  STATE.busy = true;
 
- els.dungeonExtraction.setAttribute(
-  "aria-hidden",
-  "true"
- );
+  closeModal();
 
- /*
-  Begin the extraction theme as
-  the dungeon disappears.
- */
- dungeonExtractionTheme.pause();
- dungeonExtractionTheme.currentTime = 0;
+  if (els.loading) {
+   els.loading.hidden = true;
+  }
+  stopDungeonAudio();
 
- dungeonExtractionTheme.play().catch((error) => {
-  console.warn(
-   "Dungeon extraction theme could not play:",
-   error
-  );
- });
+  els.dungeonExtraction.classList.remove("is-active", "is-leaving");
 
- /*
-  Brief darkness before the
-  extraction scene emerges.
- */
- setTimeout(() => {
-  els.dungeonExtraction.setAttribute(
-   "aria-hidden",
-   "false"
-  );
+  els.dungeonExtraction.setAttribute("aria-hidden", "true");
 
-  void els.dungeonExtraction.offsetWidth;
-
-  els.dungeonExtraction.classList.add(
-   "is-active"
-  );
- }, 1700);
-
- /*
-  Fade the entire scene back into
-  darkness near the end.
- */
- setTimeout(() => {
-  els.dungeonExtraction.classList.add(
-   "is-leaving"
-  );
- }, 16500);
-
- /*
-  The theme was authored around
-  this same 18-second sequence.
- */
- setTimeout(() => {
   dungeonExtractionTheme.pause();
   dungeonExtractionTheme.currentTime = 0;
 
-  window.location.href =
-   data?.dungeon?.return_to === "player_hub"
-    ? HUB_URL
-    : HUB_URL;
- }, 18000);
+  dungeonExtractionTheme.play().catch((error) => {
+   console.warn("Dungeon extraction theme could not play:", error);
+  });
+  setTimeout(() => {
+   els.dungeonExtraction.setAttribute("aria-hidden", "false");
 
- return true;
-}
+   void els.dungeonExtraction.offsetWidth;
+
+   els.dungeonExtraction.classList.add("is-active");
+  }, 1700);
+
+  setTimeout(() => {
+   els.dungeonExtraction.classList.add("is-leaving");
+  }, 16500);
+
+  setTimeout(() => {
+   dungeonExtractionTheme.pause();
+   dungeonExtractionTheme.currentTime = 0;
+
+   window.location.href =
+    data?.dungeon?.return_to === "player_hub" ? HUB_URL : HUB_URL;
+  }, 18000);
+
+  return true;
+ }
  /* =========================================================
      STATE
   ========================================================= */
@@ -547,6 +464,7 @@ function playDungeonRoomSfx(filename, roomType) {
   unsecuredLoot: [],
   targetRooms: null,
   lastResult: null,
+  pendingCombat: null,
   entranceActive: false,
   descendingActive: false,
   descendingToFloor: null,
@@ -670,22 +588,18 @@ function playDungeonRoomSfx(filename, roomType) {
 
   summaryReturnBtn: document.getElementById("dungeon-summary-return-btn"),
 
-/* Emergency Extraction */
-dungeonExtraction: document.getElementById(
- "doeDungeonExtraction"
-),
+  /* Emergency Extraction */
+  dungeonExtraction: document.getElementById("doeDungeonExtraction"),
 
-dungeonExtractionDragon: document.getElementById(
- "doeDungeonExtractionDragon"
-),
+  dungeonExtractionDragon: document.getElementById(
+   "doeDungeonExtractionDragon"
+  ),
 
-dungeonExtractionDragonName: document.getElementById(
- "doeDungeonExtractionDragonName"
-),
+  dungeonExtractionDragonName: document.getElementById(
+   "doeDungeonExtractionDragonName"
+  ),
 
-dungeonExtractionText: document.getElementById(
- "doeDungeonExtractionText"
-)
+  dungeonExtractionText: document.getElementById("doeDungeonExtractionText")
  };
  /* =========================================================
      API
@@ -795,11 +709,6 @@ dungeonExtractionText: document.getElementById(
 
   element.classList.add(amount > 0 ? "is-positive" : "is-negative");
 
-  /*
-   Force the animation to restart
-   even if the same stat changes
-   repeatedly.
- */
   void element.offsetWidth;
 
   element.classList.add("show");
@@ -1125,10 +1034,6 @@ dungeonExtractionText: document.getElementById(
    return;
   }
   els.riskIndicator.innerHTML = "";
-  /*
-     Ten markers are only a visual scale.
-     Risk itself may exceed 10.
-   */
   const markerCount = 10;
   for (let i = 1; i <= markerCount; i++) {
    const marker = document.createElement("span");
@@ -1419,9 +1324,7 @@ dungeonExtractionText: document.getElementById(
   setText(els.roomName, room.name || "Unknown Chamber");
   setText(
    els.roomDescription,
-   STATE.roomDescription ||
-    STATE.roomHistory?.outcome_json?.description ||
-    ""
+   STATE.roomDescription || STATE.roomHistory?.outcome_json?.description || ""
   );
   renderRoomImage(room);
   applyRoomClass(room.room_type);
@@ -1455,10 +1358,20 @@ dungeonExtractionText: document.getElementById(
  function renderActions() {
   hideAllActionGroups();
   const room = STATE.room;
-  /*
-     No room yet:
-     begin exploring.
-   */
+  if (STATE.pendingCombat) {
+   if (els.defaultActions) {
+    els.defaultActions.hidden = false;
+   }
+
+   if (els.continueBtn) {
+    els.continueBtn.hidden = false;
+    els.continueBtn.disabled = STATE.busy;
+   }
+
+   setText(els.continueBtn, "Engage");
+
+   return;
+  }
   if (!room) {
    if (els.defaultActions) {
     els.defaultActions.hidden = false;
@@ -1514,14 +1427,6 @@ dungeonExtractionText: document.getElementById(
    }
    return;
   }
-  /*
-     Camp available.
-
-     IMPORTANT:
-     Camping is allowed in ANY room.
-     Safe rooms simply avoid the
-     unsafe-camp Risk penalty.
-   */
   if (getFloor().camp_used !== true) {
    if (els.safeActions) {
     els.safeActions.hidden = false;
@@ -1531,9 +1436,6 @@ dungeonExtractionText: document.getElementById(
    setText(els.safeContinueBtn, "Continue Exploring");
    return;
   }
-  /*
-     Standard resolved room.
-   */
   if (els.defaultActions) {
    els.defaultActions.hidden = false;
   }
@@ -1603,10 +1505,6 @@ dungeonExtractionText: document.getElementById(
     player_hp_after: result.state?.player_hp_after
    };
 
-   /*
-    Update live dungeon state from
-    the choice response.
-  */
    if (result.state?.risk_after != null) {
     setRunRisk(result.state.risk_after);
    }
@@ -1619,50 +1517,19 @@ dungeonExtractionText: document.getElementById(
     STATE.player.hp_current = result.state.player_hp_after;
    }
 
-   /*
- A dungeon choice reduced the
- player to 0 HP.
+   if (result.dungeon?.failed === true) {
+    STATE.lastResult = result;
 
- The backend has already:
- - marked the run failed
- - recorded failed_at
- - deleted unsecured loot
- - returned extraction data
+    STATE.unsecuredLoot = [];
 
- From this point forward, the
- extraction scene owns the page.
-*/
-if (result.dungeon?.failed === true) {
-  STATE.lastResult = result;
+    renderParty();
+    renderRunLoot();
 
-  /*
-   The backend has destroyed all
-   unsecured dungeon loot.
-  */
-  STATE.unsecuredLoot = [];
+    showDungeonExtraction(result);
 
-  /*
-   Commit the final player state
-   underneath the extraction.
-  */
-  renderParty();
-  renderRunLoot();
+    return;
+   }
 
-  /*
-   Do NOT render the normal choice
-   result, actions, or stat popups.
-
-   The Bond Endures takes over.
-  */
-  showDungeonExtraction(result);
-
-  return;
-}
-
-   /*
-    Build a readable result from
-    the applied effects.
-  */
    const parts = [];
 
    const hpDelta = Number(result.effects?.player_hp_delta || 0);
@@ -1719,12 +1586,12 @@ if (result.dungeon?.failed === true) {
      Number(result.state?.risk_before ?? 0)
    );
   } catch (error) {
-  showError(error);
-} finally {
-  if (STATE.lastResult?.dungeon?.failed !== true) {
+   showError(error);
+  } finally {
+   if (STATE.lastResult?.dungeon?.failed !== true) {
     setBusy(false);
+   }
   }
-}
  }
  /* =========================================================
      PUZZLES
@@ -1921,12 +1788,6 @@ if (result.dungeon?.failed === true) {
 
   applyRoomClass(null);
 
-  /*
-  Reuse the existing descent
-  progress element, but give it
-  the randomized room-travel
-  duration instead.
- */
   if (els.descentProgress) {
    els.descentProgress.hidden = false;
 
@@ -1957,21 +1818,11 @@ if (result.dungeon?.failed === true) {
   };
   try {
    setBusy(true, "Exploring the darkness...");
-   /*
- Pick a different traversal time
- for every room.
-
- 2000–4000 milliseconds.
-*/
    const travelDuration = randomBetween(800, 1500);
 
    STATE.roomTravelActive = true;
    STATE.roomTravelDuration = travelDuration;
 
-   /*
- Begin the visual journey before
- waiting for the backend.
-*/
    renderRoomTravelTransition();
 
    const travelStartedAt = Date.now();
@@ -1980,78 +1831,33 @@ if (result.dungeon?.failed === true) {
     method: "POST"
    });
 
-   /*
- The API request happened during
- the traversal.
-
- Only wait for whatever portion
- of the randomized travel time
- remains.
-*/
    const elapsed = Date.now() - travelStartedAt;
 
    const remaining = Math.max(0, travelDuration - elapsed);
 
    if (remaining > 0) {
-  await wait(remaining);
-}
+    await wait(remaining);
+   }
+   if (result.dungeon?.failed === true) {
+    STATE.entranceActive = false;
+    STATE.lastResult = result;
 
-/*
- A dungeon hazard reduced the
- player to 0 HP.
+    if (STATE.player && result.hazard_result?.hp_after != null) {
+     STATE.player.hp_current = result.hazard_result.hp_after;
+    }
 
- The backend has already:
- - marked the run failed
- - recorded failed_at
- - deleted unsecured loot
- - returned extraction data
+    STATE.unsecuredLoot = [];
+    renderParty();
+    renderRunLoot();
 
- From this point forward, the
- extraction scene owns the page.
-*/
-if (result.dungeon?.failed === true) {
-  STATE.entranceActive = false;
-  STATE.lastResult = result;
+    showDungeonExtraction(result);
 
-  /*
-   Use the hazard result as the
-   authoritative final HP state.
-  */
-  if (
-    STATE.player &&
-    result.hazard_result?.hp_after != null
-  ) {
-    STATE.player.hp_current =
-      result.hazard_result.hp_after;
-  }
+    return;
+   }
 
-  /*
-   The backend has destroyed all
-   unsecured dungeon loot.
-  */
-  STATE.unsecuredLoot = [];
-
-  /*
-   Briefly commit the final player
-   state underneath the extraction.
-  */
-  renderParty();
-  renderRunLoot();
-
-  /*
-   Do NOT render the room outcome,
-   actions, stat popups, or combat.
-
-   The Bond Endures takes over.
-  */
-  showDungeonExtraction(result);
-
-  return;
-}
-
-STATE.entranceActive = false;
-STATE.lastResult = result;
-STATE.room = result.selected_room || null;
+   STATE.entranceActive = false;
+   STATE.lastResult = result;
+   STATE.room = result.selected_room || null;
 
    STATE.roomDescription = result.selected_description || null;
    STATE.roomHistory = {
@@ -2064,10 +1870,6 @@ STATE.room = result.selected_room || null;
      description_variant_index: result.description_variant_index ?? null
     }
    };
-   /*
-      Update canonical run values
-      from Explore response.
-    */
    if (STATE.current) {
     STATE.current.current_depth = result.current_depth;
     STATE.current.rooms_explored = result.rooms_explored;
@@ -2076,12 +1878,6 @@ STATE.room = result.selected_room || null;
     STATE.current.floor = STATE.current.floor || {};
     STATE.current.floor.rooms_explored = result.floor_rooms_explored;
    }
-   /*
-   Explore now returns the
-   authoritative dungeon Risk
-   after resolving the room's
-   authored risk_delta.
- */
    if (result.risk != null) {
     setRunRisk(result.risk);
    }
@@ -2120,16 +1916,19 @@ STATE.room = result.selected_room || null;
       Combat handoff.
     */
    if (result.trigger?.type === "combat") {
-    await beginDungeonCombat(result.trigger);
+    STATE.pendingCombat = result.trigger;
+
+    renderActions();
+
     return;
    }
   } catch (error) {
    showError(error);
   } finally {
-  if (STATE.lastResult?.dungeon?.failed !== true) {
+   if (STATE.lastResult?.dungeon?.failed !== true) {
     setBusy(false);
+   }
   }
-}
  }
 
  function renderExploreOutcome(result) {
@@ -2256,12 +2055,6 @@ STATE.room = result.selected_room || null;
    const result = await apiFetch("/players/me/dungeons/camp", {
     method: "POST"
    });
-
-   /*
-    Camp returns nested state
-    objects. Use those values as
-    the authoritative result.
-  */
    if (result.risk?.after != null) {
     setRunRisk(result.risk.after);
    }
@@ -2278,16 +2071,8 @@ STATE.room = result.selected_room || null;
     STATE.current.floor.camp_used = true;
    }
 
-   /*
-    Refresh player and dragon
-    vitals from server truth.
-  */
    await refreshVitals();
 
-   /*
-    Calculate every visible change
-    directly from the Camp response.
-  */
    const changes = {
     supplies:
      Number(result.supplies?.after ?? 0) - Number(result.supplies?.before ?? 0),
@@ -2338,27 +2123,14 @@ STATE.room = result.selected_room || null;
     effects.push(`${changes.risk > 0 ? "+" : ""}${changes.risk} Risk`);
    }
 
-   /*
- Update the dungeon underneath
- the camp transition.
-*/
    renderParty();
    renderStatus();
    renderActions();
 
-   /*
- Present the camping experience
- only after the backend has
- successfully committed the rest.
-*/
    setBusy(false);
 
    await playDungeonCampTransition();
 
-   /*
- Reveal the Camp outcome after
- returning to the dungeon.
-*/
    setRoomResult(
     safe
      ? "You rest safely and recover your strength."
@@ -2421,10 +2193,6 @@ STATE.room = result.selected_room || null;
   if (els.page) {
    els.page.classList.remove("is-descending");
 
-   /*
-   Force the animation to restart
-   for every floor transition.
- */
    void els.page.offsetWidth;
 
    els.page.classList.add("is-descending");
@@ -2443,12 +2211,6 @@ STATE.room = result.selected_room || null;
   if (!card) {
    return;
   }
-
-  /*
-   Build the reveal sequence in
-   the exact order we want the
-   player to experience it.
- */
   const sequence = [];
 
   const add = (element) => {
@@ -2467,10 +2229,6 @@ STATE.room = result.selected_room || null;
 
   add(card.querySelector(".dungeon-summary-divider"));
 
-  /*
-   Main expedition statistics.
-   Each statistic appears separately.
- */
   card
    .querySelectorAll(".dungeon-summary-overview .dungeon-summary-stat")
    .forEach(add);
@@ -2512,10 +2270,6 @@ STATE.room = result.selected_room || null;
    chronicleEntries.forEach(add);
   }
 
-  /*
-   Return button is deliberately
-   the final reveal.
- */
   add(els.summaryReturnBtn);
 
   /*
@@ -2537,227 +2291,206 @@ STATE.room = result.selected_room || null;
   });
  }
  function formatChronicleDelta(value, label) {
- const amount = Number(value || 0);
+  const amount = Number(value || 0);
 
- if (amount === 0) {
-  return null;
+  if (amount === 0) {
+   return null;
+  }
+
+  return `${amount > 0 ? "+" : ""}${amount} ${label}`;
  }
 
- return `${amount > 0 ? "+" : ""}${amount} ${label}`;
-}
+ function buildChronicleDetails(entry) {
+  const outcome = entry?.outcome_json || {};
 
-function buildChronicleDetails(entry) {
- const outcome = entry?.outcome_json || {};
+  const details = [];
 
- const details = [];
-
- /*
+  /*
   Treasure
  */
- if (Array.isArray(outcome.treasure) && outcome.treasure.length) {
-  const lootText = outcome.treasure
-   .map((loot) => {
-    const name = loot.name || loot.item_code || "Unknown Item";
-    const qty = Number(loot.qty || 0);
+  if (Array.isArray(outcome.treasure) && outcome.treasure.length) {
+   const lootText = outcome.treasure
+    .map((loot) => {
+     const name = loot.name || loot.item_code || "Unknown Item";
+     const qty = Number(loot.qty || 0);
 
-    return `${name} ×${qty}`;
-   })
-   .join(", ");
+     return `${name} ×${qty}`;
+    })
+    .join(", ");
 
-  details.push({
-   type: "treasure",
-   text: `Recovered ${lootText}`
-  });
- }
+   details.push({
+    type: "treasure",
+    text: `Recovered ${lootText}`
+   });
+  }
 
- /*
+  /*
   Hazard
  */
- if (outcome.hazard?.triggered) {
-  const effects = [];
+  if (outcome.hazard?.triggered) {
+   const effects = [];
 
-  const hp = formatChronicleDelta(outcome.hazard.hp_delta, "HP");
-  const risk = formatChronicleDelta(outcome.hazard.risk_delta, "Risk");
+   const hp = formatChronicleDelta(outcome.hazard.hp_delta, "HP");
+   const risk = formatChronicleDelta(outcome.hazard.risk_delta, "Risk");
 
-  if (hp) effects.push(hp);
-  if (risk) effects.push(risk);
+   if (hp) effects.push(hp);
+   if (risk) effects.push(risk);
 
-  details.push({
-   type: "hazard",
-   text: effects.length
-    ? `Hazard encountered · ${effects.join(" · ")}`
-    : "Hazard encountered"
-  });
- }
+   details.push({
+    type: "hazard",
+    text: effects.length
+     ? `Hazard encountered · ${effects.join(" · ")}`
+     : "Hazard encountered"
+   });
+  }
 
- /*
+  /*
   Choice
  */
- if (outcome.choice) {
-  const choice = outcome.choice;
+  if (outcome.choice) {
+   const choice = outcome.choice;
 
-  const effects = [];
+   const effects = [];
 
-  const hpDelta =
-   Number(choice.player_hp_after ?? 0) -
-   Number(choice.player_hp_before ?? 0);
+   const hpDelta =
+    Number(choice.player_hp_after ?? 0) - Number(choice.player_hp_before ?? 0);
 
-  const riskDelta =
-   Number(choice.risk_after ?? 0) -
-   Number(choice.risk_before ?? 0);
+   const riskDelta =
+    Number(choice.risk_after ?? 0) - Number(choice.risk_before ?? 0);
 
-  const exhaustionDelta =
-   Number(choice.exhaustion_after ?? 0) -
-   Number(choice.exhaustion_before ?? 0);
+   const exhaustionDelta =
+    Number(choice.exhaustion_after ?? 0) -
+    Number(choice.exhaustion_before ?? 0);
 
-  const hp = formatChronicleDelta(hpDelta, "HP");
-  const risk = formatChronicleDelta(riskDelta, "Risk");
-  const exhaustion = formatChronicleDelta(
-   exhaustionDelta,
-   "Exhaustion"
-  );
+   const hp = formatChronicleDelta(hpDelta, "HP");
+   const risk = formatChronicleDelta(riskDelta, "Risk");
+   const exhaustion = formatChronicleDelta(exhaustionDelta, "Exhaustion");
 
-  if (hp) effects.push(hp);
-  if (risk) effects.push(risk);
-  if (exhaustion) effects.push(exhaustion);
+   if (hp) effects.push(hp);
+   if (risk) effects.push(risk);
+   if (exhaustion) effects.push(exhaustion);
 
-  const label = choice.label || choice.code || "Decision made";
+   const label = choice.label || choice.code || "Decision made";
 
-  details.push({
-   type: "choice",
-   text: effects.length
-    ? `${label} · ${effects.join(" · ")}`
-    : label
-  });
- }
+   details.push({
+    type: "choice",
+    text: effects.length ? `${label} · ${effects.join(" · ")}` : label
+   });
+  }
 
- /*
+  /*
   Puzzle
  */
- if (outcome.puzzle_status === "solved") {
-  const attempts = Array.isArray(outcome.puzzle_attempt_history)
-   ? outcome.puzzle_attempt_history
-   : [];
+  if (outcome.puzzle_status === "solved") {
+   const attempts = Array.isArray(outcome.puzzle_attempt_history)
+    ? outcome.puzzle_attempt_history
+    : [];
 
-  const totalRiskDelta = attempts.reduce(
-   (sum, attempt) => sum + Number(attempt.risk_delta || 0),
-   0
-  );
+   const totalRiskDelta = attempts.reduce(
+    (sum, attempt) => sum + Number(attempt.risk_delta || 0),
+    0
+   );
 
-  const effects = [];
+   const effects = [];
 
-  const risk = formatChronicleDelta(totalRiskDelta, "Risk");
+   const risk = formatChronicleDelta(totalRiskDelta, "Risk");
 
-  if (risk) effects.push(risk);
+   if (risk) effects.push(risk);
 
-  const attemptCount = Number(outcome.puzzle_attempts || attempts.length || 0);
+   const attemptCount = Number(outcome.puzzle_attempts || attempts.length || 0);
 
-  let text = "Puzzle solved";
+   let text = "Puzzle solved";
 
-  if (attemptCount > 1) {
-   text += ` after ${attemptCount} attempts`;
+   if (attemptCount > 1) {
+    text += ` after ${attemptCount} attempts`;
+   }
+
+   if (effects.length) {
+    text += ` · ${effects.join(" · ")}`;
+   }
+
+   details.push({
+    type: "puzzle",
+    text
+   });
+  } else if (outcome.puzzle_status === "gave_up") {
+   const giveup = outcome.puzzle_giveup || {};
+
+   const effects = [];
+
+   const risk = formatChronicleDelta(giveup.risk_delta, "Risk");
+
+   const exhaustion = formatChronicleDelta(
+    giveup.exhaustion_delta,
+    "Exhaustion"
+   );
+
+   if (risk) effects.push(risk);
+   if (exhaustion) effects.push(exhaustion);
+
+   let text = "Puzzle abandoned";
+
+   if (effects.length) {
+    text += ` · ${effects.join(" · ")}`;
+   }
+
+   details.push({
+    type: "puzzle",
+    text
+   });
   }
 
-  if (effects.length) {
-   text += ` · ${effects.join(" · ")}`;
-  }
-
-  details.push({
-   type: "puzzle",
-   text
-  });
- } else if (outcome.puzzle_status === "gave_up") {
-  const giveup = outcome.puzzle_giveup || {};
-
-  const effects = [];
-
-  const risk = formatChronicleDelta(giveup.risk_delta, "Risk");
-
-  const exhaustion = formatChronicleDelta(
-   giveup.exhaustion_delta,
-   "Exhaustion"
-  );
-
-  if (risk) effects.push(risk);
-  if (exhaustion) effects.push(exhaustion);
-
-  let text = "Puzzle abandoned";
-
-  if (effects.length) {
-   text += ` · ${effects.join(" · ")}`;
-  }
-
-  details.push({
-   type: "puzzle",
-   text
-  });
- }
-
- /*
+  /*
   Combat
  */
- if (outcome.combat) {
-  const enemy = outcome.combat.enemy_name || "the enemy";
+  if (outcome.combat) {
+   const enemy = outcome.combat.enemy_name || "the enemy";
 
-  if (outcome.combat.result === "victory") {
-   details.push({
-    type: "combat",
-    text: `Defeated ${enemy}`
-   });
-  } else if (outcome.combat.result === "fled") {
-   details.push({
-    type: "combat",
-    text: `Fled from ${enemy}`
-   });
+   if (outcome.combat.result === "victory") {
+    details.push({
+     type: "combat",
+     text: `Defeated ${enemy}`
+    });
+   } else if (outcome.combat.result === "fled") {
+    details.push({
+     type: "combat",
+     text: `Fled from ${enemy}`
+    });
+   }
   }
- }
 
- /*
+  /*
   Camp
  */
- if (outcome.camp?.used) {
-  const camp = outcome.camp;
+  if (outcome.camp?.used) {
+   const camp = outcome.camp;
 
-  const effects = [];
+   const effects = [];
 
-  const supplies = formatChronicleDelta(
-   camp.supplies_delta,
-   "Supplies"
-  );
+   const supplies = formatChronicleDelta(camp.supplies_delta, "Supplies");
 
-  const playerHp = formatChronicleDelta(
-   camp.player_hp_delta,
-   "HP"
-  );
+   const playerHp = formatChronicleDelta(camp.player_hp_delta, "HP");
 
-  const dragonHp = formatChronicleDelta(
-   camp.dragon_hp_delta,
-   "Dragon HP"
-  );
+   const dragonHp = formatChronicleDelta(camp.dragon_hp_delta, "Dragon HP");
 
-  const exhaustion = formatChronicleDelta(
-   camp.exhaustion_delta,
-   "Exhaustion"
-  );
+   const exhaustion = formatChronicleDelta(camp.exhaustion_delta, "Exhaustion");
 
-  const risk = formatChronicleDelta(camp.risk_delta, "Risk");
+   const risk = formatChronicleDelta(camp.risk_delta, "Risk");
 
-  if (supplies) effects.push(supplies);
-  if (playerHp) effects.push(playerHp);
-  if (dragonHp) effects.push(dragonHp);
-  if (exhaustion) effects.push(exhaustion);
-  if (risk) effects.push(risk);
+   if (supplies) effects.push(supplies);
+   if (playerHp) effects.push(playerHp);
+   if (dragonHp) effects.push(dragonHp);
+   if (exhaustion) effects.push(exhaustion);
+   if (risk) effects.push(risk);
 
-  details.push({
-   type: "camp",
-   text: effects.length
-    ? `Made camp · ${effects.join(" · ")}`
-    : "Made camp"
-  });
+   details.push({
+    type: "camp",
+    text: effects.length ? `Made camp · ${effects.join(" · ")}` : "Made camp"
+   });
+  }
+
+  return details;
  }
-
- return details;
-}
  /* =========================================================
    EXPEDITION SUMMARY
 ========================================================= */
@@ -2829,84 +2562,72 @@ function buildChronicleDetails(entry) {
    }
   }
 
-  /*
- Chronicle
+  if (els.summaryChronicle) {
+   els.summaryChronicle.innerHTML = "";
 
- Each room remains one Chronicle
- entry, with the meaningful events
- from that room listed beneath it.
-*/
-if (els.summaryChronicle) {
- els.summaryChronicle.innerHTML = "";
+   const chronicle = Array.isArray(result.chronicle) ? result.chronicle : [];
 
- const chronicle = Array.isArray(result.chronicle) ? result.chronicle : [];
+   chronicle.forEach((entry) => {
+    const row = document.createElement("div");
 
- chronicle.forEach((entry) => {
-  const row = document.createElement("div");
+    row.className = "dungeon-summary-chronicle-entry";
 
-  row.className = "dungeon-summary-chronicle-entry";
-
-  /*
+    /*
    Room location.
   */
-  const location = document.createElement("span");
+    const location = document.createElement("span");
 
-  location.className = "dungeon-summary-chronicle-location";
+    location.className = "dungeon-summary-chronicle-location";
 
-  location.textContent = `Floor ${Number(entry.depth || 1)} · Room ${Number(
-   entry.room_number || 0
-  )}`;
+    location.textContent = `Floor ${Number(entry.depth || 1)} · Room ${Number(
+     entry.room_number || 0
+    )}`;
 
-  /*
+    /*
    Room name.
   */
-  const name = document.createElement("strong");
+    const name = document.createElement("strong");
 
-  name.className = "dungeon-summary-chronicle-name";
+    name.className = "dungeon-summary-chronicle-name";
 
-  name.textContent = entry.room_name || "Unknown Chamber";
+    name.textContent = entry.room_name || "Unknown Chamber";
 
-  row.append(location, name);
+    row.append(location, name);
 
-  /*
-   Meaningful events that occurred
-   during this room.
-  */
-  const details = buildChronicleDetails(entry);
+    const details = buildChronicleDetails(entry);
 
-  if (details.length) {
-   const detailWrap = document.createElement("div");
+    if (details.length) {
+     const detailWrap = document.createElement("div");
 
-   detailWrap.className = "dungeon-summary-chronicle-details";
+     detailWrap.className = "dungeon-summary-chronicle-details";
 
-   details.forEach((detail) => {
-    const line = document.createElement("span");
+     details.forEach((detail) => {
+      const line = document.createElement("span");
 
-    line.className =
-     "dungeon-summary-chronicle-detail " +
-     `is-${detail.type}`;
+      line.className =
+       "dungeon-summary-chronicle-detail " + `is-${detail.type}`;
 
-    line.textContent = detail.text;
+      line.textContent = detail.text;
 
-    detailWrap.appendChild(line);
+      detailWrap.appendChild(line);
+     });
+
+     row.appendChild(detailWrap);
+    }
+
+    els.summaryChronicle.appendChild(row);
    });
 
-   row.appendChild(detailWrap);
+   if (!chronicle.length) {
+    const empty = document.createElement("p");
+
+    empty.className = "dungeon-summary-empty";
+
+    empty.textContent = "No expedition history was recorded.";
+
+    els.summaryChronicle.appendChild(empty);
+   }
   }
-
-  els.summaryChronicle.appendChild(row);
- });
-
- if (!chronicle.length) {
-  const empty = document.createElement("p");
-
-  empty.className = "dungeon-summary-empty";
-
-  empty.textContent = "No expedition history was recorded.";
-
-  els.summaryChronicle.appendChild(empty);
- }
-}
 
   els.summary.hidden = false;
 
@@ -2940,10 +2661,6 @@ if (els.summaryChronicle) {
     method: "POST"
    });
 
-   /*
-    The descent is now committed
-    on the backend.
-  */
    STATE.current.current_depth = result.current_depth;
 
    STATE.current.risk = result.risk;
@@ -2964,18 +2681,9 @@ if (els.summaryChronicle) {
    STATE.roomDescription = null;
    STATE.entranceActive = false;
 
-   /*
-    Begin the frontend descent
-    experience.
-  */
    STATE.descendingActive = true;
    STATE.descendingToFloor = result.current_depth;
 
-   /*
-    The normal loading overlay has
-    served its purpose. The center
-    panel now owns the transition.
-  */
    setBusy(false);
 
    renderHeader();
@@ -3037,12 +2745,6 @@ if (els.summaryChronicle) {
     method: "POST"
    });
 
-   /*
-    The run is now completed and
-    the loot has been secured.
-
-    Do NOT redirect yet.
-  */
    STATE.unsecuredLoot = [];
 
    setBusy(false);
@@ -3163,10 +2865,6 @@ if (els.summaryChronicle) {
      inventory: []
     }))
    ]);
-   /*
-      Player should only be on this
-      page during an active run.
-    */
    if (current?.has_active_run !== true) {
     window.location.href = HUB_URL;
     return;
@@ -3178,14 +2876,7 @@ if (els.summaryChronicle) {
     ? inventoryPayload.inventory
     : [];
    configureDungeonAudio(STATE.current?.audio_profile);
-   /*
-      These fields are supported
-      immediately if we add them
-      to GET /dungeons/current.
 
-      Current backend does not yet
-      provide all of them.
-    */
    STATE.targetRooms =
     current.floor?.target_rooms ??
     current.floor?.metadata_json?.target_rooms ??
@@ -3236,7 +2927,18 @@ if (els.summaryChronicle) {
   ========================================================= */
  function bindEvents() {
   if (els.continueBtn) {
-   els.continueBtn.addEventListener("click", exploreDungeon);
+   els.continueBtn.addEventListener("click", async () => {
+    if (STATE.pendingCombat) {
+     const trigger = STATE.pendingCombat;
+
+     STATE.pendingCombat = null;
+
+     await beginDungeonCombat(trigger);
+
+     return;
+    }
+    await exploreDungeon();
+   });
   }
   if (els.safeContinueBtn) {
    els.safeContinueBtn.addEventListener("click", exploreDungeon);
