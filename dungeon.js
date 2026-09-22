@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/22/26 dungeon-page-12 tidy-1");
+console.log("dungeon.js V-09/22/26 dungeon-page-13 tidy-1");
 
 (() => {
  /* =========================================================
@@ -1951,12 +1951,65 @@ dungeonExtractionText: document.getElementById(
    const remaining = Math.max(0, travelDuration - elapsed);
 
    if (remaining > 0) {
-    await wait(remaining);
-   }
+  await wait(remaining);
+}
 
-   STATE.entranceActive = false;
-   STATE.lastResult = result;
-   STATE.room = result.selected_room || null;
+/*
+ A dungeon hazard reduced the
+ player to 0 HP.
+
+ The backend has already:
+ - marked the run failed
+ - recorded failed_at
+ - deleted unsecured loot
+ - returned extraction data
+
+ From this point forward, the
+ extraction scene owns the page.
+*/
+if (result.dungeon?.failed === true) {
+  STATE.entranceActive = false;
+  STATE.lastResult = result;
+
+  /*
+   Use the hazard result as the
+   authoritative final HP state.
+  */
+  if (
+    STATE.player &&
+    result.hazard_result?.hp_after != null
+  ) {
+    STATE.player.hp_current =
+      result.hazard_result.hp_after;
+  }
+
+  /*
+   The backend has destroyed all
+   unsecured dungeon loot.
+  */
+  STATE.unsecuredLoot = [];
+
+  /*
+   Briefly commit the final player
+   state underneath the extraction.
+  */
+  renderParty();
+  renderRunLoot();
+
+  /*
+   Do NOT render the room outcome,
+   actions, stat popups, or combat.
+
+   The Bond Endures takes over.
+  */
+  showDungeonExtraction(result);
+
+  return;
+}
+
+STATE.entranceActive = false;
+STATE.lastResult = result;
+STATE.room = result.selected_room || null;
 
    STATE.roomDescription = result.selected_description || null;
    STATE.roomHistory = {
@@ -2031,9 +2084,10 @@ dungeonExtractionText: document.getElementById(
   } catch (error) {
    showError(error);
   } finally {
-   setBusy(false);
+  if (STATE.lastResult?.dungeon?.failed !== true) {
+    setBusy(false);
   }
- }
+}
 
  function renderExploreOutcome(result) {
   /*
