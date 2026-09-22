@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/22/26 dungeon-page-14 tidy-1");
+console.log("dungeon.js V-09/22/26 dungeon-page-15 tidy-1");
 
 (() => {
  /* =========================================================
@@ -1620,6 +1620,46 @@ dungeonExtractionText: document.getElementById(
    }
 
    /*
+ A dungeon choice reduced the
+ player to 0 HP.
+
+ The backend has already:
+ - marked the run failed
+ - recorded failed_at
+ - deleted unsecured loot
+ - returned extraction data
+
+ From this point forward, the
+ extraction scene owns the page.
+*/
+if (result.dungeon?.failed === true) {
+  STATE.lastResult = result;
+
+  /*
+   The backend has destroyed all
+   unsecured dungeon loot.
+  */
+  STATE.unsecuredLoot = [];
+
+  /*
+   Commit the final player state
+   underneath the extraction.
+  */
+  renderParty();
+  renderRunLoot();
+
+  /*
+   Do NOT render the normal choice
+   result, actions, or stat popups.
+
+   The Bond Endures takes over.
+  */
+  showDungeonExtraction(result);
+
+  return;
+}
+
+   /*
     Build a readable result from
     the applied effects.
   */
@@ -1679,10 +1719,12 @@ dungeonExtractionText: document.getElementById(
      Number(result.state?.risk_before ?? 0)
    );
   } catch (error) {
-   showError(error);
-  } finally {
-   setBusy(false);
+  showError(error);
+} finally {
+  if (STATE.lastResult?.dungeon?.failed !== true) {
+    setBusy(false);
   }
+}
  }
  /* =========================================================
      PUZZLES
