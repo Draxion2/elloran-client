@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/21/26 dungeon-page-11 tidy-1");
+console.log("dungeon.js V-09/22/26 dungeon-page-12 tidy-1");
 
 (() => {
  /* =========================================================
@@ -11,6 +11,15 @@ console.log("dungeon.js V-09/21/26 dungeon-page-11 tidy-1");
  const ARENA_URL = "https://draxtesting.forumotion.com/h7-battle-arena-modal";
  const AUDIO_BASE_URL =
   "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/";
+ const DUNGEON_EXTRACTION_THEME_URL =
+ "https://github.com/Draxion2/elloran-client/raw/refs/heads/main/dungeon_defeat_background.mp3";
+
+const dungeonExtractionTheme = new Audio(
+ DUNGEON_EXTRACTION_THEME_URL
+);
+
+dungeonExtractionTheme.preload = "auto";
+dungeonExtractionTheme.volume = 0.8;
  /* =========================================================
    DUNGEON AUDIO
 ========================================================= */
@@ -388,6 +397,141 @@ function playDungeonRoomSfx(filename, roomType) {
 
   els.campTransition.setAttribute("aria-hidden", "true");
  }
+ function showDungeonExtraction(data) {
+ const extraction = data?.dungeon?.extraction;
+
+ if (!extraction || !els.dungeonExtraction) {
+  return false;
+ }
+
+ const dragonName =
+  extraction.dragon_name || "Your companion";
+
+ /*
+  Populate the extraction scene.
+ */
+ if (els.dungeonExtractionDragon) {
+  els.dungeonExtractionDragon.src =
+   extraction.dragon_img || "";
+
+  els.dungeonExtractionDragon.alt = dragonName;
+ }
+
+ if (els.dungeonExtractionDragonName) {
+  els.dungeonExtractionDragonName.textContent =
+   dragonName;
+ }
+
+ if (els.dungeonExtractionText) {
+  if (extraction.dragon_incapacitated === true) {
+   els.dungeonExtractionText.textContent =
+    "Battered and barely able to continue, " +
+    dragonName +
+    " answers the bond one final time. " +
+    "Refusing to leave you behind, your companion " +
+    "drags you from the depths as the darkness closes in.";
+  } else {
+   els.dungeonExtractionText.textContent =
+    "Your strength gives out as the darkness closes in. " +
+    "Through the fading noise of the dungeon, " +
+    dragonName +
+    " reaches you. Refusing to leave you behind, " +
+    "your companion drags you from the depths and " +
+    "back toward the surface.";
+  }
+ }
+
+ /*
+  The failed expedition now owns
+  the page. Nothing else should
+  remain interactive.
+ */
+ STATE.busy = true;
+
+ closeModal();
+
+ if (els.loading) {
+  els.loading.hidden = true;
+ }
+
+ /*
+  Silence the normal dungeon
+  ambience before the bond theme.
+ */
+ stopDungeonAudio();
+
+ /*
+  Reset the extraction presentation
+  in case this function is ever
+  called more than once.
+ */
+ els.dungeonExtraction.classList.remove(
+  "is-active",
+  "is-leaving"
+ );
+
+ els.dungeonExtraction.setAttribute(
+  "aria-hidden",
+  "true"
+ );
+
+ /*
+  Begin the extraction theme as
+  the dungeon disappears.
+ */
+ dungeonExtractionTheme.pause();
+ dungeonExtractionTheme.currentTime = 0;
+
+ dungeonExtractionTheme.play().catch((error) => {
+  console.warn(
+   "Dungeon extraction theme could not play:",
+   error
+  );
+ });
+
+ /*
+  Brief darkness before the
+  extraction scene emerges.
+ */
+ setTimeout(() => {
+  els.dungeonExtraction.setAttribute(
+   "aria-hidden",
+   "false"
+  );
+
+  void els.dungeonExtraction.offsetWidth;
+
+  els.dungeonExtraction.classList.add(
+   "is-active"
+  );
+ }, 1700);
+
+ /*
+  Fade the entire scene back into
+  darkness near the end.
+ */
+ setTimeout(() => {
+  els.dungeonExtraction.classList.add(
+   "is-leaving"
+  );
+ }, 16500);
+
+ /*
+  The theme was authored around
+  this same 18-second sequence.
+ */
+ setTimeout(() => {
+  dungeonExtractionTheme.pause();
+  dungeonExtractionTheme.currentTime = 0;
+
+  window.location.href =
+   data?.dungeon?.return_to === "player_hub"
+    ? HUB_URL
+    : HUB_URL;
+ }, 18000);
+
+ return true;
+}
  /* =========================================================
      STATE
   ========================================================= */
@@ -524,7 +668,24 @@ function playDungeonRoomSfx(filename, roomType) {
 
   summaryChronicle: document.getElementById("dungeon-summary-chronicle"),
 
-  summaryReturnBtn: document.getElementById("dungeon-summary-return-btn")
+  summaryReturnBtn: document.getElementById("dungeon-summary-return-btn"),
+
+/* Emergency Extraction */
+dungeonExtraction: document.getElementById(
+ "doeDungeonExtraction"
+),
+
+dungeonExtractionDragon: document.getElementById(
+ "doeDungeonExtractionDragon"
+),
+
+dungeonExtractionDragonName: document.getElementById(
+ "doeDungeonExtractionDragonName"
+),
+
+dungeonExtractionText: document.getElementById(
+ "doeDungeonExtractionText"
+)
  };
  /* =========================================================
      API
