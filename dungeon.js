@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/22/26 dungeon-page-16 tidy-2");
+console.log("dungeon.js V-09/23/26 dungeon-page-17 tidy-2");
 
 (() => {
  /* =========================================================
@@ -1355,92 +1355,208 @@ console.log("dungeon.js V-09/22/26 dungeon-page-16 tidy-2");
   );
  }
 
+  function canContinueExploring() {
+  const supplies = Number(STATE.current?.expedition_supplies || 0);
+  const exhaustion = Number(STATE.current?.exhaustion || 0);
+
+  return supplies >= 1 && exhaustion >= 5;
+ }
+
+ function getContinueBlockedReason() {
+  const supplies = Number(STATE.current?.expedition_supplies || 0);
+  const exhaustion = Number(STATE.current?.exhaustion || 0);
+
+  if (supplies < 1) {
+   return "No Supplies";
+  }
+
+  if (exhaustion < 5) {
+   return "Too Exhausted";
+  }
+
+  return null;
+ }
+
+ function canCamp() {
+  const supplies = Number(STATE.current?.expedition_supplies || 0);
+  const campUsed = getFloor().camp_used === true;
+
+  return !campUsed && supplies >= 5;
+ }
+
+ function applyContinueState(button) {
+  if (!button) {
+   return;
+  }
+
+  const blockedReason = getContinueBlockedReason();
+
+  button.disabled = STATE.busy || !!blockedReason;
+
+  setText(button, blockedReason || "Continue Exploring");
+ }
+
  function renderActions() {
-  hideAllActionGroups();
-  const room = STATE.room;
-  if (STATE.pendingCombat) {
-   if (els.defaultActions) {
-    els.defaultActions.hidden = false;
-   }
+ hideAllActionGroups();
 
-   if (els.continueBtn) {
-    els.continueBtn.hidden = false;
-    els.continueBtn.disabled = STATE.busy;
-   }
+ const room = STATE.room;
 
-   setText(els.continueBtn, "Engage");
-
-   return;
-  }
-  if (!room) {
-   if (els.defaultActions) {
-    els.defaultActions.hidden = false;
-   }
-
-   setText(
-    els.continueBtn,
-    STATE.entranceActive ? "Begin Expedition" : "Continue Exploring"
-   );
-
-   return;
-  }
-  /*
-     Unresolved choice.
-   */
-  const choiceCode = STATE.roomHistory?.choice_code || "";
-  if (room.room_type === "choice" && !choiceCode) {
-   renderChoiceActions(room);
-   return;
-  }
-  /*
-     Unresolved puzzle.
-   */
-  if (room.room_type === "puzzle") {
-   const puzzleStatus = getPuzzleStatus();
-   if (puzzleStatus !== "solved" && puzzleStatus !== "gave_up") {
-    renderPuzzleActions(room);
-    return;
-   }
-  }
-  /*
-     Floor target reached.
-   */
-  if (floorComplete()) {
-   if (els.floorActions) {
-    els.floorActions.hidden = false;
-   }
-   if (isFinalFloor()) {
-    setText(
-     els.floorCompleteText,
-     "You have explored enough of the deepest floor to bring this expedition to an end."
-    );
-    setText(els.descendBtn, "Complete Expedition");
-   } else {
-    setText(
-     els.floorCompleteText,
-     "A passage descends deeper into the dungeon."
-    );
-    setText(
-     els.descendBtn,
-     `Descend to Floor ${Number(STATE.current?.current_depth || 1) + 1}`
-    );
-   }
-   return;
-  }
-  if (getFloor().camp_used !== true) {
-   if (els.safeActions) {
-    els.safeActions.hidden = false;
-   }
-   const safe = room.is_safe_room === true;
-   setText(els.campBtn, safe ? "Make Camp" : "Make Camp — Risk +1");
-   setText(els.safeContinueBtn, "Continue Exploring");
-   return;
-  }
+ /*
+     Pending combat.
+ */
+ if (STATE.pendingCombat) {
   if (els.defaultActions) {
    els.defaultActions.hidden = false;
   }
-  setText(els.continueBtn, "Continue Exploring");
+
+  if (els.continueBtn) {
+   els.continueBtn.hidden = false;
+   els.continueBtn.disabled = STATE.busy;
+  }
+
+  setText(els.continueBtn, "Engage");
+
+  return;
  }
+  
+ if (!room) {
+  if (STATE.entranceActive) {
+   if (els.defaultActions) {
+    els.defaultActions.hidden = false;
+   }
+
+   setText(els.continueBtn, "Begin Expedition");
+   els.continueBtn.disabled = STATE.busy;
+
+   return;
+  }
+
+  const campUsed = getFloor().camp_used === true;
+  const supplies = Number(STATE.current?.expedition_supplies || 0);
+
+  if (!campUsed) {
+   if (els.safeActions) {
+    els.safeActions.hidden = false;
+   }
+
+   if (els.campBtn) {
+    els.campBtn.hidden = false;
+    els.campBtn.disabled = STATE.busy || !canCamp();
+
+    if (supplies < 5) {
+     setText(els.campBtn, "Not Enough Supplies to Camp");
+    } else {
+     setText(els.campBtn, "Make Camp — Risk +1");
+    }
+   }
+
+   applyContinueState(els.safeContinueBtn);
+
+   return;
+  }
+
+  if (els.defaultActions) {
+   els.defaultActions.hidden = false;
+  }
+
+  applyContinueState(els.continueBtn);
+
+  return;
+ }
+
+ /*
+     Unresolved choice.
+ */
+ const choiceCode = STATE.roomHistory?.choice_code || "";
+
+ if (room.room_type === "choice" && !choiceCode) {
+  renderChoiceActions(room);
+  return;
+ }
+
+ /*
+     Unresolved puzzle.
+ */
+ if (room.room_type === "puzzle") {
+  const puzzleStatus = getPuzzleStatus();
+
+  if (puzzleStatus !== "solved" && puzzleStatus !== "gave_up") {
+   renderPuzzleActions(room);
+   return;
+  }
+ }
+
+ /*
+     Floor target reached.
+ */
+ if (floorComplete()) {
+  if (els.floorActions) {
+   els.floorActions.hidden = false;
+  }
+
+  if (isFinalFloor()) {
+   setText(
+    els.floorCompleteText,
+    "You have explored enough of the deepest floor to bring this expedition to an end."
+   );
+
+   setText(els.descendBtn, "Complete Expedition");
+  } else {
+   setText(
+    els.floorCompleteText,
+    "A passage descends deeper into the dungeon."
+   );
+
+   setText(
+    els.descendBtn,
+    `Descend to Floor ${Number(STATE.current?.current_depth || 1) + 1}`
+   );
+  }
+
+  return;
+ }
+
+ /*
+     Normal between-room actions.
+ */
+ const campUsed = getFloor().camp_used === true;
+ const supplies = Number(STATE.current?.expedition_supplies || 0);
+
+ if (!campUsed) {
+  if (els.safeActions) {
+   els.safeActions.hidden = false;
+  }
+
+  const safe = room.is_safe_room === true;
+
+  if (els.campBtn) {
+   els.campBtn.hidden = false;
+   els.campBtn.disabled = STATE.busy || !canCamp();
+
+   if (supplies < 5) {
+    setText(els.campBtn, "Not Enough Supplies to Camp");
+   } else {
+    setText(
+     els.campBtn,
+     safe ? "Make Camp" : "Make Camp — Risk +1"
+    );
+   }
+  }
+
+  applyContinueState(els.safeContinueBtn);
+
+  return;
+ }
+
+ /*
+     Camp has already been used on this floor.
+ */
+ if (els.defaultActions) {
+  els.defaultActions.hidden = false;
+ }
+
+ applyContinueState(els.continueBtn);
+}
  /* =========================================================
      CHOICE ROOMS
   ========================================================= */
@@ -1809,6 +1925,10 @@ console.log("dungeon.js V-09/22/26 dungeon-page-16 tidy-2");
   if (STATE.busy) {
    return;
   }
+  if (!canContinueExploring()) {
+   renderActions();
+   return;
+  }
   startDungeonAmbience();
   const before = {
    supplies: Number(STATE.current?.expedition_supplies || 0),
@@ -1923,6 +2043,10 @@ console.log("dungeon.js V-09/22/26 dungeon-page-16 tidy-2");
     return;
    }
   } catch (error) {
+   STATE.roomTravelActive = false;
+   STATE.roomTravelDuration = null;
+   renderRoom();
+   renderStatus();
    showError(error);
   } finally {
    if (STATE.lastResult?.dungeon?.failed !== true) {
@@ -2030,6 +2154,11 @@ console.log("dungeon.js V-09/22/26 dungeon-page-16 tidy-2");
   ========================================================= */
  async function campDungeon() {
   if (STATE.busy) {
+   return;
+  }
+
+  if (!canCamp()) {
+   renderActions();
    return;
   }
 
