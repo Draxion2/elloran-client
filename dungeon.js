@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/23/26 dungeon-page-17 tidy-2");
+console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
 
 (() => {
  /* =========================================================
