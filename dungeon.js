@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
+console.log("dungeon.js V-09/26/26 universal-dungeon-1 tidy-2");
 
 (() => {
  /* =========================================================
@@ -821,6 +821,37 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
   return STATE.current?.dungeon || {};
  }
 
+function getDepthLabel() {
+  return getDungeon().depth_label || "Floor";
+}
+
+function getProgressLabel() {
+  return getDungeon().progress_label || "Descend";
+}
+
+function getProgressTransitionLabel() {
+  return getDungeon().progress_transition_label || "Descending Deeper";
+}
+
+function getProgressDescription() {
+  return (
+    getDungeon().progress_description ||
+    "A passage descends deeper into the dungeon."
+  );
+}
+
+function getExitLabel() {
+  return getDungeon().exit_label || "Return to Surface";
+}
+
+function getCompletionLabel() {
+  return getDungeon().completion_label || "Complete Expedition";
+}
+
+function formatDepth(depth) {
+  return `${getDepthLabel()} ${Number(depth || 1)}`;
+}
+
  function getRunRisk() {
   return Number(STATE.current?.risk ?? 0);
  }
@@ -973,7 +1004,8 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
   const maxDepth = Number(dungeon.max_depth || 1);
   setText(els.dungeonName, dungeon.name || "Dungeon");
   setText(els.dungeonDescription, dungeon.description || "");
-  setText(els.floorLabel, `Floor ${depth}`);
+  setText(els.floorLabel, formatDepth(depth));
+  setText(els.returnBtn, getExitLabel());
   if (!els.floorProgress) {
    return;
   }
@@ -1495,23 +1527,25 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
   }
 
   if (isFinalFloor()) {
-   setText(
+  setText(
     els.floorCompleteText,
-    "You have explored enough of the deepest floor to bring this expedition to an end."
-   );
+    `You have explored enough of the deepest ${getDepthLabel().toLowerCase()} to bring this expedition to an end.`
+  );
 
-   setText(els.descendBtn, "Complete Expedition");
-  } else {
-   setText(
+  setText(els.descendBtn, getCompletionLabel());
+} else {
+  const nextDepth = Number(STATE.current?.current_depth || 1) + 1;
+
+  setText(
     els.floorCompleteText,
-    "A passage descends deeper into the dungeon."
-   );
+    getProgressDescription()
+  );
 
-   setText(
+  setText(
     els.descendBtn,
-    `Descend to Floor ${Number(STATE.current?.current_depth || 1) + 1}`
-   );
-  }
+    `${getProgressLabel()} to ${formatDepth(nextDepth)}`
+  );
+}
 
   return;
  }
@@ -1890,7 +1924,7 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
 
   setText(
    els.roomContext,
-   `Floor ${Number(STATE.current?.current_depth || 1)}`
+   formatDepth(STATE.current?.current_depth || 1)
   );
 
   setText(els.roomName, "Pressing Onward");
@@ -2297,18 +2331,21 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
   clearRoomResult();
   hideAllActionGroups();
 
-  setText(els.roomType, "Descending");
+ setText(els.roomType, getProgressLabel());
 
-  setText(els.roomNumber, "");
+setText(els.roomNumber, "");
 
-  setText(els.roomContext, `Floor ${nextFloor}`);
+setText(els.roomContext, formatDepth(nextFloor));
 
-  setText(els.roomName, "Descending Deeper");
+setText(
+  els.roomName,
+  getProgressTransitionLabel()
+);
 
-  setText(
-   els.roomDescription,
-   "The passage slopes downward into the earth. The light from above fades as you and your companion press deeper into the dungeon."
-  );
+setText(
+  els.roomDescription,
+  getProgressDescription()
+);
 
   if (els.descentProgress) {
    els.descentProgress.hidden = false;
@@ -2645,7 +2682,12 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
     "You emerge from the depths with everything recovered during the expedition."
   );
 
-  setText(els.summaryDepth, `Floor ${Number(result.final_depth || 1)}`);
+  const depthLabel = dungeon.depth_label || getDepthLabel();
+
+  setText(
+   els.summaryDepth,
+   `${depthLabel} ${Number(result.final_depth || 1)}`
+  );
 
   setText(els.summaryRooms, Number(result.rooms_explored || 0));
 
@@ -2708,9 +2750,10 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
 
     location.className = "dungeon-summary-chronicle-location";
 
-    location.textContent = `Floor ${Number(entry.depth || 1)} · Room ${Number(
-     entry.room_number || 0
-    )}`;
+    location.textContent =
+      `${depthLabel} ${Number(entry.depth || 1)} · Room ${Number(
+       entry.room_number || 0
+      )}`;
 
     /*
    Room name.
@@ -2836,8 +2879,8 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
    renderRoom();
 
    setRoomResult(
-    result.message || `You arrive on Floor ${result.current_depth}.`,
-    "Deeper Into the Dungeon"
+    result.message || `You arrive at ${formatDepth(result.current_depth)}.`,
+    getProgressTransitionLabel()
    );
   } catch (error) {
    STATE.descendingActive = false;
@@ -2858,9 +2901,9 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
   }
 
   const confirmed = await confirmModal(
-   "Complete Expedition?",
-   "You have explored the deepest floor. Completing the dungeon will secure your expedition loot and end this run.",
-   "Complete"
+   `${getCompletionLabel()}?`,
+   `You have explored the deepest ${getDepthLabel().toLowerCase()}. Completing the expedition will secure your loot and end this run.`,
+   getCompletionLabel()
   );
 
   if (!confirmed) {
@@ -2892,11 +2935,13 @@ console.log("dungeon.js V-09/23/26 dungeon-page-18 tidy-2");
   if (STATE.busy) {
    return;
   }
-  const confirmed = await confirmModal(
-   "Return to Surface?",
-   "You will end this dungeon expedition and secure everything recovered during the run.",
-   "Return to Surface"
-  );
+ const exitLabel = getExitLabel();
+
+ const confirmed = await confirmModal(
+  `${exitLabel}?`,
+  "You will end this expedition and secure everything recovered during the run.",
+  exitLabel
+ );
   if (!confirmed) {
    return;
   }
