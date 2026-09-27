@@ -1,4 +1,4 @@
-console.log("dungeon.js V-09/26/26 universal-dungeon-1 tidy-2");
+console.log("dungeon.js V-09/26/26 combat-patch-1 tidy-2");
 
 (() => {
  /* =========================================================
@@ -3064,6 +3064,25 @@ setText(
     current.current_room_description ||
     STATE.roomHistory?.outcome_json?.description ||
     null;
+
+const combatState = STATE.roomHistory?.outcome_json?.combat || null;
+
+if (
+  STATE.room?.room_type === "combat" &&
+  combatState?.status === "pending"
+) {
+  STATE.pendingCombat = {
+    type: "combat",
+    source: "dungeon",
+    environment:
+      STATE.room?.combat_environment ||
+      STATE.room?.environment ||
+      "any_land",
+    monster_code: combatState.monster_code || ""
+  };
+} else {
+  STATE.pendingCombat = null;
+}
 
    STATE.entranceActive = shouldShowDungeonEntrance(current);
    STATE.unsecuredLoot = Array.isArray(current.unsecured_loot)
